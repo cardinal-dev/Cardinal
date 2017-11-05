@@ -1,0 +1,11 @@
+echo "// MAIN_AP_206 datapoint\n";
+echo "var MAIN_206 = {\n";
+echo "  min: 0,\n";
+echo "  max: 100, \n";
+echo "  x: 620, // x coordinate of the datapoint, a number \n";
+echo "  y: 400, // y coordinate of the datapoint, a number\n";
+echo "  value: 72 // the value at datapoint(x, y)\n";
+echo "};\n";
+echo "heatmapInstance.addData(MAIN_206);\n";
+echo "\n";
+
