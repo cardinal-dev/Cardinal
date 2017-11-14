@@ -30,5 +30,4 @@ time.sleep(.10)
 output = remote_conn.recv(65535)
 print output
 
-
 exit()
