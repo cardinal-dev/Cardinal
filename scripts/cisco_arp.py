@@ -1,40 +1,34 @@
 #!/usr/bin/python
 
-#Importing modules
 import paramiko
-import sys
+from getpass import getpass
 import time
-import urllib2
-import urllib
-
-#setting parameters like host IP, username, passwd and number of iterations to gather cmds
+import sys
 
 queryIP = sys.argv[1]
 queryUser = sys.argv[2]
 queryPass = sys.argv[3]
+querySNMP = sys.argv[4]
 
-HOST = queryIP
-USER = queryUser
-PASS = queryPass
-ITERATION = 1
+ip = queryIP
+username = queryUser
+password = queryPass
+snmp = querySNMP
 
-#A function that logins and execute commands
-def fn():
-  client1=paramiko.SSHClient()
-  #Add missing client key
-  client1.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-  #connect to switch
-  client1.connect(HOST,username=USER,password=PASS)
-  print "SSH connection to %s established" %HOST
-  #Gather commands and read the output from stdout
-  stdin, stdout, stderr = client1.exec_command('show ip arp\n')
-  print stdout.read()
-  client1.close()
-  print "Logged out of device %s" %HOST
+remote_conn_pre=paramiko.SSHClient()
+remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+remote_conn_pre.connect(ip, port=22, username=username,
+                        password=password,
+                        look_for_keys=False, allow_agent=False)
 
-#for loop to call above fn x times. Here x is set to 3
-for x in xrange(ITERATION):
-  fn()
-  print "%s Iteration/s completed" %(x+1)
-  print "********"
-  time.sleep(5) #sleep for 5 seconds
+remote_conn = remote_conn_pre.invoke_shell()
+output = remote_conn.recv(65535)
+print output
+
+remote_conn.send("show ip arp\n")
+time.sleep(.10)
+output = remote_conn.recv(65535)
+print output
+
+
+exit()
