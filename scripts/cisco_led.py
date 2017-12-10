@@ -8,12 +8,10 @@ import sys
 queryIP = sys.argv[1]
 queryUser = sys.argv[2]
 queryPass = sys.argv[3]
-querySNMP = sys.argv[4]
 
 ip = queryIP
 username = queryUser
 password = queryPass
-snmp = querySNMP
 
 remote_conn_pre=paramiko.SSHClient()
 remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
