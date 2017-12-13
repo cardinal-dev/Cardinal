@@ -9,7 +9,7 @@
 # Cardinal Configuration Variable Declarations
 
 # IMPORTANT!: Modify this to include the proper location of the scripts directory
-scriptsDir=/path/to/scripts/directory
+scriptsDir=$(awk -F "=" '/scriptsdir/ {print $2}' /path/to/cardinal_config.ini)
 
 # Open Connection to Each AP in Cardinal Database
 
