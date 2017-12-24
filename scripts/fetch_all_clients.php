@@ -26,7 +26,7 @@ SOFTWARE.
 
 */
 
-// Cardinal Configuration Information ($cardinal_base path)
+// Cardinal Configuration Information
 
 require_once('/path/to/includes/cardinalconfig.php');
 
