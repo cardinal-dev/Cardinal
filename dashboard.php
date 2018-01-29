@@ -62,7 +62,7 @@ header('Location: index.php');
 			<div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav navbar-left">
 					<li>
-						<a href="../">Home</a>
+						<a href="/">Home</a>
 					</li>
 
 
