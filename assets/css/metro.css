@@ -1,0 +1,49 @@
+@import url(http://weloveiconfonts.com/api/?family=fontawesome);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300);
+
+/* fontawesome */
+[class*="fontawesome-"]:before {
+  font-family: 'FontAwesome', sans-serif;
+}
+.left {
+  float: left;
+}
+.clear {
+clear: both;
+}
+
+.ssids {
+  background: rgb(218,165,32);
+}
+.accesspoint {
+  background: rgb(220,20,60);
+}
+
+.apgroup {
+  background: rgb(39,183,121);
+}
+
+.clients {
+  background: rgb(38,168,226);
+}
+
+.metroblock {
+  width: 21em;
+  padding: 0em 1em 1em 1em;
+  color: #fff;
+  font-family: 'Open Sans', sans-serif;
+  margin: 1em;
+}
+
+.metroblock h1, .metroblock h2, .metroblock .icon {
+  font-weight: 300;
+  margin: 0;
+  padding: 0;
+}
+.metroblock h1, .metroblock .icon {
+  font-size: 7em;
+  text-align: center;
+}
+.metroblock .icon {
+  margin-right: .2em;
+}
