@@ -14,6 +14,6 @@ If anyone is interested in contributing to Cardinal, please contact me! Cardinal
 
 To the first two contributors, I will send you a Cardinal t-shirt! (black shirt with the Cardinal logo on front)
 
-For installation instructions & documentation, please visit http://cardinal.mcclunetechnologies.net. 
+For installation instructions & documentation, please visit https://cardinal.mcclunetechnologies.net. 
 
 This is for you, Chris.
