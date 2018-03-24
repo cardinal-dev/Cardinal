@@ -3,4 +3,4 @@ language: php
 php:
 - '7.0'
 before_install:
-- source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/install_dependencies.sh)
+- source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
