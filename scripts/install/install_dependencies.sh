@@ -4,7 +4,7 @@
 # falcon78921
 
 # Add ppa:ondrej/php as source for Ubuntu & update sources
-sudo add-apt-repository ppa:ondrej/php
+sudo add-apt-repository -y ppa:ondrej/php
 sudo apt-get update
 
 # Install Dependencies
