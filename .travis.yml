@@ -8,5 +8,4 @@ install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo chown -R www-data:www-data /var/www/html
-- sudo chmod -R 777 /var/www/html # For CI purposes only, DO NOT have this in production!
 script: curl http://127.0.0.1/index.php # Cardinal, are we live?
