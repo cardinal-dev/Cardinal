@@ -2,5 +2,7 @@ sudo: true
 language: php
 php:
 - '7.0'
+before_script: composer require atoum/atoum
+script: vendor/bin/atoum
 before_install:
 - source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
