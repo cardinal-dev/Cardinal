@@ -2,3 +2,4 @@ language: php
 php:
 - '7.0'
 sudo: enabled
+install: scripts/install/install-dependencies.sh
