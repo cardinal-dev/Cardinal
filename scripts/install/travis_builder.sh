@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Install Cardinal Dependencies
+# Travis-CI Builder
 # falcon78921
 
 # For Travis-CI Builds
