@@ -4,4 +4,6 @@ php:
 - '7.0'
 services:
   - mysql
-before_script: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
+install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
+before_script: ls
+script: wget http://127.0.0.1/Cardinal/index.php
