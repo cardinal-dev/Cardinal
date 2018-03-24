@@ -2,4 +2,6 @@ sudo: true
 language: php
 php:
 - '7.0'
+services:
+  - mysql
 before_script: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
