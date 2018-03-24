@@ -9,3 +9,4 @@ before_script:
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo chown -R www-data:www-data /var/www/html
 script: curl http://127.0.0.1/index.php # Cardinal, are we live?
+script: php /var/www/html/index.php
