@@ -7,5 +7,6 @@ services:
 install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
 before_script: 
 - ls
+- ls /var/www
 - echo "WE'RE DONE" | nc -w 5 127.0.0.1 80
 script: wget http://127.0.0.1/index.php
