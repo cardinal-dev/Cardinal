@@ -3,11 +3,6 @@
 # Travis-CI Builder
 # falcon78921
 
-# For Travis-CI Builds
-sudo rm /var/lib/apt/lists/lock
-sudo rm /var/cache/apt/archives/lock
-sudo rm /var/lib/dpkg/lock
-
 # Add ppa:ondrej/php as source for Ubuntu & update sources
 sudo apt-get install -y software-properties-common
 sudo apt-get install -y python-software-properties
