@@ -1,6 +1,6 @@
+sudo: enabled
 language: php
 php:
 - '7.0'
-sudo: required
 before_install:
 - source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/install_dependencies.sh)
