@@ -6,6 +6,7 @@ services:
 - mysql
 install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
 before_script: 
-- sudo service apache2 stop # Just for CI purposes only, testing to see if page loads on port 80 (HTTP)
-- sudo python -m SimpleHTTPServer 80 &
+- sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
+- sudo chown -R www-data:www-data /var/www/html
+- sudo chmod -R 777 /var/www/html # For CI purposes only, DO NOT have this in production!
 script: wget http://127.0.0.1/index.php
