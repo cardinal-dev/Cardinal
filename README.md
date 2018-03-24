@@ -1,3 +1,4 @@
+![alt_text](https://travis-ci.org/falcon78921/Cardinal.svg?branch=master)
 ![alt text](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/09/cardinal.png)
 
 <h1>Cardinal</h1>
