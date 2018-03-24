@@ -8,5 +8,6 @@ install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal
 before_script: 
 - ls
 - pwd
-- echo "WE'RE DONE" | nc -w 5 127.0.0.1 80
+- ls -lah /var/www/
+- echo "WE'RE DONE" | nc -w 5 127.0.1.1 80
 script: wget http://127.0.0.1/index.php
