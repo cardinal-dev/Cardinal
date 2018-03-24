@@ -6,7 +6,7 @@
 # Add ppa:ondrej/php as source for Ubuntu & update sources
 sudo apt-get install -y software-properties-common
 sudo apt-get install -y python-software-properties
-sudo add-apt-repository -y ppa:ondrej/php
+#sudo add-apt-repository -y ppa:ondrej/php - for Travis-CI build
 sudo apt-get update
 
 # Install Dependencies
