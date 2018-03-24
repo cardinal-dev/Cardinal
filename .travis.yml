@@ -6,5 +6,7 @@ services:
 - mysql
 install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
 before_script: 
+- chown -R www-data:www-data /var/www/html
+- chmod -R 777 /var/www/html # Just for integration tests only, would not recommend long-term...
 - cp -r * /var/www/html
 script: wget http://127.0.1.1/index.php
