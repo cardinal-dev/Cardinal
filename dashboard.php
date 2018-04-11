@@ -741,30 +741,30 @@ header('Location: index.php');
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
 					<div class="chart-title">
-						Configure SSIDs (2.4GHz)
+						Configure SSIDs
 					</div>
 
 
 					<div class="chart-stage">
 						<center>
-							<a class="configure_ssid_24" href="configure_ssid.php"><img src="assets/img/cardinal5.png"></a>
+							<a class="configure_ssids" href="configure_ssid_wizard.php"><img src="assets/img/cardinal5.png"></a>
 						</center>
 					</div>
 
 
-					<div id="configuressid24" style="display:none;" title="Configure SSIDs (2.4GHz)">
-						<iframe height="350" id="configure_ssid_24_frame" name="configure_ssid_24_frame" width="350"></iframe>
+					<div id="configuressids" style="display:none;" title="Configure SSIDs">
+						<iframe height="350" id="configure_ssids_frame" name="configure_ssids_frame" width="350"></iframe>
 					</div>
 					<script>
 					$(document).ready(function () {
-					$(".configure_ssid_24").click(function () {
-					   $("#configure_ssid_24_frame").attr('src', $(this).attr("href"));
-					   $("#configuressid24").dialog({
+					$(".configure_ssids").click(function () {
+					   $("#configure_ssids_frame").attr('src', $(this).attr("href"));
+					   $("#configuressids").dialog({
 					       width: 400,
 					       height: 450,
 					       modal: true,
 					       close: function () {
-					           $("#configure_ssid_24_frame").attr('src', "about:blank");
+					           $("#configure_ssids_frame").attr('src', "about:blank");
 					       }
 					   });
 					   return false;
@@ -774,304 +774,10 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Configure A SSID (2.4GHz) For A Single Access Point
+						Configure SSIDs for registered access points in Cardinal
 					</div>
 				</div>
 			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure SSID (2.4GHz) (Group)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_ssid_group_24" href="configure_ssid_group.php"><img src="assets/img/cardinal5.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configuressidgroup24" style="display:none;" title="Configure SSID (2.4GHz) (Group)">
-						<iframe height="350" id="configure_ssid_24_group_frame" name="configure_ssid_24_group_frame" width="350"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".configure_ssid_group_24").click(function () {
-					   $("#configure_ssid_24_group_frame").attr('src', $(this).attr("href"));
-					   $("#configuressidgroup24").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#configure_ssid_24_group_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure SSIDs (2.4GHz) For A Group of Access Points
-					</div>
-				</div>
-			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure RADIUS SSID (2.4GHz)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_radius_ssid_24" href="configure_ssid_radius.php"><img src="assets/img/cardinal13.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configuressidradius24" style="display:none;" title="Configure RADIUS SSID (2.4GHz)">
-						<iframe height="450" id="configure_radius_ssid_24_frame" name="configure_radius_ssid_24_frame" width="400"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".configure_radius_ssid_24").click(function () {
-					   $("#configure_radius_ssid_24_frame").attr('src', $(this).attr("href"));
-					   $("#configuressidradius24").dialog({
-					       width: 475,
-					       height: 550,
-					       modal: true,
-					       close: function () {
-					           $("#configure_radius_ssid_24_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure A 802.1x SSID on A Single Access Point
-					</div>
-				</div>
-			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure RADIUS SSID (2.4GHz) (Group)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_radius_ssid_24_group" href="configure_ssid_radius_group.php"><img src="assets/img/cardinal13.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configuressidradiusgroup24" style="display:none;" title="Configure RADIUS SSID (2.4GHz) (Group)">
-						<iframe height="450" id="configure_radius_ssid_24_group_frame" name="configure_radius_ssid_24_group_frame" width="400"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".configure_radius_ssid_24_group").click(function () {
-					   $("#configure_radius_ssid_24_group_frame").attr('src', $(this).attr("href"));
-					   $("#configuressidradiusgroup24").dialog({
-					       width: 475,
-					       height: 550,
-					       modal: true,
-					       close: function () {
-					           $("#configure_radius_ssid_24_group_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure A 802.1x SSID For A Group of Access Points
-					</div>
-				</div>
-			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure SSIDs (5GHz)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_ssid_5" href="configure_ssid_5ghz.php"><img src="assets/img/cardinal5.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configuressid5" style="display:none;" title="Configure SSIDs (5GHz)">
-						<iframe height="350" id="configure_ssid_5_frame" name="configure_ssid_5_frame" width="350"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".configure_ssid_5").click(function () {
-					   $("#configure_ssid_5_frame").attr('src', $(this).attr("href"));
-					   $("#configuressid5").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#configure_ssid_5_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure A SSID (5GHz) For A Single Access Point
-					</div>
-				</div>
-			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure SSIDs (5GHz) (Group)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_ssid_group_5" href="configure_ssid_5ghz_group.php"><img src="assets/img/cardinal5.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configuressidgroup5" style="display:none;" title="Configure SSIDs (5GHz) (Group)">
-						<iframe height="350" id="configure_ssid_group_5_frame" name="configure_ssid_group_5_frame" width="350"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".configure_ssid_group_5").click(function () {
-					   $("#configure_ssid_group_5_frame").attr('src', $(this).attr("href"));
-					   $("#configuressidgroup5").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#configure_ssid_group_5_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure SSIDs (5GHz) For A Group of Access Points
-					</div>
-				</div>
-			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure RADIUS SSID (5GHz)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_radius_ssid_5" href="configure_ssid_radius_5ghz.php"><img src="assets/img/cardinal13.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configuressidradius5" style="display:none;" title="Configure RADIUS SSID (5GHz)">
-						<iframe height="450" id="configure_radius_ssid_5_frame" name="configure_radius_ssid_5_frame" width="400"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".configure_radius_ssid_5").click(function () {
-					   $("#configure_radius_ssid_5_frame").attr('src', $(this).attr("href"));
-					   $("#configuressidradius5").dialog({
-					       width: 475,
-					       height: 550,
-					       modal: true,
-					       close: function () {
-					           $("#configure_radius_ssid_5_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure A 802.1x SSID on A Single Access Point
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure RADIUS SSID (5GHz) (Group)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_radius_ssid_5_group" href="configure_ssid_radius_5ghz_group.php"><img src="assets/img/cardinal13.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configuressidradius5group" style="display:none;" title="Configure RADIUS SSID (5GHz) (Group)">
-						<iframe height="450" id="configure_radius_ssid_5_group_frame" name="configure_radius_ssid_5_group_frame" width="400"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".configure_radius_ssid_5_group").click(function () {
-					   $("#configure_radius_ssid_5_group_frame").attr('src', $(this).attr("href"));
-					   $("#configuressidradius5group").dialog({
-					       width: 475,
-					       height: 550,
-					       modal: true,
-					       close: function () {
-					           $("#configure_radius_ssid_5_group_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure A 802.1x SSID For A Group of Access Points
-					</div>
-				</div>
-			</div>
-
 
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
