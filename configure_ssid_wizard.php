@@ -53,9 +53,3 @@ header('Location: index.php');
  <option value="configure_ssid_radius_5ghz_group.php">Add a 5GHz RADIUS SSID (Group)</option>
 </select>
 </center>
-
-<?php
-
-$conn->close();
-
-?>
