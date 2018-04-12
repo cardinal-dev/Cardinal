@@ -172,6 +172,15 @@ if ($result->num_rows > 0) {
     echo "";
 }
 
+?>
+
+<br>
+<br>
+<button onclick="window.location.href='/configure_ssid_wizard.php'">Back to Configure SSID Wizard</button>
+
+<?php
+
 $conn->close();
+
 ?>
 
