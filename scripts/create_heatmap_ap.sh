@@ -11,14 +11,12 @@ cardinalBase=$(awk -F "=" '/cardinalbase/ {print $2}' /path/to/cardinal_config.i
 # Append the information sent from the add_new_ap_heatmap.php page to the following heatmap page
 # Start from reverse, each access point will go below the Cardinal APS GO BELOW HERE comment 
 
-sed -i '/Cardinal APS GO BELOW HERE/aecho "\n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "heatmapInstance.addData('"$1"');\n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "};\n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "  value: '"$7"' // the value at datapoint(x, y)\n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "  y: '"$6"', // y coordinate of the datapoint, a number\n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "  x: '"$5"', // x coordinate of the datapoint, a number \n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "  max: '"$4"', \n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "  min: '"$3"',\n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "var '"$1"' = {\n";' $cardinalBase/assets/building_maps/$2
-sed -i '/Cardinal APS GO BELOW HERE/aecho "// '"$1"' datapoint\n";' $cardinalBase/assets/building_maps/$2
-
+sed -i '/Cardinal APS GO BELOW HERE/aheatmapInstance.addData('$1')' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/a}' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/avalue: '$7'' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/ay: '$6',' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/ax: '$5',' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/amax: '$4',' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/amin: '$3',' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/avar '$1' = {' $cardinalBase/assets/building_maps/$2
+sed -i '/Cardinal APS GO BELOW HERE/a<!-- '$1' datapoint -->' $cardinalBase/assets/building_maps/$2
