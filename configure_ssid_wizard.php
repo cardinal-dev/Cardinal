@@ -42,14 +42,10 @@ header('Location: index.php');
 
 <center>
 <select name="configuressid" onchange="location=this.value;">
- <option value="">Select a SSID Deployment Option:</option>
- <option value="configure_ssid.php">Add a 2.4GHz WPA2-PSK SSID (Single AP)</option>
- <option value="configure_ssid_group.php">Add a 2.4GHz WPA2-PSK SSID (Group)</option>
- <option value="configure_ssid_radius.php">Add a 2.4GHz RADIUS SSID (Single AP)</option>
- <option value="configure_ssid_radius_group.php">Add a 2.4GHz RADIUS SSID (Group)</option>
- <option value="configure_ssid_5ghz.php">Add a 5GHz WPA2-PSK SSID (Single AP)</option>
- <option value="configure_ssid_5ghz_group.php">Add a 5GHz WPA2-PSK SSID (Group)</option>
- <option value="configure_ssid_radius_5ghz.php">Add a 5GHz RADIUS SSID (Single AP)</option>
- <option value="configure_ssid_radius_5ghz_group.php">Add a 5GHz RADIUS SSID (Group)</option>
+ <option value="">Select a SSID Creation Option:</option>
+ <option value="configure_ssid.php">Add a 2.4GHz WPA2-PSK SSID</option>
+ <option value="configure_ssid_radius.php">Add a 2.4GHz RADIUS SSID</option>
+ <option value="configure_ssid_5ghz.php">Add a 5GHz WPA2-PSK SSID</option>
+ <option value="configure_ssid_radius_5ghz.php">Add a 5GHz RADIUS SSID</option>
 </select>
 </center>
