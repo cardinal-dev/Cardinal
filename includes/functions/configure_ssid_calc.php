@@ -33,62 +33,41 @@ session_start();
 // If user is not logged into Cardinal, then redirect them to the login page
 
 if (!isset($_SESSION['username'])) {
-header('Location: index.php');
+header('Location: ../../index.php');
 }
 
 // Cardinal Configuration Information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once(__DIR__ . '/../dbconnect.php');
 
-?>
+// Declare POST variables
 
-<html>
-<form id="add_ssid" action="includes/functions/configure_ssid_calc.php" method="POST">
-<font face="Verdana">
-<label>SSID Name: </label>
-<input type="text" name="ssid_name" required>
-<br>
-<label>WPA2-PSK (Minimum 8 Characters): </label>
-<input type="password" name="wpa2_psk" required>
-<br>
-<label>VLAN: </label>
-<input type="text" name="vlan" required>
-<br>
-<label>Bridge Group ID: </label>
-<input type="text" name="bridge_group_id" required>
-<br>
-<label>2.4GHz Radio Sub Interface ID: </label>
-<input type="text" name="24_sub_id" required>
-<br>
-<label>Gigabit Sub Interface ID: </label>
-<input type="text" name="giga_sub_id" required>
-<br>
-<input type="submit" name="Submit" required>
-</font>
-</form>
-</html>
+$querySsid = $_POST["ssid_name"];
+$queryVlan = $_POST["vlan"];
+$queryWpa2 = $_POST["wpa2_psk"];
+$queryBridgeId = $_POST["bridge_group_id"];
+$queryRadioId = $_POST["24_sub_id"];
+$queryGigaId = $_POST["giga_sub_id"];
 
-<button onclick="window.location.href='/configure_ssid_wizard.php'">Back to Configure SSID Wizard</button>
+// Store SSID Data in Database 
+if ($_POST) {
+$ssidUpdate = "INSERT INTO ssids_24ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('$querySsid', '$queryVlan', '$queryWpa2', '$queryBridgeId', '$queryRadioId', '$queryGigaId')";
+$ssidQuery = mysqli_query($conn,$ssidUpdate);
+$ssidValue = mysqli_fetch_object($ssidQuery);
 
-<?php
+// Redirect to this page.
+header('Location: ../../configure_ssid.php?Success=1');
+exit();
+}
 
-// Success after SSID registration (from configure_ssid_calc.php)
-if ( isset($_GET['Success']) && $_GET['Success'] == 1 )
-{
-     // Success Message!
-     echo "<br>";
-     echo "<br>";
-     ?>
-     <font face="Verdana">
-     <?php echo "2.4GHz SSID Created Successfully!"; ?>
-     </font>
-<?php } ?>
+// Clear POST Variables
+unset($_POST);
 
-<?php
+// Close SQL connection
 
 $conn->close();
 

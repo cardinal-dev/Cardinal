@@ -43,114 +43,54 @@ require_once('includes/cardinalconfig.php');
 // MySQL connection information
 
 require_once('includes/dbconnect.php');
-$result = $conn->query("select ap_id,ap_name from access_points");
-
-// HTML Dropdown for AP
-
-echo "<html>\n";
-echo "<head>\n";
-echo "</head>\n";
-echo "<body>\n";
-echo "<font face=\"Verdana\">\n"; 
-echo "Choose AP:";
-echo "</font>";
-echo "<form id=\"configure_ap\" action=\"\" method=\"POST\">\n";
-echo "<select name='id'>";
-
-    while ($row = $result->fetch_assoc()) {
-
-                  unset($id, $name);
-                  $id = $row['ap_id'];
-                  $name = $row['ap_name'];
-                  echo '<option value="'.$id.'">'.$name.'</option>';
-
-}
-
-echo "</select>";
-echo "<br>";
-echo "</br>";
-
-// Configure SSID Parameters
-
-echo "<html>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>SSID Name:</label>\n";
-echo "<input type=\"text\" name=\"ssid_name\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>WPA2-PSK:</label>\n";
-echo "<input type=\"password\" name=\"wpa2_psk\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>VLAN:</label>\n";
-echo "<input type=\"text\" name=\"vlan\"/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>Bridge Group ID:</label>\n";
-echo "<input type=\"text\" name=\"bridge_group_id\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>5GHz Radio Sub Interface ID:</label>\n";
-echo "<input type=\"text\" name=\"5_sub_id\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>Gigabit Sub Interface ID:</label>\n";
-echo "<input type=\"text\" name=\"giga_sub_id\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<input type=\"submit\" value=\"Submit\">\n";
-echo "\n";
-echo "</form>\n";
-echo "</body>\n";
-echo "</html>\n";
-
-// Fetch POST data from configure_ssid_5ghz.php and execute SQL queries
-$varConfID = $_POST['id'];
-
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = $varConfID";
-$result = $conn->query($sql);
-
-// Get the data in place (so it can be passed to Python)
-
-if ($result->num_rows > 0) {
-    // store data of each row
-    while($row = $result->fetch_assoc()) {
-       $queryIP = $row["ap_ip"];
-       $queryUser = $row["ap_ssh_username"];
-       $queryPass = $row["ap_ssh_password"];
-       $querySSID = $_POST['ssid_name'];
-       $queryWPA2 = $_POST['wpa2_psk'];
-       $queryVlan = $_POST['vlan'];
-       $queryBridgeGroup = $_POST['bridge_group_id'];
-       $queryRadioSub = $_POST['5_sub_id'];
-       $queryGigaSub = $_POST['giga_sub_id'];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_configure_ssid_5ghz.py $queryIP $queryUser $queryPass $querySSID $queryWPA2 $queryVlan $queryBridgeGroup $queryRadioSub $queryGigaSub");
-       $pyOutput = shell_exec($pyCommand);
-
-// Store SSID Data in Database
-
-       $ssidUpdate = "INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('".$_POST["ssid_name"]."', '".$_POST["vlan"]."', '".$_POST["wpa2_psk"]."', '".$_POST["bridge_group_id"]."', '".$_POST["5_sub_id"]."', '".$_POST["giga_sub_id"]."')";
-       $ssidQuery = mysqli_query($conn,$ssidUpdate);
-       $ssidValue = mysqli_fetch_object($ssidQuery);
-       echo "<br>";
-       echo "<br>";
-       echo "Creation of 5GHz SSID <b>$querySSID</b> for Access Point <b>$name</b> Successfully Initiated!";
-
-       // Clear POST Variables
-       unset($_POST);
-     }
-} else {
-    echo "";
-}
 
 ?>
 
+<html>
+<form id="add_ssid" action="includes/sqlLogic/configure_ssid_5ghz_calc.php" method="POST">
+<font face="Verdana">
+<label>SSID Name: </label>
+<input type="text" name="ssid_name" required>
 <br>
+<label>WPA2-PSK (Minimum 8 Characters): </label>
+<input type="password" name="wpa2_psk" required>
 <br>
+<label>VLAN: </label>
+<input type="text" name="vlan" required>
+<br>
+<label>Bridge Group ID: </label>
+<input type="text" name="bridge_group_id" required>
+<br>
+<label>5GHz Radio Sub Interface ID: </label>
+<input type="text" name="5_sub_id" required>
+<br>
+<label>Gigabit Sub Interface ID: </label>
+<input type="text" name="giga_sub_id" required>
+<br>
+<input type="submit" name="Submit" required>
+</font>
+</form>
+</html>
+
 <button onclick="window.location.href='/configure_ssid_wizard.php'">Back to Configure SSID Wizard</button>
+
+<?php
+
+// Success after SSID registration (from configure_ssid_5ghz_calc.php)
+if ( isset($_GET['Success']) && $_GET['Success'] == 1 )
+{
+     // Success Message!
+     echo "<br>";
+     echo "<br>";
+     ?>
+     <font face="Verdana">
+     <?php echo "5GHz SSID Created Successfully!"; ?>
+     </font>
+<?php } ?>
 
 <?php
 
 $conn->close();
 
 ?>
+
