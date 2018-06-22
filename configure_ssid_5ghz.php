@@ -47,7 +47,7 @@ require_once('includes/dbconnect.php');
 ?>
 
 <html>
-<form id="add_ssid" action="includes/sqlLogic/configure_ssid_5ghz_calc.php" method="POST">
+<form id="add_5ghz_ssid" action="includes/functions/configure_ssid_5ghz_calc.php" method="POST">
 <font face="Verdana">
 <label>SSID Name: </label>
 <input type="text" name="ssid_name" required>

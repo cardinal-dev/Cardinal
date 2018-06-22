@@ -44,47 +44,23 @@ require_once('includes/cardinalconfig.php');
 
 require_once('includes/dbconnect.php');
 
-// HTML Dropdown for AP
-
-$apDropdownQuery = $conn->query("SELECT ap_id,ap_name FROM access_points");
-
-echo "<html>\n";
-echo "<head>\n";
-echo "</head>\n";
-echo "<body>\n";
-echo "<font face=\"Verdana\">\n"; 
-echo "Choose AP:";
-echo "</font>";
-echo "<form id=\"configure_ap\" action=\"\" method=\"POST\">\n";
-echo "<select name='apid'>";
-
-    while ($apRow = $apDropdownQuery->fetch_assoc()) {
-
-                  unset($apId, $apName);
-                  $apId = $apRow['ap_id'];
-                  $apName = $apRow['ap_name'];
-                  echo '<option value="'.$apId.'">'.$apName.'</option>';
-
-}
-
-echo "</select>";
-echo "<br>";
-echo "</br>";
-
 // Dropdown for SSID Deletion
 
 $ssidDropdownQuery = $conn->query("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz");
 
-echo "<html>\n";
-echo "<head>\n";
-echo "</head>\n";
-echo "<body>\n";
-echo "<font face=\"Verdana\">\n"; 
-echo "Choose SSID:";
-echo "</font>";
-echo "<form id=\"delete_ssid\" action=\"\" method=\"POST\">\n";
-echo "<select name='ssidid'>";
+?>
 
+<html>
+<head>
+</head>
+<body>
+<font face="Verdana">
+Choose SSID:
+</font>
+<form id="delete_ssid" action="\" method="POST">
+<select name="ssidid">
+
+<?php
     while ($ssidRow = $ssidDropdownQuery->fetch_assoc()) {
 
                   unset($ssidId, $ssidName);
@@ -93,27 +69,11 @@ echo "<select name='ssidid'>";
                   echo '<option value="'.$ssidId.'">'.$ssidName.'</option>';
 
 }
+?>
 
-echo "</select>";
+</select>
 
-// Fetch POST data from file and execute Python commands & SQL queries
-$varAPId = $_POST['apid'];
-$varSSIDId = $_POST['ssidid'];
-
-$apSql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '$varAPId'";
-$apResult = $conn->query($apSql);
-
-$ssidSql = "SELECT ap_ssid_name,ap_ssid_vlan,ap_ssid_radio_id,ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '$varSSIDId'";
-$ssidResult = $conn->query($ssidSql);
-
-// Get the data in place (so it can be passed to Python)
-
-    // store data of each row
-    while($row = $apResult->fetch_assoc()) {
-       $queryIP = $row["ap_ip"];
-       $queryUser = $row["ap_ssh_username"];
-       $queryPass = $row["ap_ssh_password"];
-    }
+<?php
 
     while($row = $ssidResult->fetch_assoc()) {
        $querySSID = $row["ap_ssid_name"];
