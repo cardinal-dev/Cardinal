@@ -41,14 +41,14 @@ header('Location: index.php');
 require_once('includes/dbconnect.php');
 
 // Query SQL Database for up-to-date client counts
-
-$sql = "SELECT SUM(ap_total_clients) AS totalClients FROM access_points WHERE ap_id = $apId";
+$varAPId = $_SESSION['apid'];
+$sql = "SELECT ap_total_clients FROM access_points WHERE ap_id = '$varAPId'";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     // store data of each row
     while($row = $result->fetch_assoc()) {
-       $queryClients = $row["totalClients"];
+       $queryClients = $row["ap_total_clients"];
      }
 } else {
     echo "";

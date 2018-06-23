@@ -40,7 +40,7 @@ clear: both;
   margin: 0;
   padding: 0;
 }
-.metroblock h1, .metroblock .icon {
+.metroblock h1, .metroblock, .icon {
   font-size: 7em;
   text-align: center;
 }

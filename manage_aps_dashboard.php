@@ -36,8 +36,29 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-$apName = $_POST['ap_name'];
-$apId = $_POST['ap_id'];
+// Cardinal Configuration Information
+
+require_once('includes/cardinalconfig.php');
+
+// MySQL connection information
+
+require_once('includes/dbconnect.php');
+
+// Fetch POST data from file and execute Python commands & SQL queries
+$varAPId = $_POST['apid'];
+
+$apSql = "SELECT ap_name,ap_ip,ap_total_clients FROM access_points WHERE ap_id = '$varAPId'";
+$apResult = $conn->query($apSql);
+
+    // store data of each row
+    while($row = $apResult->fetch_assoc()) {
+       $queryAPName = $row["ap_name"];
+       $queryIP = $row["ap_ip"];
+       $queryClients = $row["ap_total_clients"];
+    }
+
+
+$_SESSION['apid'] = $varAPId;
 
 ?>
 
@@ -97,19 +118,20 @@ $apId = $_POST['ap_id'];
 			<div class="col-sm-12">
 				<div class="chart-wrapper">
 					<div class="chart-title">
-						Access Point Statistics for $apName
+						Access Point Statistics for <?php echo $queryAPName; ?>
 					</div>
 
 
 					<div class="chart-stage">
 						<div id="grid-1-1">
 						<iframe height="310px" scrolling="no" src="graph_per_ap_clients.php" style="border:none;" width="300px"></iframe>
+						<iframe height="310px" scrolling="no" src="graph_ap_bandwidth.php" style="border:none;" width="300px"></iframe>
 						</div>
 					</div>
 
 
 					<div class="chart-notes">
-						Cardinal Access Point Statistics for $apName
+						Cardinal Access Point Statistics for <?php echo $queryAPName; ?>
 					</div>
 				</div>
 			</div>
