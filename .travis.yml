@@ -10,4 +10,4 @@ before_script:
 - sudo chown -R www-data:www-data /var/www/html
 - composer require nette/code-checker
 - composer update
-script: vendor/bin/nette/code-checker/code-checker -d /var/www/html
+script: php vendor/bin/nette/code-checker/code-checker -d /var/www/html
