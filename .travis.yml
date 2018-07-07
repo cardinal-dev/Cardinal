@@ -17,8 +17,8 @@ before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < /var/www/html/sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
-- sudo mv -f /var/www/html/scripts/install/ci/cardinalconfig.php /var/www/html/scripts/includes
-- sudo mv -f /var/www/html/scripts/install/ci/dbconnect.php /var/www/html/scripts/includes
+- sudo mv -f /var/www/html/scripts/install/ci/cardinalconfig.php /var/www/html/includes
+- sudo mv -f /var/www/html/scripts/install/ci/dbconnect.php /var/www/html/includes
 - sudo cat /var/www/html/includes/dbconnect.php
 - sudo cat /var/www/html/includes/cardinalconfig.php
 script: 
