@@ -9,4 +9,5 @@ before_script:
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo chown -R www-data:www-data /var/www/html
 - composer global require nette/code-checker
+- ls /home/travis/.config/composer/vendor/nette/code-checker
 script: sudo php /home/travis/.config/composer/vendor/nette/code-checker/code-checker -d /var/www/html
