@@ -4,7 +4,8 @@ php:
 - '7.0'
 services:
 - mysql
-install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
+install: 
+- source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
 - composer global require nette/code-checker
 - composer update
 before_script: 
