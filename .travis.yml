@@ -11,4 +11,5 @@ before_script:
 - composer global require nette/code-checker
 - ls /home/travis/.config/composer/vendor/nette/code-checker
 - chmod a+x /home/travis/.config/composer/vendor/nette/code-checker/code-checker
-script: sudo php /home/travis/.config/composer/vendor/nette/code-checker/code-checker -d /var/www/html
+- cd /home/travis/.config/composer/vendor/nette/code-checker
+script: ./code-checker -d /var/www/html
