@@ -14,3 +14,4 @@ sudo apt-get install openssh-server openssh-client git apache2 python-paramiko p
 
 # PHP Nette Code Checker
 composer global require nette/code-checker
+composer update
