@@ -1,5 +1,0 @@
-{
-    "require": {
-        "nette/code-checker": "2.13.*"
-    }
-}
