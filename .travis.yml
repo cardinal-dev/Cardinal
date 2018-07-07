@@ -15,8 +15,8 @@ before_script:
 - cd /home/travis/.config/composer/vendor/nette/tester
 - ls /home/travis/.config/composer/vendor/nette/tester
 script: 
-- sudo php tester.php /var/www/html/*.php
-- sudo php tester.php /var/www/html/assets/templates/*.php
-- sudo php tester.php /var/www/html/includes/*.php
-- sudo php tester.php /var/www/html/scripts/*.php
-- sudo php tester.php /var/www/html/includes/functions/*.php
+- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/*.php
+- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/assets/templates/*.php
+- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/includes/*.php
+- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/scripts/*.php
+- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/includes/functions/*.php
