@@ -8,4 +8,4 @@ install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo chown -R www-data:www-data /var/www/html
-script: php /var/www/html/index.php
+script: sudo /var/www/html/scripts/install/nette-ci.sh
