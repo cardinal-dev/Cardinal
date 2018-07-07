@@ -11,6 +11,3 @@ sudo apt-get update
 
 # Install Dependencies
 sudo apt-get install openssh-server openssh-client git apache2 python-paramiko python php7.0 php7.0-mysql snmp nmap curl traceroute whois tftpd-hpa
-
-# PHP Nette Code Checker
-composer install nette/code-checker
