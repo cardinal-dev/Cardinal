@@ -14,6 +14,8 @@ before_script:
 - sudo chmod a+x /home/travis/.config/composer/vendor/nette/tester/src/tester.php
 - cd /home/travis/.config/composer/vendor/nette/tester
 - ls /home/travis/.config/composer/vendor/nette/tester
+- mysql -e 'CREATE DATABASE cardinal;'
+- mysql -uroot -p cardinal < /var/www/html/sql/cardinal.sql
 script: 
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/assets/templates/*.php
