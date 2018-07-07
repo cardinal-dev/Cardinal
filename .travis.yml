@@ -15,7 +15,7 @@ before_script:
 - cd /home/travis/.config/composer/vendor/nette/tester
 - ls /home/travis/.config/composer/vendor/nette/tester
 - mysql -e 'CREATE DATABASE cardinal;'
-- mysql -u root --password="" < /var/www/html/sql/cardinal.sql
+- mysql -u root --password="" cardinal < /var/www/html/sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
 script: 
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/*.php
