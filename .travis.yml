@@ -5,12 +5,12 @@ php:
 services:
 - mysql
 install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
+- composer global require nette/code-checker
+- composer update
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo chown -R www-data:www-data /var/www/html
-- composer global require nette/code-checker
-- ls /home/travis/.config/composer/vendor/nette/code-checker
 - chmod a+x /home/travis/.config/composer/vendor/nette/code-checker/code-checker
-- composer update
 - cd /home/travis/.config/composer/vendor/nette/code-checker
+- ls /home/travis/.config/composer/vendor/nette/code-checker
 script: php code-checker -d /var/www/html
