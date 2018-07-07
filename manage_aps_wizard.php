@@ -26,32 +26,63 @@ SOFTWARE.
 
 */
 
-function db_connect() {
+// Cardinal Login Session
 
-        // Define connection as a static variable, to avoid connecting more than once 
-    static $conn;
+session_start();
 
-        // Try and connect to the database, if a connection has not been established yet
-    if(!isset($conn)) {
-             // Load configuration as an array. Use the actual location of your configuration file
-        $config = parse_ini_file('/path/to/php_cardinal.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
-        $conn = mysqli_connect($config['servername'],$config['username'],$config['password'],$config['dbname']);
-    }
+// If user is not logged into Cardinal, then redirect them to the login page
 
-        // If connection was not successful, handle the error
-    if($conn === false) {
-            // Handle error - notify administrator, log to a file, show an error screen, etc.
-        return mysqli_connect_error(); 
-    }
-    return $conn;
+if (!isset($_SESSION['username'])) {
+header('Location: index.php');
 }
 
-// Connect to the database
-$conn = db_connect();
+// Cardinal Configuration Information
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+require_once('includes/cardinalconfig.php');
+
+// MySQL connection information
+
+require_once('includes/dbconnect.php');
+
+// HTML Dropdown for AP
+
+$apDropdownQuery = $conn->query("SELECT ap_id,ap_name FROM access_points");
+
+?>
+
+<html>
+<head>
+</head>
+<body>
+<font face="Verdana">
+Choose AP:
+</font>
+<form id="manage_aps" action="manage_aps_dashboard.php" method="POST">
+<select name="apid">
+
+<?php
+
+    while ($apRow = $apDropdownQuery->fetch_assoc()) {
+
+                  unset($apId, $apName);
+                  $apId = $apRow['ap_id'];
+                  $apName = $apRow['ap_name'];
+                  echo '<option value="'.$apId.'">'.$apName.'</option>';
+
 }
 
-?> 
+?>
+
+</select>
+<br>
+<br>
+<input type="Submit" label="Submit">
+</body>
+</form>
+</html>
+
+<?php
+
+$conn->close();
+
+?>

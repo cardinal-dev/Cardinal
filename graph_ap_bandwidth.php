@@ -26,32 +26,41 @@ SOFTWARE.
 
 */
 
-function db_connect() {
+// Cardinal Login Session
 
-        // Define connection as a static variable, to avoid connecting more than once 
-    static $conn;
+session_start();
 
-        // Try and connect to the database, if a connection has not been established yet
-    if(!isset($conn)) {
-             // Load configuration as an array. Use the actual location of your configuration file
-        $config = parse_ini_file('/path/to/php_cardinal.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
-        $conn = mysqli_connect($config['servername'],$config['username'],$config['password'],$config['dbname']);
-    }
+// If user is not logged into Cardinal, then redirect them to the login page
 
-        // If connection was not successful, handle the error
-    if($conn === false) {
-            // Handle error - notify administrator, log to a file, show an error screen, etc.
-        return mysqli_connect_error(); 
-    }
-    return $conn;
+if (!isset($_SESSION['username'])) {
+header('Location: index.php');
 }
 
-// Connect to the database
-$conn = db_connect();
+// MySQL connection information
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+require_once('includes/dbconnect.php');
+
+// Query SQL Database for up-to-date bandwidth counts
+$varAPId = $_SESSION['apid'];
+$sql = "SELECT ap_bandwidth FROM access_points WHERE ap_id = '$varAPId'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // store data of each row
+    while($row = $result->fetch_assoc()) {
+       $queryBandwidth = $row["ap_bandwidth"];
+     }
 }
 
-?> 
+$conn->close();
+
+?>
+
+<html>
+<link rel="stylesheet" href="assets/css/metro.css">
+
+<div class="metroblock accesspoint left">
+  <h1><?php echo $queryBandwidth; ?></h1>
+  <div class="clear"></div>
+  <h2>Bandwidth</h2>
+</div>
