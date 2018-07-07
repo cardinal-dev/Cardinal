@@ -8,4 +8,5 @@ install: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo chown -R www-data:www-data /var/www/html
-script: source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/nette-ci.sh)
+- composer require nette/code-checker
+script: vendor/nette/code-checker/code-checker -d /var/www/html
