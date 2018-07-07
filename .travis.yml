@@ -11,7 +11,7 @@ install:
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo chown -R www-data:www-data /var/www/html
-- chmod a+x /home/travis/.config/composer/vendor/nette/code-checker/code-checker
+- sudo chmod a+x /home/travis/.config/composer/vendor/nette/code-checker/code-checker
 - cd /home/travis/.config/composer/vendor/nette/code-checker
 - ls /home/travis/.config/composer/vendor/nette/code-checker
-script: php code-checker -d /var/www/html
+script: sudo php code-checker -d /var/www/html
