@@ -21,6 +21,7 @@ before_script:
 - sudo mv -f /var/www/html/scripts/install/ci/dbconnect.php /var/www/html/includes
 - sudo cat /var/www/html/includes/dbconnect.php
 - sudo cat /var/www/html/includes/cardinalconfig.php
+- phpenmod mysqli
 script: 
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/assets/templates/*.php
