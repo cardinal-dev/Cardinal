@@ -22,6 +22,7 @@ before_script:
 - sudo cat /var/www/html/includes/dbconnect.php
 - sudo cat /var/www/html/includes/cardinalconfig.php
 - sudo phpenmod mysqli
+- sudo php -m
 script: 
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php /var/www/html/assets/templates/*.php
