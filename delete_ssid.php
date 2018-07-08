@@ -59,45 +59,6 @@ Choose SSID:
 </font>
 <form id="delete_ssid" action="\" method="POST">
 <select name="ssidid">
-
-<?php
-    while ($ssidRow = $ssidDropdownQuery->fetch_assoc()) {
-
-                  unset($ssidId, $ssidName);
-                  $ssidId = $ssidRow['ap_ssid_id'];
-                  $ssidName = $ssidRow['ap_ssid_name'];
-                  echo '<option value="'.$ssidId.'">'.$ssidName.'</option>';
-
-}
-?>
-
 </select>
-
-<?php
-
-    while($row = $ssidResult->fetch_assoc()) {
-       $querySSID = $row["ap_ssid_name"];
-       $queryVlan = $row["ap_ssid_vlan"];
-       $queryRadioSub = $row["ap_ssid_radio_id"];
-       $queryGigaSub = $row["ap_ssid_ethernet_id"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_delete_ssid.py $queryIP $queryUser $queryPass $querySSID $queryVlan $queryRadioSub $queryGigaSub");
-       $pyOutput = shell_exec($pyCommand);
-       echo "<font face=\"Verdana\">\n";
-       echo "<br>";
-       echo "<br>";
-       echo "Deletion of 2.4GHz SSID <b>$querySSID</b> for Access Point <b>$apName</b> Successfully Initiated!";
-       echo "</font>";
-    }
-
-echo "<font face=\"Verdana\">\n";
-echo "<br>";
-echo "<br>";
-echo "<input type=\"submit\" value=\"Submit\">\n";
-echo "</font>";
-
-// Clear POST Variables
-unset($_POST);
-
-$conn->close();
 
 ?>
