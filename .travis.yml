@@ -19,6 +19,7 @@ before_script:
 - mysql -e 'SHOW TABLES from cardinal;'
 - sudo mv -f /var/www/html/scripts/install/ci/cardinalconfig.php /var/www/html/includes
 - sudo mv -f /var/www/html/scripts/install/ci/dbconnect.php /var/www/html/includes
+- sudo mv -f /var/www/html/scripts/install/ci/fetch_all_clients.php /var/www/html/scripts
 - sudo cat /var/www/html/includes/dbconnect.php
 - sudo cat /var/www/html/includes/cardinalconfig.php
 - sudo phpenmod mysqli
