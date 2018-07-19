@@ -21,22 +21,22 @@ remote_conn_pre.connect(ip, port=22, username=username,
 
 remote_conn = remote_conn_pre.invoke_shell()
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send("enable\n")
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send('%s\n' % password)
 time.sleep(.15)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send("wr\n")
 time.sleep(.15)
 output = remote_conn.recv(65535)
-print output
+
 
 exit()
 

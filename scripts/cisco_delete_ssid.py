@@ -29,52 +29,52 @@ remote_conn_pre.connect(ip, port=22, username=username,
 
 remote_conn = remote_conn_pre.invoke_shell()
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send("enable\n")
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send('%s\n' % password)
 time.sleep(.15)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send("conf t\n")
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send('no dot11 ssid %s\n' % ssid)
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send('no int d0.%s\n' % radiosub)
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send('no int gi0.%s\n' % gigasub)
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send("int d0\n")
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send('no encryption vlan %s mode ciphers aes-ccm\n' % vlan)
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 remote_conn.send("do wr\n")
 time.sleep(.10)
 output = remote_conn.recv(65535)
-print output
+
 
 exit()
 
