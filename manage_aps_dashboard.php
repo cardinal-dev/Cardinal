@@ -67,7 +67,7 @@ $_SESSION['apid'] = $varAPId;
 	<title>Cardinal</title>
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/keen-dashboards.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/cardinal-dashboard.css" rel="stylesheet" type="text/css">
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
 	</script>
@@ -103,10 +103,6 @@ $_SESSION['apid'] = $varAPId;
 					<li>
 						<a href="https://github.com/falcon78921">Technical Support</a>
 					</li>
-
-					<li>
-						<a href="logout.php">Logout</a>
-					</li>
 				</ul>
 			</div>
 		</div>
@@ -135,19 +131,6 @@ $_SESSION['apid'] = $varAPId;
 					</div>
 				</div>
 			</div>
-	<script src="assets/lib/jquery/dist/jquery.min.js" type="text/javascript">
-	</script> 
-	<script src="assets/lib/bootstrap/dist/js/bootstrap.min.js" type="text/javascript">
-	</script> 
-	<script src="assets/lib/holderjs/holder.js" type="text/javascript">
-	</script> 
-	<script>
-	   Holder.add_theme("white", { background:"#fff", foreground:"#a7a7a7", size:10 });
-	</script> 
-	<script src="assets/lib/keen-js/dist/keen.min.js" type="text/javascript">
-	</script> 
-	<script src="assets/js/meta.js" type="text/javascript">
-	</script>
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
 	</script> 

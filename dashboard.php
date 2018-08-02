@@ -43,7 +43,7 @@ header('Location: index.php');
 	<title>Cardinal</title>
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/keen-dashboards.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/cardinal-dashboard.css" rel="stylesheet" type="text/css">
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
 	</script>
@@ -65,16 +65,13 @@ header('Location: index.php');
 						<a href="./">Home</a>
 					</li>
 
-
 					<li>
-						<a href="http://cardinal.mcclunetechnologies.net">Developer</a>
+						<a href="https://cardinal.mcclunetechnologies.net">Developer</a>
 					</li>
-
 
 					<li>
 						<a href="https://github.com/falcon78921">Source</a>
 					</li>
-
 
 					<li>
 						<a href="https://github.com/falcon78921">Technical Support</a>
@@ -211,15 +208,17 @@ header('Location: index.php');
 
 
 					<div id="networktools" style="display:none;" title="Cardinal Network Toolkit">
-						<iframe height="720" id="network_tools_frame" name="network_tools_frame" width="1480"></iframe>
+
+						<iframe height="768" id="network_tools_frame" name="network_tools_frame" width="1366"></iframe>
+
 					</div>
 					<script>
 					        $(document).ready(function () {
 					        $(".network_tools").click(function () {
 					        $("#network_tools_frame").attr('src', $(this).attr("href"));
 					        $("#networktools").dialog({
-					            width: 1280,
-					            height: 720,
+					            width: 1366,
+					            height: 768,
 					            modal: true,
 					            close: function () {
 					        $("#network_tools_frame").attr('src', "about:blank");
@@ -236,6 +235,49 @@ header('Location: index.php');
 					</div>
 				</div>
 			</div>
+
+
+			<div class="col-sm-12">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Manage Cardinal Access Points
+					</div>
+
+
+					<div class="chart-stage">
+						<center>
+							<a class="manage_aps" href="manage_aps_wizard.php"><img src="assets/img/cardinal4.png"></a>
+						</center>
+					</div>
+
+
+					<div id="manageaps" style="display:none;" title="Manage Cardinal Access Points">
+						<iframe height="768" id="manage_aps_frame" name="manage_aps_frame" width="1366"></iframe>
+					</div>
+					<script>
+					 $(document).ready(function () {
+					     $(".manage_aps").click(function () {
+					     $("#manage_aps_frame").attr('src', $(this).attr("href"));
+					     $("#manageaps").dialog({
+					       width: 1366,
+					       height: 768,
+					       modal: true,
+					       close: function () {
+					           $("#manage_aps_frame").attr('src', "about:blank");
+					       }
+					   });
+					   return false;
+					});
+					});
+
+					</script>
+
+					<div class="chart-notes">
+						Manage Cardinal Access Points
+					</div>
+				</div>
+			</div>
+
 
 			<div class="col-sm-12">
 				<div class="chart-wrapper">
@@ -442,91 +484,6 @@ header('Location: index.php');
 					</div>
 				</div>
 			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure Access Point
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_access_points" href="manage_aps.php"><img src="assets/img/cardinal4.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configureap" style="display:none;" title="Configure Access Point">
-						<iframe height="350" id="configure_ap_frame" name="configure_ap_frame" width="350"></iframe>
-					</div>
-					<script>
-					        $(document).ready(function () {
-					        $(".configure_access_points").click(function () {
-					        $("#configure_ap_frame").attr('src', $(this).attr("href"));
-					        $("#configureap").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#configure_ap_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure A Single Access Point
-					</div>
-				</div>
-			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Configure Access Points (Group)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="configure_access_point_groups" href="configure_access_point_groups.php"><img src="assets/img/cardinal4.png"></a>
-						</center>
-					</div>
-
-
-					<div id="configureapgroup" style="display:none;" title="Configure Access Points (Group)">
-						<iframe height="350" id="configure_ap_group_frame" name="configure_ap_group_frame" width="350"></iframe>
-					</div>
-					<script>
-					        $(document).ready(function () {
-					        $(".configure_access_point_groups").click(function () {
-					        $("#configure_ap_group_frame").attr('src', $(this).attr("href"));
-					        $("#configureapgroup").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#configure_ap_group_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Configure An Entire Group of Access Points
-					</div>
-				</div>
-			</div>
-
 
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
@@ -905,19 +862,6 @@ header('Location: index.php');
 			</div>
 		</div>
 	</div>
-	<script src="assets/lib/jquery/dist/jquery.min.js" type="text/javascript">
-	</script> 
-	<script src="assets/lib/bootstrap/dist/js/bootstrap.min.js" type="text/javascript">
-	</script> 
-	<script src="assets/lib/holderjs/holder.js" type="text/javascript">
-	</script> 
-	<script>
-	   Holder.add_theme("white", { background:"#fff", foreground:"#a7a7a7", size:10 });
-	</script> 
-	<script src="assets/lib/keen-js/dist/keen.min.js" type="text/javascript">
-	</script> 
-	<script src="assets/js/meta.js" type="text/javascript">
-	</script>
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
 	</script> 

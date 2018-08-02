@@ -62,5 +62,5 @@ $conn->close();
 <div class="metroblock accesspoint left">
   <h1><?php echo $queryBandwidth; ?></h1>
   <div class="clear"></div>
-  <h2>Bandwidth</h2>
+  <h2>Bandwidth (Mbps)</h2>
 </div>
