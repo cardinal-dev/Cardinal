@@ -34,7 +34,7 @@ function db_connect() {
         // Try and connect to the database, if a connection has not been established yet
     if(!isset($conn)) {
              // Load configuration as an array. Use the actual location of your configuration file
-        $config = parse_ini_file('/home/cardinal/php_cardinal.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
+        $config = parse_ini_file('/path/to/php_cardinal.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
         $conn = mysqli_connect($config['servername'],$config['username'],$config['password'],$config['dbname']);
     }
 
