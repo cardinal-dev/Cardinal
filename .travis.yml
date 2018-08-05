@@ -30,3 +30,4 @@ script:
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/scripts/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/functions/*.php
+- sudo pyflakes /var/www/html/scripts/*.py
