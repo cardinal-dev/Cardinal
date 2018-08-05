@@ -1,10 +1,8 @@
 #!/usr/bin/python
 
 import paramiko
-from getpass import getpass
 import time
 import sys
-import os
 
 queryIP = sys.argv[1]
 queryUser = sys.argv[2]
