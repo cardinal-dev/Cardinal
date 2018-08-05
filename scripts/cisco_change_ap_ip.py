@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-import os
 import paramiko
-from getpass import getpass
 import time
 import sys
 
