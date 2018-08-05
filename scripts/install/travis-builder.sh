@@ -13,4 +13,4 @@ sudo apt-get update
 sudo apt-get install openssh-server openssh-client git apache2 python-paramiko python php7.0 php7.0-mysql snmp nmap curl traceroute whois tftpd-hpa
 
 # Add Python testing
-sudo apt-get install pylint
+sudo apt-get install pyflakes
