@@ -33,6 +33,8 @@ echo -e ""
 echo "Cardinal Settings & Configuration"
 read -p "Okay, now we need a directory where the Cardinal configuration will reside. Where is this directory at? " varConfigDir
 echo -e ""
+read -p "Okay, now we need a directory where Cisco IOS images reside. Where is this directory at? " varTftpDir
+echo -e ""
 read -p "Okay, now we need a directory where the Cardinal scripts will reside. Preferably, this should be OUTSIDE of the web root. What is the directory? " varDirScripts
 echo -e ""
 read -p "Okay, now we need the base location of your Cardinal installation. What is the absolute path of your Cardinal installation? " varCardinalBase
@@ -51,11 +53,13 @@ touch $varConfigDir/cardinal_config.ini
 echo "[cardinal_config]" >> $varConfigDir/cardinal_config.ini
 echo 'scriptsdir'=""$varDirScripts"" >> $varConfigDir/cardinal_config.ini
 echo 'cardinalbase'=""$varCardinalBase"" >> $varConfigDir/cardinal_config.ini
+echo 'tftpdir'=""$varTftpDir"" >> $varConfigDir/cardinal_config.ini
 
 # Let's also give the non-web directory Apache read rights
 chown -R www-data:www-data $varDbCredDir
 chown -R www-data:www-data $varConfigDir
 chown -R www-data:www-data $varDirScripts
+chown -R www-data:www-data $varTftpDir
 
 # Now, let's create the MySQL database for Cardinal. We also want to import the SQL structure too!
 mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""

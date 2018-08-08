@@ -25,10 +25,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
+ 
+// Cardinal Login Session
 
-// Load configuration as an array. Use the actual location of your configuration file
-   $config = parse_ini_file('/path/to/cardinal_config.ini'); 
-   $scriptsDir = $config['scriptsdir'];
-   $tftpDir = $config['tftpdir'];
+session_start();
+
+// If user is not logged into Cardinal, then redirect them to the login page
+
+if (!isset($_SESSION['username'])) {
+header('Location: index.php');
+}
+
+// Cardinal Configuration
+
+require_once('includes/cardinalconfig.php');
 
 ?>
+
+<html>
+<font face="Verdana">
+<form action="includes/functions/upload_ios_tftp_calc.php" enctype="multipart/form-data" method="POST">
+<label>Upload IOS:</label>
+<input type="file" name="fileToUpload" id="fileToUpload" required>
+<br>
+<input type="submit" value="Upload TAR" name="Submit">
+</form>
+</html>

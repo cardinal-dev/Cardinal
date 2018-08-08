@@ -70,7 +70,7 @@ header('Location: index.php');
 					</li>
 
 					<li>
-						<a href="https://github.com/falcon78921">Source</a>
+						<a href="https://github.com/falcon78921/Cardinal">Source</a>
 					</li>
 
 					<li>
