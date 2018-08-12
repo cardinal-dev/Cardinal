@@ -68,9 +68,11 @@ $tftpBackupQuery = mysqli_query($conn,"SELECT ap_ip,ap_ssh_username,ap_ssh_passw
        echo "</font>";
     }
 
-// Redirect to this page.
-header('Location: ../backup_ap_config.php');
-exit();
+// Link back to the backup_ap_config.php page
+echo "<br>";
+echo "<br>";
+echo "<a href=\"../backup_ap_config.php\">Back to TFTP Backup Menu</a>";
+echo "</font>";
 
 $conn->close();
 
