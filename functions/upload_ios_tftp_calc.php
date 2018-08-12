@@ -26,28 +26,41 @@ SOFTWARE.
 
 */
 
-// Cardinal Login Session
+// Cardinal Configuration Information
 
-session_start();
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
-// If user is not logged into Cardinal, then redirect them to the login page
+// MySQL connection information
 
-if (!isset($_SESSION['username'])) {
-header('Location: index.php');
+require_once(__DIR__ . '/../includes/dbconnect.php');
+
+$target_dir = "$tftpDir";
+$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+$uploadOk = 1;
+
+// Check if file already exists
+if (file_exists($target_file)) {
+    echo "Sorry, file already exists.";
+    $uploadOk = 0;
+}
+
+// Check file size
+if ($_FILES["fileToUpload"]["size"] > 50000000) {
+    echo "Sorry, your file is too large.";
+    $uploadOk = 0;
+}
+
+// Check if $uploadOk is set to 0 by an error
+if ($uploadOk == 0) {
+    echo "Sorry, your file was not uploaded.";
+
+// if everything is ok, try to upload file
+} else {
+    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+        echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+    } else {
+        echo "Sorry, there was an error uploading your file.";
+    }
 }
 
 ?>
-
-<html>
-<form id="tftp_ap" action="functions/backup_ap_config_calc.php" method="POST">
-<font face="Verdana">
-<label>TFTP Server IP: </label>
-<input type="text" name="tftp-ip" required>
-<br>
-<label>Config Backup Name: </label>
-<input type="text" name="config-name" required>
-<br>
-<input type="submit" name="Submit" required>
-</font>
-</form>
-</html>

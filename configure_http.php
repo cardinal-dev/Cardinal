@@ -36,36 +36,15 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// MySQL connection information
-
-require_once('includes/dbconnect.php');
-$result = $conn->query("select ap_id,ap_name from access_points");
-
 echo "<html>\n";
-echo "<head>\n";
-echo "</head>\n";
 echo "<font face=\"Verdana\">\n";
-echo "Choose AP:";
-echo "</font>";
 echo "<body>\n";
-echo "<form id=\"configure_ap\" action=\"\" method=\"POST\">\n";
-echo "<select name='id'>";
-
-    while ($row = $result->fetch_assoc()) {
-
-                  unset($id, $name);
-                  $id = $row['ap_id'];
-                  $name = $row['ap_name'];
-                  echo '<option value="'.$id.'">'.$name.'</option>';
-
-}
-
-echo "</select>";
+echo "<form id=\"configure_http\" action=\"\" method=\"POST\">\n";
 echo "<input type=\"button\" value=\"Enable HTTP\" name=\"enable-http\" onclick=\"askForEnableHTTP()\" />\n";
 echo "<input type=\"button\" value=\"Disable HTTP\" name=\"disable-http\" onclick=\"askForDisableHTTP()\" />\n";
 echo "</form>\n";
 echo "<script>\n";
-echo "form=document.getElementById(\"configure_ap\");\n";
+echo "form=document.getElementById(\"configure_http\");\n";
 echo "function askForEnableHTTP() {\n";
 echo "        form.action=\"enable_http.php\";\n";
 echo "        form.submit();\n";
@@ -75,6 +54,7 @@ echo "        form.action=\"disable_http.php\";\n";
 echo "        form.submit();\n";
 echo "}\n";
 echo "</script>\n";
+echo "</font>\n";
 echo "</body>\n";
 echo "</html>";
 

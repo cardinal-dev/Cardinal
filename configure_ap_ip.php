@@ -36,44 +36,32 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// Cardinal Configuration Information
+?>
 
-require_once('includes/cardinalconfig.php');
+<html>
+<form id="change_ip" action="functions/configure_ap_ip_calc.php" method="POST">
+<font face="Verdana">
+<label>New IP Address: </label>
+<input type="text" name="ap_ip_change" required>
+<br>
+<label>Subnet Mask: </label>
+<input type="text" name="ap_subnetmask" required>
+<br>
+<input type="submit" name="Submit" required>
+</font>
+</form>
+</html>
 
-// MySQL connection information
+<?php
 
-require_once('includes/dbconnect.php');
-
-// Fetch AP Session
-
-$varAPId = $_SESSION['apid'];
-
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = $varAPId";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // store data of each row
-    while($row = $result->fetch_assoc()) {
-       $queryIP = $row["ap_ip"];
-       $queryUser = $row["ap_ssh_username"];
-       $queryPass = $row["ap_ssh_password"];
-       $querySNMP = $row["ap_snmp"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_disable_snmp.py $queryIP $queryUser $queryPass $querySNMP");
-       $pyOutput = shell_exec($pyCommand);
-       echo "<font face=\"Verdana\">\n";
-       echo "Access Point Disable SNMP Functionality Initiated!";
-     }
-} else {
-    echo "";
+// Success after IP change (from configure_ap_ip.php)
+if ( isset($_GET['Success']) && $_GET['Success'] == 1 )
+{
+     // Success Message!
+     echo "<br>";
+     echo "<font face=\"Verdana\">\n";
+     echo "IP Address Update Successfully Initiated!";
+     echo "</font>";
 }
-
-// Link back to configure_snmp.php page
-echo "<br>";
-echo "<br>";
-echo "<font face=\"Verdana\">\n";
-echo "<a href=\"configure_snmp.php\">Back to Configure SNMP Menu</a>";
-echo "</font>";
-
-$conn->close();
 
 ?>

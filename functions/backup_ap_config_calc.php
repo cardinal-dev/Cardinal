@@ -38,41 +38,39 @@ header('Location: index.php');
 
 // Cardinal Configuration Information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once(__DIR__ . '/../includes/dbconnect.php');
 
 // Fetch AP Session
 
 $varAPId = $_SESSION['apid'];
 
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = $varAPId";
-$result = $conn->query($sql);
+// MySQL calculations for access point command
 
-if ($result->num_rows > 0) {
+$tftpBackupQuery = mysqli_query($conn,"SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = $varAPId");
+
+// Get the data in place (so it can be passed to Python)
+
     // store data of each row
-    while($row = $result->fetch_assoc()) {
+    while($row = mysqli_fetch_array($tftpBackupQuery)) {
        $queryIP = $row["ap_ip"];
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
-       $querySNMP = $row["ap_snmp"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_disable_snmp.py $queryIP $queryUser $queryPass $querySNMP");
+       $queryTFTP = $_POST['tftp-ip'];
+       $queryTFTPName = $_POST['config-name'];
+       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_tftp_backup.py $queryIP $queryUser $queryPass $queryTFTP $queryTFTPName");
        $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
-       echo "Access Point Disable SNMP Functionality Initiated!";
-     }
-} else {
-    echo "";
-}
+       echo "Access Point Configuration Backup Initiated!";
+       echo "</font>";
+    }
 
-// Link back to configure_snmp.php page
-echo "<br>";
-echo "<br>";
-echo "<font face=\"Verdana\">\n";
-echo "<a href=\"configure_snmp.php\">Back to Configure SNMP Menu</a>";
-echo "</font>";
+// Redirect to this page.
+header('Location: ../backup_ap_config.php');
+exit();
 
 $conn->close();
 

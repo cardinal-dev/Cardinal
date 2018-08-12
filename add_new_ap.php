@@ -43,7 +43,7 @@ require_once('includes/dbconnect.php');
 // Add new access point form
 
 echo "<html>\n";
-echo "<form id=\"add_new_ap\" action=\"add_new_ap_calc.php\" method=\"POST\">\n";
+echo "<form id=\"add_new_ap\" action=\"functions/add_new_ap_calc.php\" method=\"POST\">\n";
 echo "<font face=\"Verdana\">\n";
 echo "<label>Access Point Name:</label>\n";
 echo "<input type=\"text\" name=\"ap_name\" required/>\n";

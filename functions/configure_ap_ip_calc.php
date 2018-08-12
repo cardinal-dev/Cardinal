@@ -38,17 +38,17 @@ header('Location: index.php');
 
 // Cardinal Configuration Information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once(__DIR__ . '/../includes/dbconnect.php');
 
 // Fetch AP Session
 
 $varAPId = $_SESSION['apid'];
 
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = $varAPId";
+$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = $varAPId";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -57,23 +57,19 @@ if ($result->num_rows > 0) {
        $queryIP = $row["ap_ip"];
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
-       $querySNMP = $row["ap_snmp"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_disable_snmp.py $queryIP $queryUser $queryPass $querySNMP");
+       $queryNewIP = $_POST['ap_ip_change'];
+       $querySubnetMask = $_POST['ap_subnetmask'];
+       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_change_ap_ip.py $queryIP $queryUser $queryPass $queryNewIP $querySubnetMask");
        $pyOutput = shell_exec($pyCommand);
-       echo "<font face=\"Verdana\">\n";
-       echo "Access Point Disable SNMP Functionality Initiated!";
+       $phpMySQLUpdate = "UPDATE access_points SET ap_ip = '$queryNewIP' WHERE ap_id = '$varAPId'";
+       $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);
+       $phpMySQLValue = mysqli_fetch_object($phpMySQLQuery);
+       // Redirect with success message.
+       header('Location: ../configure_ap_ip.php?Success=1');
      }
 } else {
     echo "";
 }
 
-// Link back to configure_snmp.php page
-echo "<br>";
-echo "<br>";
-echo "<font face=\"Verdana\">\n";
-echo "<a href=\"configure_snmp.php\">Back to Configure SNMP Menu</a>";
-echo "</font>";
-
 $conn->close();
-
 ?>

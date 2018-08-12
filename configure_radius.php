@@ -36,37 +36,16 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// MySQL connection information
-
-require_once('includes/dbconnect.php');
-$result = $conn->query("select ap_id,ap_name from access_points");
-
 echo "<html>\n";
 echo "<head>\n";
 echo "<font face=\"Verdana\">\n";
-echo "Choose AP:";
-echo "<br>";
-echo "</font>\n";
-echo "</head>\n";
 echo "<body>\n";
-echo "<form id=\"configure_ap\" action=\"\" method=\"POST\">\n";
-echo "<select name='id'>";
-
-    while ($row = $result->fetch_assoc()) {
-
-                  unset($id, $name);
-                  $id = $row['ap_id'];
-                  $name = $row['ap_name'];
-                  echo '<option value="'.$id.'">'.$name.'</option>';
-
-}
-
-echo "</select>";
+echo "<form id=\"configure_radius\" action=\"\" method=\"POST\">\n";
 echo "<input type=\"button\" value=\"Enable RADIUS\" name=\"enable-radius\" onclick=\"askForEnableRadius()\" />\n";
 echo "<input type=\"button\" value=\"Disable RADIUS\" name=\"disable-radius\" onclick=\"askForDisableRadius()\" />\n";
 echo "</form>\n";
 echo "<script>\n";
-echo "form=document.getElementById(\"configure_ap\");\n";
+echo "form=document.getElementById(\"configure_radius\");\n";
 echo "function askForEnableRadius() {\n";
 echo "        form.action=\"enable_radius.php\";\n";
 echo "        form.submit();\n";
@@ -75,6 +54,7 @@ echo "function askForDisableRadius() {\n";
 echo "        form.action=\"disable_radius.php\";\n";
 echo "        form.submit();\n";
 echo "}\n";
+echo "</font>\n";
 echo "</script>\n";
 echo "</body>\n";
 echo "</html>";

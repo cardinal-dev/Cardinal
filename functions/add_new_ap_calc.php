@@ -38,42 +38,27 @@ header('Location: index.php');
 
 // Cardinal Configuration Information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once(__DIR__ . '/../includes/dbconnect.php');
 
-// Fetch AP Session
+// Gather data from form and submit information to MySQL database
 
-$varAPId = $_SESSION['apid'];
-
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = $varAPId";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // store data of each row
-    while($row = $result->fetch_assoc()) {
-       $queryIP = $row["ap_ip"];
-       $queryUser = $row["ap_ssh_username"];
-       $queryPass = $row["ap_ssh_password"];
-       $querySNMP = $row["ap_snmp"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_disable_snmp.py $queryIP $queryUser $queryPass $querySNMP");
-       $pyOutput = shell_exec($pyCommand);
-       echo "<font face=\"Verdana\">\n";
-       echo "Access Point Disable SNMP Functionality Initiated!";
-     }
-} else {
-    echo "";
+if ($_POST) {
+   $phpMySQLUpdate = "INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('".$_POST["ap_name"]."', '".$_POST["ap_ip"]."', '".$_POST["ssh_username"]."', '".$_POST["ssh_password"]."', '".$_POST["ap_snmp"]."', '".$_POST["group_id"]."')";
+   $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);
+   $phpMySQLValue = mysqli_fetch_object($phpMySQLQuery);
+   // Redirect to this page.
+   header('Location: ../add_new_ap.php?Success=1');
+   exit();
 }
 
-// Link back to configure_snmp.php page
-echo "<br>";
-echo "<br>";
-echo "<font face=\"Verdana\">\n";
-echo "<a href=\"configure_snmp.php\">Back to Configure SNMP Menu</a>";
-echo "</font>";
-
+// Close MySQL database connection
 $conn->close();
+
+// Clear POST Variables
+unset($_POST);
 
 ?>

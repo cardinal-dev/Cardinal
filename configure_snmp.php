@@ -36,32 +36,12 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// MySQL connection information
-
-require_once('includes/dbconnect.php');
-$result = $conn->query("select ap_id,ap_name from access_points");
-
 echo "<html>\n";
 echo "<head>\n";
 echo "<font face=\"Verdana\">\n";
-echo "Choose AP:";
-echo "<br>";
-echo "</font>\n";
 echo "</head>\n";
 echo "<body>\n";
 echo "<form id=\"configure_snmp\" action=\"\" method=\"POST\">\n";
-echo "<select name='id'>";
-
-    while ($row = $result->fetch_assoc()) {
-
-                  unset($id, $name);
-                  $id = $row['ap_id'];
-                  $name = $row['ap_name'];
-                  echo '<option value="'.$id.'">'.$name.'</option>';
-
-}
-
-echo "</select>";
 echo "<input type=\"button\" value=\"Enable SNMP\" name=\"enable-snmp\" onclick=\"askForEnableSNMP()\" />\n";
 echo "<input type=\"button\" value=\"Disable SNMP\" name=\"disable-snmp\" onclick=\"askForDisableSNMP()\" />\n";
 echo "</form>\n";
@@ -75,6 +55,7 @@ echo "function askForDisableSNMP() {\n";
 echo "        form.action=\"disable_snmp.php\";\n";
 echo "        form.submit();\n";
 echo "}\n";
+echo "</font>\n";
 echo "</script>\n";
 echo "</body>\n";
 echo "</html>";

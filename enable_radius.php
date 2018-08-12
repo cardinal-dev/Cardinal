@@ -44,10 +44,11 @@ require_once('includes/cardinalconfig.php');
 
 require_once('includes/dbconnect.php');
 
-// Fetch POST data from configure_aps.html and execute SQL queries
-$varConfID = $_POST['id'];
+// Fetch AP Session
 
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = $varConfID";
+$varAPId = $_SESSION['apid'];
+
+$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = $varAPId";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -72,4 +73,5 @@ echo "<a href=\"configure_radius.php\">Back to Configure RADIUS Menu</a>";
 echo "</font>";
 
 $conn->close();
+
 ?>
