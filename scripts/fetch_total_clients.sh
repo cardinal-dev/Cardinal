@@ -12,7 +12,7 @@
 scriptsDir=$(awk -F "=" '/scriptsdir/ {print $2}' /path/to/cardinal_config.ini)
 
 # Open Connection to Each AP in Cardinal Database
-
+mkdir $scriptsDir/results
 python $scriptsDir/cisco_count_clients.py $1 $2 $3 $4 > $scriptsDir/results/$4.results
 
 # Run grep query, specifically for MAC addresses that were collected from PHP script
