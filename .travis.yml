@@ -22,6 +22,8 @@ before_script:
 - sudo mv -f /var/www/html/scripts/install/ci/fetch_all_clients.php /var/www/html/scripts
 - sudo cat /var/www/html/includes/dbconnect.php
 - sudo cat /var/www/html/includes/cardinalconfig.php
+- sudo grep -o "/path/to/cardinal_config.ini" /var/www/html/includes/cardinalconfig.php
+- sudo grep -o "/path/to/php_cardinal.ini" /var/www/html/includes/dbconnect.php
 - sudo phpenmod mysqli
 - sudo php -m
 script: 
