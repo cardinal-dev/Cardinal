@@ -74,7 +74,7 @@ header('Location: index.php');
 					</li>
 
 					<li>
-						<a href="https://github.com/falcon78921">Technical Support</a>
+						<a href="https://github.com/falcon78921/Cardinal/issues">Technical Support</a>
 					</li>
 
 					<li>
