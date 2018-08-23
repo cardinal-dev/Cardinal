@@ -36,23 +36,27 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-echo "<html>\n";
-echo "<form method=\"post\" action=\"add_access_point_groups_calc.php\">\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>Access Point Group Name:</label>\n";
-echo "<input type=\"text\" name=\"ap_group_name\" required/>\n";
-echo "<br /> </font>\n";
-echo "<input type=\"submit\" value=\"Register\">\n";
-echo "\n";
-echo "</form>\n";
-echo "</body>\n";
-echo "</html>\n";
+?>
+
+<html>
+<form method="POST" action="functions/add_access_point_groups_calc.php">
+<font face="Verdana">
+<label>Access Point Group Name:</label>
+<input type="text" name="ap_group_name" required>
+<br> 
+</font>
+<input type="submit" value="Register">
+</form>
+</body>
+</html>
+
+<?php
 
 // Success after access point registration (from add_new_ap_calc.php)
 if ( isset($_GET['Success']) && $_GET['Success'] == 1 )
 {
      // Success Message!
-     echo "<font face=\"Verdana\">\n";
+     echo "<font face=\"Verdana\">";
      echo "Access Point Group Registered Successfully!";
      echo "</font>";
 }
