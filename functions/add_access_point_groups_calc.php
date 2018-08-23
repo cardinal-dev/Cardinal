@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
- 
+
 // Cardinal Login Session
 
 session_start();
@@ -36,50 +36,27 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// First, we need to give our location a name. We'll start a form
+// Cardinal Configuration Information
 
-echo "<html>\n";
-echo "<font face=\"Verdana\">\n"; 
-echo "<form id=\"configure_heatmap\" action=\"add_new_heatmap_calc.php\" method=\"POST\">\n";
-echo "<label>Location Name:</label>\n";
-echo "<input type=\"text\" name=\"location_name\" required/>\n";
-echo "<br>";
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
-// Then, we need to select one of our uploaded images to act as the heatmap location 
+// MySQL connection information
 
-echo "<font face=\"Verdana\">\n"; 
-echo "Choose Heatmap Image: ";
+require_once(__DIR__ . '/../includes/dbconnect.php');
 
-echo "<select name=\"ImageFile\">\n";
-echo "<option value=\"\">- Select Image -\n";
 
-$dirPath = dir('assets/img');
-$imgArray = array();
-while (($file = $dirPath->read()) !== false)
+// Gather data from form and submit information to MySQL database
 
-// This statement will only display files that have a GIF, JPG, or PNG file extension
-
-{
-  if ((substr($file, -3)=="gif") || (substr($file, -3)=="jpg") || (substr($file, -3)=="png"))
-
-{
-   $imgArray[ ] = trim($file);
-  }
-}
-$dirPath->close();
-sort($imgArray);
-$c = count($imgArray);
-for($i=0; $i<$c; $i++)
-{
-    echo "<option value=\"" . $imgArray[$i] . "\">" . $imgArray[$i] . "\n";
+if ($_POST) {
+   $phpMySQLUpdate = "INSERT INTO access_point_groups (ap_group_name) VALUES ('".$_POST["ap_group_name"]."')";
+   $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);
+   $phpMySQLValue = mysqli_fetch_object($phpMySQLQuery);
+   // Redirect to this page.
+   header('Location: ../add_access_point_groups.php?Success=1');
+   exit();
 }
 
-echo "</select>";
-echo "<br>";
-echo "<input type=\"submit\" value=\"Submit\">\n";
-echo "</form>";
-echo "</html>";
+$conn->close();
 
 ?>
-
 
