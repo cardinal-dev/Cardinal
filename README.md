@@ -3,7 +3,7 @@
 
 <h1>Cardinal</h1>
 
-Cardinal is an open source Cisco access point controller. Cardinal uses a LAMP stack for the frontend, and Python to handle the configuration of access points via SSH. In order to use Cardinal, your Cisco AP's must be in autonomous mode (K9W7 IOS) and have SSH enabled. 
+Cardinal is an open source Cisco access point controller. Cardinal is built on the LAMP stack, and uses Python to handle the configuration of access points via SSH. In order to use Cardinal, your Cisco AP's must be in autonomous mode (K9W7 IOS) and have SSH enabled. 
 
 <h2>Why Cardinal?</h2>
 Cardinals are beautiful, majestic birds. People say that Cardinals represent loved ones who have passed. When Cardinals visit you, they carry love and remembrance. When I developed Cardinal, I thought of one person, in particular, who loved the red birds. I would go visit a woman in a nursing home, who loved Cardinals. This woman was exceptionally benevolent and a beautiful soul. Her humor and smile lit up the room every time I would visit. Even though I didn’t know her for a long time, knowing her for the length I did was a privilege. Unfortunately, she passed away in 2013.
