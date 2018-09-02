@@ -10,7 +10,6 @@ install:
 - composer update
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
-- sudo grep -o "/path/to/cardinal_config.ini" /var/www/html/includes/cardinalconfig.php
 - sudo grep -o "/path/to/php_cardinal.ini" /var/www/html/includes/dbconnect.php
 - sudo chown -R www-data:www-data /var/www/html
 - sudo chmod a+x /home/travis/.config/composer/vendor/nette/tester/src/tester.php
@@ -19,16 +18,13 @@ before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < /var/www/html/sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
-- sudo mv -f /var/www/html/scripts/install/ci/cardinalconfig.php /var/www/html/includes
 - sudo mv -f /var/www/html/scripts/install/ci/dbconnect.php /var/www/html/includes
-- sudo mv -f /var/www/html/scripts/install/ci/fetch_all_clients.php /var/www/html/scripts
+- sudo mv -f /var/www/html/scripts/install/ci/poller.php /var/www/html/scripts
 - sudo cat /var/www/html/includes/dbconnect.php
-- sudo cat /var/www/html/includes/cardinalconfig.php
 - sudo phpenmod mysqli
 - sudo php -m
 script: 
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/*.php
-- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/assets/templates/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/scripts/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/functions/*.php

@@ -12,7 +12,7 @@
 mysqlAuth=$(awk -F "=" '/scriptsdir/ {print $2}' /path/to/cardinalmysql.ini)
 
 # Get values from MySQL database
-scriptsDir=$(echo "SELECT cardinalScripts FROM settings WHERE settings_id = 1" | mysql database -u $username -p$password)
+scriptsDir=$(echo "SELECT cardinalScripts FROM settings WHERE settings_id = 1" | mysql $dbname -u $username -p$password)
 echo $scriptsDir
 
 # Open Connection to Each AP in Cardinal Database
