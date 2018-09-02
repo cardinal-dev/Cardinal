@@ -26,7 +26,7 @@ CREATE TABLE `access_point_groups` (
   `ap_group_id` int(11) NOT NULL AUTO_INCREMENT,
   `ap_group_name` text NOT NULL,
   PRIMARY KEY (`ap_group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,7 +48,24 @@ CREATE TABLE `access_points` (
   `ap_bandwidth` text NOT NULL,
   `ap_all_id` int(11) DEFAULT '2',
   PRIMARY KEY (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `settings`
+--
+
+DROP TABLE IF EXISTS `settings`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `settings` (
+  `settings_id` int(11) NOT NULL,
+  `cardinal_home` text NOT NULL COMMENT 'Directory where Cardinal core resides',
+  `cardinal_scripts` text NOT NULL COMMENT 'Directory where Cardinal scripts resides',
+  `cardinal_tftp` text NOT NULL COMMENT 'Directory where Cardinal TFTP data is stored',
+  `poll_schedule` int(11) NOT NULL COMMENT 'Amount (in minutes) when Cardinal fetches information',
+  PRIMARY KEY (`settings_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +84,7 @@ CREATE TABLE `ssids_24ghz` (
   `ap_ssid_radio_id` int(11) NOT NULL,
   `ap_ssid_ethernet_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 2.4GHz radio';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 2.4GHz radio';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,4 +181,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-08-08  3:23:45
+-- Dump completed on 2018-09-02  3:54:01

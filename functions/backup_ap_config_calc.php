@@ -42,7 +42,7 @@ require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once(__DIR__ . '/../includes/dbconnect.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
 // Fetch AP Session
 

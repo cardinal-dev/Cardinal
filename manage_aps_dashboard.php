@@ -36,13 +36,9 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// Cardinal Configuration Information
-
-require_once('includes/cardinalconfig.php');
-
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 // Fetch POST data from file and execute Python commands & SQL queries
 $varAPId = $_POST['apid'];

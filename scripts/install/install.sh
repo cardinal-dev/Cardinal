@@ -31,29 +31,22 @@ echo -e ""
 read -p "Finally, where do you want to store your MySQL database information? REMEMBER: This location shouldn't be the web root, this should be a directory outside of the web root. Please make sure you give www-data or your web server rights to read the file. " varDbCredDir
 echo -e ""
 echo "Cardinal Settings & Configuration"
-read -p "Okay, now we need a directory where the Cardinal configuration will reside. Where is this directory at? " varConfigDir
-echo -e ""
 read -p "Okay, now we need a directory where Cisco IOS images reside. Where is this directory at? " varTftpDir
 echo -e ""
 read -p "Okay, now we need a directory where the Cardinal scripts will reside. Preferably, this should be OUTSIDE of the web root. What is the directory? " varDirScripts
+echo -e ""
+read -p "Okay, now we need a duration (in minutes) when Cardinal will pull info from access points (e.g. clients associated, bandwidth, etc.) What is the desired duration in minutes?" varSchedulePoll
 echo -e ""
 read -p "Okay, now we need the base location of your Cardinal installation. What is the absolute path of your Cardinal installation? " varCardinalBase
 echo "Thank you for installing Cardinal!"
 
 # Let's create a php_cardinal.php configuration file based on user input (for Cardinal SQL connections)
-touch $varDbCredDir/php_cardinal.ini
-echo "[cardinal_mysql_config]" >> $varDbCredDir/php_cardinal.ini
-echo 'servername'=""$varDatabaseIP"" >> $varDbCredDir/php_cardinal.ini
-echo 'username'=""$varDbUsername"" >> $varDbCredDir/php_cardinal.ini
-echo 'password'=""$varDbPassword"" >> $varDbCredDir/php_cardinal.ini
-echo 'dbname'=""$varDbName"" >> $varDbCredDir/php_cardinal.ini
-
-# Let's then create a configuration file (for other Cardinal stuff)
-touch $varConfigDir/cardinal_config.ini
-echo "[cardinal_config]" >> $varConfigDir/cardinal_config.ini
-echo 'scriptsdir'=""$varDirScripts"" >> $varConfigDir/cardinal_config.ini
-echo 'cardinalbase'=""$varCardinalBase"" >> $varConfigDir/cardinal_config.ini
-echo 'tftpdir'=""$varTftpDir"" >> $varConfigDir/cardinal_config.ini
+touch $varDbCredDir/cardinalmysql.ini
+echo "[cardinal_mysql_config]" >> $varDbCredDir/cardinalmysql.ini
+echo 'servername'=""$varDatabaseIP"" >> $varDbCredDir/cardinalmysql.ini
+echo 'username'=""$varDbUsername"" >> $varDbCredDir/cardinalmysql.ini
+echo 'password'=""$varDbPassword"" >> $varDbCredDir/cardinalmysql.ini
+echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinalmysql.ini
 
 # Let's also give the non-web directory Apache read rights
 chown -R www-data:www-data $varDbCredDir
@@ -65,12 +58,15 @@ chown -R www-data:www-data $varTftpDir
 mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""
 mysql -u$varDbUsername --password=$varDbPassword $varDbName < $varCardinalBase/sql/cardinal.sql
 
+# Add Cardinal configuration to MySQL
+mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO settings (settings_id,cardinal_home,cardinal_scripts,cardinal_tftp,poll_schedule) VALUES ('1','$varConfigDir','$varDirScripts','$varTftpDir','$varSchedulePoll')"
+
 # Now, let's create a Cardinal admin
 hashedPass=$(python -c 'import crypt; print crypt.crypt("'$varCardinalPass'", "$6$random_salt")')
 mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO users (username,password) VALUES ('$varCardinalUser','$hashedPass')"
 
-# Add fetch_all_clients.php to crontab (for constant pull of all AP clients)
-crontab -l > fetch_all_clients
-echo "* * * * * php" $varDirScripts"/fetch_all_clients.php" >> fetch_all_clients
-crontab fetch_all_clients
-rm fetch_all_clients
+# Add poller.php to crontab
+crontab -l > poller
+echo "*/'$varSchedulePoll' * * * * php" $varDirScripts"/poller.php" >> poller
+crontab poller
+rm poller

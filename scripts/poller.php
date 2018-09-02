@@ -30,10 +30,6 @@ SOFTWARE.
 
 require_once('/path/to/includes/cardinalconfig.php');
 
-// MySQL connection information
-
-require_once('/path/to/includes/dbconnect.php');
-
 // Run Cisco Client Command & Store Results in SQL
 
 $sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_name,ap_id FROM access_points WHERE ap_all_id = 2";
@@ -56,6 +52,8 @@ if ($result->num_rows > 0) {
        $phpMySQLUpdate = "UPDATE access_points SET ap_total_clients = '$bashClientsOutput' WHERE ap_id = $queryID";
        $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);
        $phpMySQLValue = mysqli_fetch_object($phpMySQLQuery);
+       $getBandwidth = escapeshellcmd("$scriptsDir/fetch_bandwidth.sh $queryIP $queryUser $queryPass $queryName");
+       $getBandwidthExec = shell_exec($getBandwidth);
 
      }
 } else {

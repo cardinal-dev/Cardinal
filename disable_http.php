@@ -42,7 +42,7 @@ require_once('includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 // Fetch AP Session
 
@@ -57,7 +57,7 @@ if ($result->num_rows > 0) {
        $queryIP = $row["ap_ip"];
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_disable_http.py $queryIP $queryUser $queryPass");
+       $pyCommand = escapeshellcmd("python $cardinalScripts/cisco_disable_http.py $queryIP $queryUser $queryPass");
        $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
        echo "Access Point Disable HTTP Functionality Initiated!";

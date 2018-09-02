@@ -9,7 +9,11 @@
 # Cardinal Configuration Variable Declarations
 
 # IMPORTANT!: Modify this to include the proper location of the scripts directory
-scriptsDir=$(awk -F "=" '/scriptsdir/ {print $2}' /path/to/cardinal_config.ini)
+mysqlAuth=$(awk -F "=" '/scriptsdir/ {print $2}' /path/to/cardinalmysql.ini)
+
+# Get values from MySQL database
+scriptsDir=$(echo "SELECT cardinalScripts FROM settings WHERE settings_id = 1" | mysql $dbname -u $username -p$password)
+echo $scriptsDir
 
 # Open Connection to Each AP in Cardinal Database
 mkdir $scriptsDir/results

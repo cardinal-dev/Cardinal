@@ -1,9 +1,0 @@
-<!-- MAIN_AP_206 datapoint -->
-var MAIN_206 = {
-    min: 0,
-    max: 100,
-    x: 620,
-    y: 400,
-    value: 72
-}
-heatmapInstance.addData(MAIN_206)

@@ -1,6 +1,6 @@
-<?php
+#!/usr/bin/python
 
-/* Cardinal - An Open Source Cisco Wireless Access Point Controller
+''' Cardinal - An Open Source Cisco Wireless Access Point Controller
 
 MIT License
 
@@ -24,34 +24,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-*/
+'''
 
-function db_connect() {
+import paramiko
+import time
+import sys
 
-        // Define connection as a static variable, to avoid connecting more than once 
-    static $conn;
+queryIP = sys.argv[1]
+queryUser = sys.argv[2]
+queryPass = sys.argv[3]
 
-        // Try and connect to the database, if a connection has not been established yet
-    if(!isset($conn)) {
-             // Load configuration as an array. Use the actual location of your configuration file
-        $config = parse_ini_file('/var/www/html/scripts/install/ci/php_cardinal.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
-        $conn = mysqli_connect($config['servername'],$config['username'],$config['password'],$config['dbname']);
-    }
+ip = queryIP
+username = queryUser
+password = queryPass
 
-        // If connection was not successful, handle the error
-    if($conn === false) {
-            // Handle error - notify administrator, log to a file, show an error screen, etc.
-        return mysqli_connect_error(); 
-    }
-    return $conn;
-}
+remote_conn_pre=paramiko.SSHClient()
+remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+remote_conn_pre.connect(ip, port=22, username=username,
+                        password=password,
+                        look_for_keys=False, allow_agent=False)
 
-// Connect to the database
-$conn = db_connect();
+remote_conn = remote_conn_pre.invoke_shell()
+output = remote_conn.recv(65535)
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
-?> 
+remote_conn.send("sho int gi0 | i Mbps\n")
+time.sleep(.10)
+output = remote_conn.recv(65535)
+
+
+exit()

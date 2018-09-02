@@ -30,10 +30,6 @@ SOFTWARE.
 
 require_once('/var/www/html/includes/cardinalconfig.php');
 
-// MySQL connection information
-
-require_once('/var/www/html/includes/dbconnect.php');
-
 // Run Cisco Client Command & Store Results in SQL
 
 $sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_name,ap_id FROM access_points WHERE ap_all_id = 2";

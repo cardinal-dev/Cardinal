@@ -32,7 +32,7 @@ session_start();
 
 // Cardinal MySQL Connection
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 $username = $_POST['username'];
 $password = $_POST['password'];

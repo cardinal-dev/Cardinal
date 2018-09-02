@@ -42,7 +42,7 @@ require_once('includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 // HTML Dropdown for AP
 

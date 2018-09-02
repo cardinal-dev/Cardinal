@@ -26,8 +26,44 @@ SOFTWARE.
 
 */
 
-// Load configuration as an array. Use the actual location of your configuration file
-   $config = parse_ini_file('/var/www/html/scripts/install/ci/cardinal_config.ini'); 
-   $scriptsDir = $config['scriptsdir']
+function db_connect() {
 
-?>
+        // Define connection as a static variable, to avoid connecting more than once 
+    static $conn;
+
+        // Try and connect to the database, if a connection has not been established yet
+    if(!isset($conn)) {
+             // Load configuration as an array. Use the actual location of your configuration file
+        $config = parse_ini_file('/var/www/html/scripts/install/ci/cardinalmysql.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
+        $conn = mysqli_connect($config['servername'],$config['username'],$config['password'],$config['dbname']);
+    }
+
+        // If connection was not successful, handle the error
+    if($conn === false) {
+            // Handle error - notify administrator, log to a file, show an error screen, etc.
+        return mysqli_connect_error(); 
+    }
+    return $conn;
+}
+
+// Connect to the database
+$conn = db_connect();
+
+// Query configuration information
+
+$cardinalConfig = "SELECT cardinal_home,cardinal_scripts,cardinal_tftp,poll_schedule FROM settings WHERE settings_id = 1";
+$configResult = $conn->query($cardinalConfig);
+
+if ($configResult->num_rows > 0) {
+    // store data of each row
+    while($settingsRow = $configResult->fetch_assoc()) {
+       $cardinalHome = $settingsRow['cardinal_home'];
+       $scriptsDir = $settingsRow['cardinal_scripts'];
+       $cardinalTftp = $settingsRow['cardinal_tftp'];
+       $pollSchedule = $settingsRow['poll_schedule'];
+     }
+} else {
+    echo "";
+}
+
+?> 

@@ -42,7 +42,7 @@ require_once('includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 // Dropdown for SSID Deletion
 
@@ -60,5 +60,3 @@ Choose SSID:
 <form id="delete_ssid" action="\" method="POST">
 <select name="ssidid">
 </select>
-
-?>
