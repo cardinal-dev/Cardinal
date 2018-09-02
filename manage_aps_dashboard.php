@@ -38,7 +38,7 @@ header('Location: index.php');
 
 // Cardinal Configuration Information
 
-require_once('includes/cardinalconfig.php');
+//require_once('includes/cardinalconfig.php');
 
 // MySQL connection information
 

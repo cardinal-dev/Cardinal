@@ -28,11 +28,11 @@ SOFTWARE.
 
 // Cardinal Configuration Information
 
-require_once('/path/to/includes/cardinalconfig.php');
+require_once('/var/www/html/includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('/path/to/includes/dbconnect.php');
+require_once('/var/www/html/includes/dbconnect.php');
 
 // Run Cisco Client Command & Store Results in SQL
 
@@ -47,11 +47,11 @@ if ($result->num_rows > 0) {
        $queryPass = $row["ap_ssh_password"];
        $queryName = $row["ap_name"];
        $queryID = $row["ap_id"];
-       $bashCommand = escapeshellcmd("$scriptsDir/fetch_total_clients.sh $queryIP $queryUser $queryPass $queryName");
+       $bashCommand = escapeshellcmd("$cardinalScripts/fetch_total_clients.sh $queryIP $queryUser $queryPass $queryName");
        $bashOutput = shell_exec($bashCommand);
-       $bashClients = escapeshellcmd("cat $scriptsDir/results/$queryName.clients");
+       $bashClients = escapeshellcmd("cat $cardinalScripts/results/$queryName.clients");
        $bashClientsOutput = shell_exec($bashClients);
-       $bashWipeClients = escapeshellcmd("rm $scriptsDir/results/$queryName.clients");
+       $bashWipeClients = escapeshellcmd("rm $cardinalScripts/results/$queryName.clients");
        $bashWipeClientsExec = shell_exec($bashWipeClients);
        $phpMySQLUpdate = "UPDATE access_points SET ap_total_clients = '$bashClientsOutput' WHERE ap_id = $queryID";
        $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);

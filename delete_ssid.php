@@ -60,5 +60,3 @@ Choose SSID:
 <form id="delete_ssid" action="\" method="POST">
 <select name="ssidid">
 </select>
-
-?>

@@ -1,6 +1,6 @@
-<?php
+#!/usr/bin/python
 
-/* Cardinal - An Open Source Cisco Wireless Access Point Controller
+''' Cardinal - An Open Source Cisco Wireless Access Point Controller
 
 MIT License
 
@@ -24,11 +24,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-*/
+'''
 
-// Load configuration as an array. Use the actual location of your configuration file
-   $config = parse_ini_file('/path/to/cardinal_config.ini'); 
-   $scriptsDir = $config['scriptsdir'];
-   $tftpDir = $config['tftpdir'];
+import paramiko
+import time
+import sys
 
-?>
+queryIP = sys.argv[1]
+queryUser = sys.argv[2]
+queryPass = sys.argv[3]
+
+ip = queryIP
+username = queryUser
+password = queryPass
+
+remote_conn_pre=paramiko.SSHClient()
+remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+remote_conn_pre.connect(ip, port=22, username=username,
+                        password=password,
+                        look_for_keys=False, allow_agent=False)
+
+remote_conn = remote_conn_pre.invoke_shell()
+output = remote_conn.recv(65535)
+
+
+remote_conn.send("sho int gi0 | i Mbps\n")
+time.sleep(.10)
+output = remote_conn.recv(65535)
+
+
+exit()
