@@ -42,7 +42,7 @@ require_once('includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 // Fetch POST data from configure_aps.html and execute SQL queries
 $varConfID = $_POST['id'];

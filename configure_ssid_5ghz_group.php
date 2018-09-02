@@ -36,15 +36,11 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// Cardinal Configuration Information
-
-require_once('includes/cardinalconfig.php');
-
 // Choose the AP to query from SQL database
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 $result = $conn->query("select ap_group_id,ap_group_name from access_point_groups");
 
 // HTML Dropdown for AP

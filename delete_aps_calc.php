@@ -38,7 +38,7 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 // Delete MySQL database record based on ID submission
 $varID = $_POST['id'];

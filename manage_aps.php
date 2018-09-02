@@ -38,7 +38,7 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 $result = $conn->query("select ap_id,ap_name from access_points");
 

@@ -38,7 +38,7 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 $sql="SELECT * FROM access_points";
 

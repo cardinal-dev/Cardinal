@@ -38,7 +38,7 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/dbconnect.php');
+require_once('includes/cardinalconfig.php');
 
 // Query SQL Database for up-to-date AP group count
 
