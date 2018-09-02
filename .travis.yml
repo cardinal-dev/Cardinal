@@ -18,7 +18,7 @@ before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < /var/www/html/sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
-- mysql -u root --password="" cardinal -e 'INSERT INTO settings (settings_id,cardinal_home,cardinal_scripts,cardinal_tftp,poll_schedule) VALUES ('1','/var/www/html','/var/www/html/scripts','/var/www/html/scripts/install/ci','2')'
+- mysql -u root --password="" cardinal -e 'INSERT INTO settings (settings_id,cardinal_home,cardinal_scripts,cardinal_tftp,poll_schedule) VALUES ('1','/var/www/html','/var/www/html/scripts','/var/www/html/scripts/install/ci','2');'
 - sudo mv -f /var/www/html/scripts/install/ci/dbconnect.php /var/www/html/includes
 - sudo mv -f /var/www/html/scripts/install/ci/poller.php /var/www/html/scripts
 - sudo cat /var/www/html/includes/dbconnect.php
