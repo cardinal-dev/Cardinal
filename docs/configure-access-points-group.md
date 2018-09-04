@@ -1,15 +1,6 @@
 Configure Access Points (Group)
 ===============================
 
-date
-:   2017-10-29 13:08
-
-author
-:   Falcon
-
-slug
-:   configure-access-points-group
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f610e7733ce.png)
 
 The Cardinal **Configure Access Points (Group)** tile is where an user

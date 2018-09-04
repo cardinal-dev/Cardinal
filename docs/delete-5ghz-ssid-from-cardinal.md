@@ -1,15 +1,6 @@
 Delete 5GHz SSID from Cardinal
 ==============================
 
-date
-:   2017-10-29 13:12
-
-author
-:   Falcon
-
-slug
-:   delete-5ghz-ssid-from-cardinal
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7ee9051236.png)
 
 The **Delete 5GHz  SSID from Cardinal** tile allows an user to delete an

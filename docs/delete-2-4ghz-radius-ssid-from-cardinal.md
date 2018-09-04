@@ -1,15 +1,6 @@
 Delete 2.4GHz RADIUS SSID from Cardinal
 =======================================
 
-date
-:   2017-10-29 13:12
-
-author
-:   Falcon
-
-slug
-:   delete-2-4ghz-radius-ssid-from-cardinal
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7ee4eb7938.png)
 
 The **Delete 2.4GHz RADIUS SSID from Cardinal** tile allows an user to

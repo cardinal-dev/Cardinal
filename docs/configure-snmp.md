@@ -1,15 +1,6 @@
 Configure SNMP
 ==============
 
-date
-:   2017-10-29 13:09
-
-author
-:   Falcon
-
-slug
-:   configure-snmp
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f6145e0c8bd.png)
 
 The Cardinal **Configure SNMP** tile is where an user can enable/disable

@@ -1,15 +1,6 @@
 Network Toolkit
 ===============
 
-date
-:   2017-09-25 21:35
-
-author
-:   Falcon
-
-slug
-:   network-toolkit
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/09/img_59c9aefe60e3c.png)
 
 The **Cardinal Network Toolkit** is where a user can run useful network

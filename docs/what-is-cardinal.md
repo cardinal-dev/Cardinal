@@ -1,15 +1,6 @@
 What is Cardinal?
 =================
 
-date
-:   2017-07-07 21:48
-
-author
-:   Falcon
-
-slug
-:   what-is-cardinal
-
 Cardinal is an open source Cisco access point controller. Cardinal uses
 a LAMP stack for the frontend, and Python to handle the configuration of
 access points via SSH.

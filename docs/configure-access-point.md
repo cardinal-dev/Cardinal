@@ -1,15 +1,6 @@
 Configure Access Point
 ======================
 
-date
-:   2017-10-29 13:07
-
-author
-:   Falcon
-
-slug
-:   configure-access-point
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f60d3436a21.png)
 
 The Cardinal **Configure Access Point** tile is where an user can

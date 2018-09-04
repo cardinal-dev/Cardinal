@@ -1,15 +1,6 @@
 Installation
 ============
 
-date
-:   2017-07-07 22:40
-
-author
-:   Falcon
-
-slug
-:   installation
-
 After you have chosen an appropriate Linux distro and installed the
 software dependencies, we can begin the installation of Cardinal.
 

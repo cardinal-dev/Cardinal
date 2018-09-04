@@ -1,15 +1,6 @@
 Change Access Point IP
 ======================
 
-date
-:   2017-10-29 13:07
-
-author
-:   Falcon
-
-slug
-:   change-access-point-ip
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f60c313cdbb.png)
 
 The **Cardinal Change Access Point IP** tile is where an user can change

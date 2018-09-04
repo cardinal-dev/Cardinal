@@ -1,15 +1,6 @@
 Configure SSIDs (2.4GHz)
 ========================
 
-date
-:   2017-10-29 13:09
-
-author
-:   Falcon
-
-slug
-:   configure-ssids-2-4ghz
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f61652e55c1.png)
 
 The Cardinal **Configure SSIDs (2.4GHz)** tile is where an user can
