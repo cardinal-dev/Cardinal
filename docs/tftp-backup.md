@@ -1,15 +1,6 @@
 TFTP Backup
 ===========
 
-date
-:   2017-10-29 13:08
-
-author
-:   Falcon
-
-slug
-:   tftp-backup
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f61122d8c8a.png)
 
 The Cardinal **TFTP Backup** tile is where an user can backup an access

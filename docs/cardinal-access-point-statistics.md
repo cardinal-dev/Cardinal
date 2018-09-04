@@ -1,15 +1,6 @@
 Cardinal Access Point Statistics
 ================================
 
-date
-:   2017-09-24 23:42
-
-author
-:   Falcon
-
-slug
-:   cardinal-access-point-statistics
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/09/img_59c87c446e1d0.png)
 
 The **Cardinal Access Point Statistics** menu is where users can see the

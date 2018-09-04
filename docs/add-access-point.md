@@ -1,15 +1,6 @@
 Add Access Point
 ================
 
-date
-:   2017-09-25 21:24
-
-author
-:   Falcon
-
-slug
-:   add-access-point
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/09/img_59c9ac6c7b40b.png)
 
 The **Cardinal Add Access Point** tile is where an user can add a Cisco

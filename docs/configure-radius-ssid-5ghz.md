@@ -1,15 +1,6 @@
 Configure RADIUS SSID (5GHz)
 ============================
 
-date
-:   2017-10-29 13:10
-
-author
-:   Falcon
-
-slug
-:   configure-radius-ssid-5ghz
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7e8179c6d4.png)
 
 The Cardinal **Configure RADIUS SSID (5GHz)** tile is where an user can

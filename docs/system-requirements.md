@@ -1,15 +1,6 @@
 System Requirements
 ===================
 
-date
-:   2017-07-07 21:48
-
-author
-:   Falcon
-
-slug
-:   system-requirements
-
 Well, to install Cardinal, it would be best if you had a Linux system. I
 used Ubuntu 14.04.2 when I developed Cardinal, and it worked fine for
 me. However, that doesn't mean you couldn't use CentOS, Red Hat, etc. As

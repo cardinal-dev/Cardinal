@@ -1,15 +1,6 @@
 Configure SSIDs (5GHz)
 ======================
 
-date
-:   2017-10-29 13:10
-
-author
-:   Falcon
-
-slug
-:   configure-ssids-5ghz
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7e1e401ae5.png)
 
 The Cardinal **Configure SSIDs (5GHz)** tile is where an user can

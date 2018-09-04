@@ -1,15 +1,6 @@
 Software Dependencies
 =====================
 
-date
-:   2017-07-07 22:40
-
-author
-:   Falcon
-
-slug
-:   software-dependencies
-
 Once you have your OS in order, here are some important software
 dependencies to install. Again, I used Ubuntu 14.04.2 LTS Server, so the
 software used might have updated versions available. Please check your

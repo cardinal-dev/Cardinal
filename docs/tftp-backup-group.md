@@ -1,15 +1,6 @@
 TFTP Backup (Group)
 ===================
 
-date
-:   2017-10-29 13:08
-
-author
-:   Falcon
-
-slug
-:   tftp-backup-group
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f6127c9d352.png)
 
 The Cardinal **TFTP Backup (Group)**tile is where an user can backup a

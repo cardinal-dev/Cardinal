@@ -1,15 +1,6 @@
 Add Access Point Group
 ======================
 
-date
-:   2017-09-25 21:31
-
-author
-:   Falcon
-
-slug
-:   add-access-point-group
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/09/img_59c9ae0131b84.png)
 
 The **Cardinal Add Access Point Group** tile is where an user can add an

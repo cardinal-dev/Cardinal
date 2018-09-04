@@ -1,15 +1,6 @@
 Delete Access Point Groups
 ==========================
 
-date
-:   2017-10-29 13:10
-
-author
-:   Falcon
-
-slug
-:   delete-access-point-groups
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7e9300c0f6.png)
 
 The Cardinal **Delete Access Point Groups** tile is where an user can

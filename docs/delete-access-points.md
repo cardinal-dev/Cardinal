@@ -1,15 +1,6 @@
 Delete Access Points
 ====================
 
-date
-:   2017-10-29 13:10
-
-author
-:   Falcon
-
-slug
-:   delete-access-points
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7e8662977b.png)
 
 The Cardinal **Delete Access Points** tile is where an user can delete

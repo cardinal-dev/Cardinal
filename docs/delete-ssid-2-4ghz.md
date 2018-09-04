@@ -1,15 +1,6 @@
 Delete SSID (2.4GHz)
 ====================
 
-date
-:   2017-10-29 13:11
-
-author
-:   Falcon
-
-slug
-:   delete-ssid-2-4ghz
-
 ![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7ea527590b.png)
 
 The Cardinal **Delete SSID (2.4GHz)** tile is where an user can delete
