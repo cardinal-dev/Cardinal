@@ -1,8 +1,8 @@
 Home
 ====
 
-Cardinal is an open source Cisco access point controller. Cardinal uses
-a LAMP stack for the frontend, and Python to handle the configuration of
+Cardinal is an open source Cisco access point controller. Cardinal is built
+on the LAMP stack, and uses Python to handle the configuration of
 access points via SSH.
 
 Cardinals are beautiful, majestic birds. People say that Cardinals
