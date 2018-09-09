@@ -83,3 +83,5 @@ echo "</html>";
 $conn->close();
 
 ?>
+
+<button onclick="window.location.href='/delete_ssid_wizard.php'">Back to Delete SSID Wizard</button>
