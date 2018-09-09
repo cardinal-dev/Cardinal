@@ -39,18 +39,20 @@ header('Location: index.php');
 // MySQL connection information
 
 require_once('includes/cardinalconfig.php');
+
 $result = $conn->query("select ap_id,ap_name from access_points");
 
-echo "<html>\n";
-echo "<head>\n";
-echo "<font face=\"Verdana\">\n";
-echo "Choose AP:";
-echo "<br>";
-echo "</font>\n";
-echo "</head>\n";
-echo "<body>\n";
-echo "<form id=\"delete_ap\" action=\"\" method=\"POST\">\n";
-echo "<select name='id'>";
+?>
+
+<html>
+<font face="Verdana">
+Choose AP:
+<br>
+<body>
+<form id="delete_ap" action="/" method="POST">
+<select name="id">
+
+<?php
 
     while ($row = $result->fetch_assoc()) {
 
@@ -61,17 +63,22 @@ echo "<select name='id'>";
 
 }
 
-echo "</select>";
-echo "<input type=\"button\" value=\"Confirm Deletion\" name=\"confirmdeletion\" onclick=\"askForDeletion()\" />\n";
-echo "</form>\n";
-echo "<script>\n";
-echo "form=document.getElementById(\"delete_ap\");\n";
-echo "function askForDeletion() {\n";
-echo "        form.action=\"delete_aps_calc.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "</script>\n";
-echo "</body>\n";
+?>
+
+</select>
+<input type="button" value="Confirm Deletion" name="confirmdeletion" onclick="askForDeletion()">
+</form>
+<script>
+form=document.getElementById("delete_ap")
+function askForDeletion() {
+	form.action="functions/delete_aps_calc.php"
+	form.submit()
+}
+
+</script>
+</body>
+
+<?php
 
 // Success after access point registration (from delete_aps_calc.php)
 if ( isset($_GET['Success']) && $_GET['Success'] == 1 )

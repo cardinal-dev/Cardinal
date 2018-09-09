@@ -103,7 +103,7 @@ header('Location: index.php');
 
 
 					<div class="chart-notes">
-						Cardinal Access Point Statistics
+						Cardinal access point statistics
 					</div>
 				</div>
 			</div>
@@ -145,7 +145,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Add A Single Access Point
+						Add access points to Cardinal
 					</div>
 				</div>
 			</div>
@@ -187,10 +187,92 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Add A Single Access Point Group
+						Add access point groups to Cardinal
 					</div>
 				</div>
 			</div>
+
+                        <div class="col-sm-12">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Delete Access Point
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="delete_aps" href="delete_aps.php"><img src="assets/img/cardinal10.png"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="deleteaps" style="display:none;" title="Delete Access Points">
+                                                <iframe height="350" id="delete_ap_frame" name="delete_ap_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                        $(document).ready(function () {
+                                        $(".delete_aps").click(function () {
+                                           $("#delete_ap_frame").attr('src', $(this).attr("href"));
+                                           $("#deleteaps").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#delete_ap_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                Delete access points from Cardinal
+                                        </div>
+                                </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Delete Access Point Group
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="delete_ap_group" href="delete_ap_group.php"><img src="assets/img/cardinal10.png"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="deleteapgroup" style="display:none;" title="Delete Access Point Groups">
+                                                <iframe height="350" id="delete_ap_group_frame" name="delete_ap_group_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                        $(document).ready(function () {
+                                        $(".delete_ap_group").click(function () {
+                                           $("#delete_ap_group_frame").attr('src', $(this).attr("href"));
+                                           $("#deleteapgroup").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#delete_ap_group_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                Delete access point groups from Cardinal
+                                        </div>
+                                </div>
+                        </div>
 
 
 			<div class="col-sm-12">
@@ -231,7 +313,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Cardinal Network Toolkit
+						Run network diagnostic tools
 					</div>
 				</div>
 			</div>
@@ -273,7 +355,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Manage Cardinal Access Points
+						Manage Cardinal access points
 					</div>
 				</div>
 			</div>
@@ -359,90 +441,6 @@ header('Location: index.php');
 					</div>
 				</div>
 			</div>
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Delete Access Points
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="delete_aps" href="delete_aps.php"><img src="assets/img/cardinal10.png"></a>
-						</center>
-					</div>
-
-
-					<div id="deleteaps" style="display:none;" title="Delete Access Points">
-						<iframe height="350" id="delete_ap_frame" name="delete_ap_frame" width="350"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".delete_aps").click(function () {
-					   $("#delete_ap_frame").attr('src', $(this).attr("href"));
-					   $("#deleteaps").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#delete_ap_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Delete A Single Access Point
-					</div>
-				</div>
-			</div>
-
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						Delete Access Point Groups
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="delete_ap_group" href="delete_ap_group.php"><img src="assets/img/cardinal10.png"></a>
-						</center>
-					</div>
-
-
-					<div id="deleteapgroup" style="display:none;" title="Delete Access Point Groups">
-						<iframe height="350" id="delete_ap_group_frame" name="delete_ap_group_frame" width="350"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".delete_ap_group").click(function () {
-					   $("#delete_ap_group_frame").attr('src', $(this).attr("href"));
-					   $("#deleteapgroup").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#delete_ap_group_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						Delete An Access Point Group
-					</div>
-				</div>
-			</div>
-
 
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">

@@ -38,22 +38,27 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
-// Delete MySQL database record based on ID submission
-$varID = $_POST['id'];
+// Delete AP Group SQL 
 
-$sql = "DELETE FROM access_points WHERE ap_id = '$varID'";
+$varID = $_POST['group_id'];
+$sql = "DELETE FROM access_point_groups WHERE ap_group_id = '$varID'";
 
 if ($conn->query($sql) === TRUE) {
-    echo "";
+    echo "Access Point Group Deleted Successfully";
 } else {
-    echo "Error deleting access point: " . $conn->error;
+    echo "Error deleting record: " . $conn->error;
 }
 
 // Redirect to this page.
-header('Location: delete_aps.php?Success=1');
+header('Location: delete_ap_group.php?Success=1');
+exit();
 
+// Close MySQL connection
 $conn->close();
+
+// Clear POST Variables
+unset($_POST);
 
 ?>
