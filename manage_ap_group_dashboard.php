@@ -43,7 +43,7 @@ require_once('includes/cardinalconfig.php');
 // Fetch POST data from file and execute Python commands & SQL queries
 $varGroupId = $_POST['groupid'];
 
-$groupSql = "SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '$varGroupId'";
+$groupSql = "SELECT ap_name,ap_group_name,ap_ip,ap_total_clients FROM access_points,access_point_groups WHERE access_point_groups.ap_group_id = '$varGroupId'";
 $groupResult = $conn->query($groupSql);
 
     // store data of each row
@@ -114,7 +114,6 @@ $_SESSION['groupid'] = $varGroupId;
 					<div class="chart-stage">
 						<div id="grid-1-1">
 						<iframe height="310px" scrolling="no" src="graph_per_ap_clients.php" style="border:none;" width="300px"></iframe>
-						<iframe height="310px" scrolling="no" src="graph_ap_bandwidth.php" style="border:none;" width="300px"></iframe>
 						</div>
 					</div>
 
@@ -162,129 +161,6 @@ $_SESSION['groupid'] = $varGroupId;
 
                                         <div class="chart-notes">
                                                 
-                                        </div>
-                                </div>
-                        </div>
-
-                        <div class="col-sm-6 col-md-4">
-                                <div class="chart-wrapper">
-                                        <div class="chart-title">
-                                                Configure HTTP (Group)
-                                        </div>
-
-
-                                        <div class="chart-stage">
-                                                <center>
-                                                        <a class="configure_http" href="configure_http.php"><img src="assets/img/cardinal7.png"></a>
-                                                </center>
-                                        </div>
-
-
-                                        <div id="configurehttp" style="display:none;" title="Configure HTTP">
-                                                <iframe height="350" id="configure_http_frame" name="configure_http_frame" width="350"></iframe>
-                                        </div>
-                                        <script>
-                                        $(document).ready(function () {
-                                        $(".configure_http").click(function () {
-                                           $("#configure_http_frame").attr('src', $(this).attr("href"));
-                                           $("#configurehttp").dialog({
-                                               width: 400,
-                                               height: 450,
-                                               modal: true,
-                                               close: function () {
-                                                   $("#configure_http_frame").attr('src', "about:blank");
-                                               }
-                                           });
-                                           return false;
-                                        });
-                                        });
-
-                                        </script>
-
-                                        <div class="chart-notes">
-
-                                        </div>
-                                </div>
-                        </div>
-
-				<div class="col-sm-6 col-md-4">
-                                <div class="chart-wrapper">
-                                        <div class="chart-title">
-                                                Configure RADIUS (Group)
-                                        </div>
-
-
-                                        <div class="chart-stage">
-                                                <center>
-                                                        <a class="configure_radius" href="configure_radius.php"><img src="assets/img/cardinal8.png"></a>
-                                                </center>
-                                        </div>
-
-
-                                        <div id="configureradius" style="display:none;" title="Configure RADIUS">
-                                                <iframe height="350" id="configure_radius_frame" name="configure_radius_frame" width="350"></iframe>
-                                        </div>
-                                        <script>
-                                        $(document).ready(function () {
-                                        $(".configure_radius").click(function () {
-                                           $("#configure_radius_frame").attr('src', $(this).attr("href"));
-                                           $("#configureradius").dialog({
-                                               width: 400,
-                                               height: 450,
-                                               modal: true,
-                                               close: function () {
-                                                   $("#configure_radius_frame").attr('src', "about:blank");
-                                               }
-                                           });
-                                           return false;
-                                        });
-                                        });
-
-                                        </script>
-
-                                        <div class="chart-notes">
-                                                
-                                        </div>
-                                </div>
-                        </div>
-
-                        <div class="col-sm-6 col-md-4">
-                                <div class="chart-wrapper">
-                                        <div class="chart-title">
-                                                Configure SNMP (Group)
-                                        </div>
-
-
-                                        <div class="chart-stage">
-                                                <center>
-                                                        <a class="configure_snmp" href="configure_snmp.php"><img src="assets/img/cardinal11.png"></a>
-                                                </center>
-                                        </div>
-
-
-                                        <div id="configuresnmp" style="display:none;" title="Configure SNMP">
-                                                <iframe height="350" id="configure_snmp_frame" name="configure_snmp_frame" width="350"></iframe>
-                                        </div>
-                                        <script>
-                                        $(document).ready(function () {
-                                        $(".configure_snmp").click(function () {
-                                           $("#configure_snmp_frame").attr('src', $(this).attr("href"));
-                                           $("#configuresnmp").dialog({
-                                               width: 400,
-                                               height: 450,
-                                               modal: true,
-                                               close: function () {
-                                                   $("#configure_snmp_frame").attr('src', "about:blank");
-                                               }
-                                           });
-                                           return false;
-                                        });
-                                        });
-
-                                        </script>
-
-                                        <div class="chart-notes">
-                                                Configure SNMP on A Single Access Point
                                         </div>
                                 </div>
                         </div>

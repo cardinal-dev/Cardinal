@@ -109,7 +109,7 @@ header('Location: index.php');
 			</div>
 
 
-			<div class="col-sm-12">
+			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
 					<div class="chart-title">
 						Add Access Point
@@ -123,7 +123,7 @@ header('Location: index.php');
 					</div>
 
 
-					<div id="addnewap" style="display:none;" title="Add New Access Point">
+					<div id="addnewap" style="display:none;" title="Add Access Point">
 						<iframe height="350" id="add_new_ap_frame" name="add_new_ap_frame" width="350"></iframe>
 					</div>
 					<script>
@@ -151,7 +151,7 @@ header('Location: index.php');
 			</div>
 
 
-			<div class="col-sm-12">
+			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
 					<div class="chart-title">
 						Add Access Point Group
@@ -165,7 +165,7 @@ header('Location: index.php');
 					</div>
 
 
-					<div id="addnewapgroup" style="display:none;" title="Add New Access Point Group">
+					<div id="addnewapgroup" style="display:none;" title="Add Access Point Group">
 						<iframe height="350" id="add_new_ap_group_frame" name="add_new_ap_group_frame" width="350"></iframe>
 					</div>
 					<script>
@@ -192,7 +192,7 @@ header('Location: index.php');
 				</div>
 			</div>
 
-                        <div class="col-sm-12">
+                        <div class="col-sm-6 col-md-4">
                                 <div class="chart-wrapper">
                                         <div class="chart-title">
                                                 Delete Access Point
@@ -206,7 +206,7 @@ header('Location: index.php');
                                         </div>
 
 
-                                        <div id="deleteaps" style="display:none;" title="Delete Access Points">
+                                        <div id="deleteaps" style="display:none;" title="Delete Access Point">
                                                 <iframe height="350" id="delete_ap_frame" name="delete_ap_frame" width="350"></iframe>
                                         </div>
                                         <script>
@@ -233,7 +233,7 @@ header('Location: index.php');
                                 </div>
                         </div>
 
-                        <div class="col-sm-12">
+                        <div class="col-sm-6 col-md-4">
                                 <div class="chart-wrapper">
                                         <div class="chart-title">
                                                 Delete Access Point Group
@@ -247,7 +247,7 @@ header('Location: index.php');
                                         </div>
 
 
-                                        <div id="deleteapgroup" style="display:none;" title="Delete Access Point Groups">
+                                        <div id="deleteapgroup" style="display:none;" title="Delete Access Point Group">
                                                 <iframe height="350" id="delete_ap_group_frame" name="delete_ap_group_frame" width="350"></iframe>
                                         </div>
                                         <script>
@@ -275,7 +275,7 @@ header('Location: index.php');
                         </div>
 
 
-			<div class="col-sm-12">
+			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
 					<div class="chart-title">
 						Network Toolkit
@@ -319,7 +319,7 @@ header('Location: index.php');
 			</div>
 
 
-			<div class="col-sm-12">
+			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
 					<div class="chart-title">
 						Manage Cardinal Access Point
@@ -360,7 +360,7 @@ header('Location: index.php');
 				</div>
 			</div>
 
-                        <div class="col-sm-12">
+                        <div class="col-sm-6 col-md-4">
                                 <div class="chart-wrapper">
                                         <div class="chart-title">
                                                 Manage Cardinal Access Point Group
@@ -400,47 +400,6 @@ header('Location: index.php');
                                         </div>
                                 </div>
                         </div>
-
-			<div class="col-sm-6 col-md-4">
-				<div class="chart-wrapper">
-					<div class="chart-title">
-						TFTP Backup (Group)
-					</div>
-
-
-					<div class="chart-stage">
-						<center>
-							<a class="tftp_backup_group" href="backup_ap_config_group.php"><img src="assets/img/cardinal6.png"></a>
-						</center>
-					</div>
-
-
-					<div id="tftpbackupgroup" style="display:none;" title="TFTP Backup (Group)">
-						<iframe height="350" id="tftp_backup_group_frame" name="tftp_backup_group_frame" width="350"></iframe>
-					</div>
-					<script>
-					$(document).ready(function () {
-					$(".tftp_backup_group").click(function () {
-					   $("#tftp_backup_group_frame").attr('src', $(this).attr("href"));
-					   $("#tftpbackupgroup").dialog({
-					       width: 400,
-					       height: 450,
-					       modal: true,
-					       close: function () {
-					           $("#tftp_backup_group_frame").attr('src', "about:blank");
-					       }
-					   });
-					   return false;
-					});
-					});
-
-					</script>
-
-					<div class="chart-notes">
-						
-					</div>
-				</div>
-			</div>
 
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
@@ -525,6 +484,7 @@ header('Location: index.php');
 			</div>
 		</div>
 	</div>
+
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
 	</script> 
