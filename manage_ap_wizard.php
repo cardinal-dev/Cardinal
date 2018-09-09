@@ -53,7 +53,7 @@ $apDropdownQuery = $conn->query("SELECT ap_id,ap_name FROM access_points");
 <font face="Verdana">
 Choose AP:
 </font>
-<form id="manage_aps" action="manage_aps_dashboard.php" method="POST">
+<form id="manage_aps" action="manage_ap_dashboard.php" method="POST">
 <select name="apid">
 
 <?php

@@ -49,7 +49,7 @@ Choose AP Group:
 <br>
 </head>
 <body>
-<form id="delete_ap_group" action="\" method="POST">
+<form id="delete_ap_group" action="" method="POST">
 <select name="group_id">
 
 <?php

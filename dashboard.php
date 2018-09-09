@@ -103,7 +103,7 @@ header('Location: index.php');
 
 
 					<div class="chart-notes">
-						Cardinal access point statistics
+						
 					</div>
 				</div>
 			</div>
@@ -145,7 +145,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Add access points to Cardinal
+						
 					</div>
 				</div>
 			</div>
@@ -187,7 +187,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Add access point groups to Cardinal
+						
 					</div>
 				</div>
 			</div>
@@ -228,7 +228,7 @@ header('Location: index.php');
                                         </script>
 
                                         <div class="chart-notes">
-                                                Delete access points from Cardinal
+                                                
                                         </div>
                                 </div>
                         </div>
@@ -269,7 +269,7 @@ header('Location: index.php');
                                         </script>
 
                                         <div class="chart-notes">
-                                                Delete access point groups from Cardinal
+                                                
                                         </div>
                                 </div>
                         </div>
@@ -313,7 +313,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Run network diagnostic tools
+						
 					</div>
 				</div>
 			</div>
@@ -322,13 +322,13 @@ header('Location: index.php');
 			<div class="col-sm-12">
 				<div class="chart-wrapper">
 					<div class="chart-title">
-						Manage Cardinal Access Points
+						Manage Cardinal Access Point
 					</div>
 
 
 					<div class="chart-stage">
 						<center>
-							<a class="manage_aps" href="manage_aps_wizard.php"><img src="assets/img/cardinal4.png"></a>
+							<a class="manage_aps" href="manage_ap_wizard.php"><img src="assets/img/cardinal4.png"></a>
 						</center>
 					</div>
 
@@ -355,10 +355,51 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Manage Cardinal access points
+						
 					</div>
 				</div>
 			</div>
+
+                        <div class="col-sm-12">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Manage Cardinal Access Point Group
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="manage_ap_group" href="manage_ap_group_wizard.php"><img src="assets/img/cardinal4.png"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="manageapgroup" style="display:none;" title="Manage Cardinal Access Point Group">
+                                                <iframe height="768" id="manage_ap_group_frame" name="manage_ap_group_frame" width="1366"></iframe>
+                                        </div>
+                                        <script>
+                                         $(document).ready(function () {
+                                             $(".manage_ap_group").click(function () {
+                                             $("#manage_ap_group_frame").attr('src', $(this).attr("href"));
+                                             $("#manageapgroup").dialog({
+                                               width: 1366,
+                                               height: 768,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#manage_ap_group_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+
+                                        </div>
+                                </div>
+                        </div>
 
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
@@ -396,7 +437,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Backup An Entire Access Point Group's Configuration Via TFTP
+						
 					</div>
 				</div>
 			</div>
@@ -437,7 +478,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Configure SSIDs for registered access points in Cardinal
+						
 					</div>
 				</div>
 			</div>
@@ -478,7 +519,7 @@ header('Location: index.php');
 					</script>
 
 					<div class="chart-notes">
-						Delete a SSID from Cardinal
+						
 					</div>
 				</div>
 			</div>

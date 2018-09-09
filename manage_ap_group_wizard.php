@@ -40,33 +40,44 @@ header('Location: index.php');
 
 require_once('includes/cardinalconfig.php');
 
-// Fetch AP Session
+// HTML Dropdown for AP Group
 
-$varAPId = $_SESSION['apid'];
+$groupQuery = $conn->query("SELECT ap_group_id,ap_group_name FROM access_point_groups");
 
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = $varAPId";
-$result = $conn->query($sql);
+?>
 
-if ($result->num_rows > 0) {
-    // store data of each row
-    while($row = $result->fetch_assoc()) {
-       $queryIP = $row["ap_ip"];
-       $queryUser = $row["ap_ssh_username"];
-       $queryPass = $row["ap_ssh_password"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_disable_radius.py $queryIP $queryUser $queryPass");
-       $pyOutput = shell_exec($pyCommand);
-       echo "<font face=\"Verdana\">\n";
-       echo "Access Point Disable RADIUS Functionality Initiated!";
-     }
-} else {
-    echo "";
+<html>
+<head>
+</head>
+<body>
+<font face="Verdana">
+Choose AP Group:
+</font>
+<form id="manage_ap_group" action="manage_ap_group_dashboard.php" method="POST">
+<select name="groupid">
+
+<?php
+
+    while ($groupRow = $groupQuery->fetch_assoc()) {
+
+                  unset($groupId, $groupName);
+                  $groupId = $groupRow['ap_group_id'];
+                  $groupName = $groupRow['ap_group_name'];
+                  echo '<option value="'.$groupId.'">'.$groupName.'</option>';
+
 }
 
-// Link back to the configure_radius.php page
-echo "<br>";
-echo "<br>";
-echo "<a href=\"configure_radius.php\">Back to Configure RADIUS Menu</a>";
-echo "</font>";
+?>
+
+</select>
+<br>
+<br>
+<input type="Submit" label="Submit">
+</body>
+</form>
+</html>
+
+<?php
 
 $conn->close();
 
