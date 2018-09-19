@@ -1,12 +1,2 @@
 title: Cardinal
-menus: header
-plugins:
-  - jekyll-menus
 theme: jekyll-theme-cayman
-header_pages:
-  - index.md
-  - credits.md
-  - contact-us.md
-  - installation.md
-  - software-dependencies.md
-  - system-requirements.md
