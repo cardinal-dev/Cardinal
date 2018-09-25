@@ -54,7 +54,6 @@ if ($result->num_rows > 0) {
        $phpMySQLValue = mysqli_fetch_object($phpMySQLQuery);
        $getBandwidth = escapeshellcmd("$scriptsDir/fetch_bandwidth.sh $queryIP $queryUser $queryPass $queryName");
        $getBandwidthExec = shell_exec($getBandwidth);
-
      }
 } else {
     echo "";

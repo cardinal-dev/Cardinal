@@ -41,15 +41,18 @@ header('Location: index.php');
 require_once('includes/cardinalconfig.php');
 $result = $conn->query("select ap_group_id,ap_group_name from access_point_groups");
 
-echo "<html>\n";
-echo "<head>\n";
-echo "<font face=\"Verdana\">\n";
-echo "Choose AP Group:";
-echo "<br>";
-echo "</head>\n";
-echo "<body>\n";
-echo "<form id=\"delete_ap_group\" action=\"\" method=\"POST\">\n";
-echo "<select name='group_id'>";
+?>
+
+<html>
+<font face="Verdana">
+Choose AP Group:
+<br>
+</head>
+<body>
+<form id="delete_ap_group" action="" method="POST">
+<select name="group_id">
+
+<?php
 
     while ($row = $result->fetch_assoc()) {
 
@@ -60,19 +63,22 @@ echo "<select name='group_id'>";
 
 }
 
-echo "</select>";
-echo "<input type=\"button\" value=\"Confirm Deletion\" name=\"confirmdeletion\" onclick=\"askForDeletion()\" />\n";
-echo "</form>\n";
-echo "<script>\n";
-echo "form=document.getElementById(\"delete_ap_group\");\n";
-echo "function askForDeletion() {\n";
-echo "        form.action=\"delete_ap_group_calc.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "</script>\n";
-echo "</body>\n";
+?>
 
-$conn->close();
+</select>
+<input type="button" value="Confirm Deletion" name="confirmdeletion" onclick="askForDeletion()">
+</form>
+<script>
+form=document.getElementById("delete_ap_group")
+function askForDeletion() {
+   form.action="functions/delete_ap_group_calc.php"
+   form.submit()
+}
+
+</script>
+</body>
+
+<?php
 
 // Success after access point registration (from delete_ap_group_calc.php)
 if ( isset($_GET['Success']) && $_GET['Success'] == 1 )
@@ -81,5 +87,7 @@ if ( isset($_GET['Success']) && $_GET['Success'] == 1 )
      echo "Access Point Group Deleted Successfully!";
      echo "</font>";
 }
+
+$conn->close();
 
 ?>

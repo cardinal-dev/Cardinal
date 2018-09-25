@@ -38,13 +38,13 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
 // Delete SSID from Cardinal database
-$varID = $_POST['ssid5id'];
+$varSsidId = $_POST['ssid24id'];
 
 // Query database for Cardinal record. Delete record when found
-$sql = "DELETE FROM ssids_5ghz WHERE ap_ssid_id = '$varID'";
+$sql = "DELETE FROM ssids_24ghz WHERE ap_ssid_id = '$varSsidId'";
 
 if ($conn->query($sql) === TRUE) {
     echo "";
@@ -54,12 +54,12 @@ if ($conn->query($sql) === TRUE) {
 
 // Confirmation that the SSID was successfully deleted from Cardinal database
 echo "<font face=\"Verdana\">\n";
-echo "5GHz SSID Successfully Deleted!";
+echo "2.4GHz SSID Successfully Deleted!";
 
 // Link back to the delete_ssid_database.php
 echo "<br>";
 echo "<br>";
-echo "<a href=\"delete_ssid_database_5ghz.php\">Back to Cardinal SSID Deletion Menu</a>";
+echo "<a href=\"delete_ssid_database.php\">Back to Cardinal SSID Deletion Menu</a>";
 echo "</font>";
 
 $conn->close();

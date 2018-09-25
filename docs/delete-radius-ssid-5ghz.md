@@ -1,15 +1,17 @@
-Delete RADIUS SSID (5GHz)
-=========================
+Delete 5GHz RADIUS SSID from Cardinal
+=====================================
 
-![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7ed0a113d8.png)
+![image0](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7eefa0eedf.png)
 
-The Cardinal **Delete RADIUS SSID (5GHz)** tile is where an user can
-delete an existing 5GHz 802.1x SSID from a Cardinal managed AP.
+The **Delete 5GHz RADIUS SSID from Cardinal** tile allows an user to
+delete an existing 5GHz 802.1x SSID from Cardinal’s
+database, **NOT** the AP. If you wish to delete the SSID from the AP,
+please use the **Delete SSID** tiles.
 
-![image1](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7ed28c6f3a.png)
+![image1](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/10/img_59f7ef25a7673.png)
 
-This will send a series of SSH commands that will delete the SSID
-configurations from AP. If you wish to perform this action, on a wider
-scale, please use the **Delete RADIUS SSID (5GHz) (Group)** tile. Please
-make sure you create an access point group before utilizing this
-feature.
+This will delete the SSID from Cardinal, completely. If you are going to
+wipe the SSID out completely, I would recommend first deleting the SSIDs
+from the AP’s. Then, I would delete the SSID from Cardinal. Currently,
+there is no way to see which AP’s have a certain SSID associated to it.
+I am working on that feature.

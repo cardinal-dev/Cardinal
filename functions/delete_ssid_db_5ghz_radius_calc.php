@@ -38,22 +38,31 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
-// Delete MySQL database record based on ID submission
-$varID = $_POST['id'];
+// Delete SSID from Cardinal database
+$varID = $_POST['ssid5id'];
 
-$sql = "DELETE FROM access_points WHERE ap_id = '$varID'";
+// Query database for Cardinal record. Delete record when found
+$sql = "DELETE FROM ssids_5ghz_radius WHERE ap_ssid_id = '$varID'";
 
 if ($conn->query($sql) === TRUE) {
     echo "";
 } else {
-    echo "Error deleting access point: " . $conn->error;
+    echo "Error deleting record: " . $conn->error;
 }
 
-// Redirect to this page.
-header('Location: delete_aps.php?Success=1');
+// Confirmation that the SSID was successfully deleted from Cardinal database
+echo "<font face=\"Verdana\">\n";
+echo "5GHz RADIUS SSID Successfully Deleted!";
+
+// Link back to the delete_ssid_database.php
+echo "<br>";
+echo "<br>";
+echo "<a href=\"delete_ssid_radius_5ghz_database.php\">Back to Cardinal SSID Deletion Menu</a>";
+echo "</font>";
 
 $conn->close();
 
 ?>
+

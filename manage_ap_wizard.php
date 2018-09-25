@@ -40,29 +40,45 @@ header('Location: index.php');
 
 require_once('includes/cardinalconfig.php');
 
-// Delete SSID from Cardinal database
-$varID = $_POST['ssid24id'];
+// HTML Dropdown for AP
 
-// Query database for Cardinal record. Delete record when found
-$sql = "DELETE FROM ssids_24ghz_radius WHERE ap_ssid_id = '$varID'";
+$apDropdownQuery = $conn->query("SELECT ap_id,ap_name FROM access_points");
 
-if ($conn->query($sql) === TRUE) {
-    echo "";
-} else {
-    echo "Error deleting record: " . $conn->error;
+?>
+
+<html>
+<head>
+</head>
+<body>
+<font face="Verdana">
+Choose AP:
+</font>
+<form id="manage_aps" action="manage_ap_dashboard.php" method="POST">
+<select name="apid">
+
+<?php
+
+    while ($apRow = $apDropdownQuery->fetch_assoc()) {
+
+                  unset($apId, $apName);
+                  $apId = $apRow['ap_id'];
+                  $apName = $apRow['ap_name'];
+                  echo '<option value="'.$apId.'">'.$apName.'</option>';
+
 }
 
-// Confirmation that the SSID was successfully deleted from Cardinal database
-echo "<font face=\"Verdana\">\n";
-echo "2.4GHz RADIUS SSID Successfully Deleted!";
+?>
 
-// Link back to the delete_ssid_database.php
-echo "<br>";
-echo "<br>";
-echo "<a href=\"delete_ssid_radius_database.php\">Back to Cardinal SSID Deletion Menu</a>";
-echo "</font>";
+</select>
+<br>
+<br>
+<input type="Submit" label="Submit">
+</body>
+</form>
+</html>
+
+<?php
 
 $conn->close();
 
 ?>
-
