@@ -52,8 +52,6 @@ if ($result->num_rows > 0) {
        $phpMySQLUpdate = "UPDATE access_points SET ap_total_clients = '$bashClientsOutput' WHERE ap_id = $queryID";
        $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);
        $phpMySQLValue = mysqli_fetch_object($phpMySQLQuery);
-       $getBandwidth = escapeshellcmd("$scriptsDir/fetch_bandwidth.sh $queryIP $queryUser $queryPass $queryName");
-       $getBandwidthExec = shell_exec($getBandwidth);
      }
 } else {
     echo "";
