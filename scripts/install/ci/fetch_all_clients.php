@@ -26,48 +26,41 @@ SOFTWARE.
 
 */
 
-// Cardinal Login Session
+// Cardinal Configuration Information
 
-session_start();
-
-// If user is not logged into Cardinal, then redirect them to the login page
-
-if (!isset($_SESSION['username'])) {
-header('Location: index.php');
-}
+require_once('/var/www/html/includes/cardinalconfig.php');
 
 // MySQL connection information
 
-require_once(__DIR__ . '/../includes/cardinalconfig.php');
+require_once('/var/www/html/includes/dbconnect.php');
 
-// Fetch AP Session
+// Run Cisco Client Command & Store Results in SQL
 
-$varAPId = $_SESSION['apid'];
+$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_name,ap_id FROM access_points WHERE ap_all_id = 2";
+$result = $conn->query($sql);
 
-// MySQL calculations for access point command
-
-$tftpBackupQuery = mysqli_query($conn,"SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = $varAPId");
-
-// Get the data in place (so it can be passed to Python)
-
+if ($result->num_rows > 0) {
     // store data of each row
-    while($row = mysqli_fetch_array($tftpBackupQuery)) {
+    while($row = $result->fetch_assoc()) {
        $queryIP = $row["ap_ip"];
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
-       $queryTFTP = $_POST['tftp-ip'];
-       $queryTFTPName = $_POST['config-name'];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_tftp_backup.py $queryIP $queryUser $queryPass $queryTFTP $queryTFTPName");
-       $pyOutput = shell_exec($pyCommand);
-       echo "<font face=\"Verdana\">\n";
-       echo "Access Point Configuration Backup Initiated!";
-    }
+       $queryName = $row["ap_name"];
+       $queryID = $row["ap_id"];
+       $bashCommand = escapeshellcmd("$cardinalScripts/fetch_total_clients.sh $queryIP $queryUser $queryPass $queryName");
+       $bashOutput = shell_exec($bashCommand);
+       $bashClients = escapeshellcmd("cat $cardinalScripts/results/$queryName.clients");
+       $bashClientsOutput = shell_exec($bashClients);
+       $bashWipeClients = escapeshellcmd("rm $cardinalScripts/results/$queryName.clients");
+       $bashWipeClientsExec = shell_exec($bashWipeClients);
+       $phpMySQLUpdate = "UPDATE access_points SET ap_total_clients = '$bashClientsOutput' WHERE ap_id = $queryID";
+       $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);
+       $phpMySQLValue = mysqli_fetch_object($phpMySQLQuery);
 
-// Link back to the backup_ap_config.php page
-echo "<br>";
-echo "<br>";
-echo "<a href=\"../backup_ap_config.php\">Back to TFTP Backup Menu</a>";
-echo "</font>";
+     }
+} else {
+    echo "";
+}
 
 $conn->close();
 
