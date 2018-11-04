@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 ''' Cardinal - An Open Source Cisco Wireless Access Point Controller
 
@@ -29,6 +30,7 @@ SOFTWARE.
 import paramiko
 import time
 import sys
+import subprocess
 
 queryIP = sys.argv[1]
 queryUser = sys.argv[2]
@@ -47,10 +49,9 @@ remote_conn_pre.connect(ip, port=22, username=username,
 remote_conn = remote_conn_pre.invoke_shell()
 output = remote_conn.recv(65535)
 
-
-remote_conn.send("sho int gi0 | i Mbps\n")
+remote_conn.send("sho int gi0\n")
 time.sleep(.10)
-output = remote_conn.recv(65535)
-
+sshBandwidth = remote_conn.recv(65535)
+getBandwidth = subprocess.Popen("/bin/echo '%s' | /bin/grep -E -o '.{4}Mbps'"%sshBandwidth, shell=True)
 
 exit()

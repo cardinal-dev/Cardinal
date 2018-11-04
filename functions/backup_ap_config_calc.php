@@ -61,7 +61,6 @@ $tftpBackupQuery = mysqli_query($conn,"SELECT ap_ip,ap_ssh_username,ap_ssh_passw
        $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
        echo "Access Point Configuration Backup Initiated!";
-       echo "</font>";
     }
 
 // Link back to the backup_ap_config.php page
