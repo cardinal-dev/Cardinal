@@ -61,7 +61,7 @@ DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
   `settings_id` int(11) NOT NULL,
   `cardinal_home` text NOT NULL COMMENT 'Directory where Cardinal core resides',
-  `cardinal_scripts` text NOT NULL COMMENT 'Directory where Cardinal scripts resides',
+  `scout_dir` text NOT NULL COMMENT 'Directory where Scout resides',
   `cardinal_tftp` text NOT NULL COMMENT 'Directory where Cardinal TFTP data is stored',
   `poll_schedule` int(11) NOT NULL COMMENT 'Amount (in minutes) when Cardinal fetches information',
   PRIMARY KEY (`settings_id`)

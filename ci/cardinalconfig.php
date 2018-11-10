@@ -58,7 +58,7 @@ if ($configResult->num_rows > 0) {
     // store data of each row
     while($settingsRow = $configResult->fetch_assoc()) {
        $cardinalHome = $settingsRow['cardinal_home'];
-       $scriptsDir = $settingsRow['cardinal_scripts'];
+       $scoutDir = $settingsRow['scout_dir'];
        $cardinalTftp = $settingsRow['cardinal_tftp'];
        $pollSchedule = $settingsRow['poll_schedule'];
      }

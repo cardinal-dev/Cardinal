@@ -2,10 +2,11 @@ sudo: true
 language: php
 php:
 - '7.0'
+- '7.1'
 services:
 - mysql
 install: 
-- source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/install/travis-builder.sh)
+- source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/master/scripts/ci/travis-builder.sh)
 - composer global require nette/tester
 - composer update
 before_script: 
@@ -18,15 +19,16 @@ before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < /var/www/html/sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
-- mysql -u root --password="" cardinal -e "INSERT INTO settings (settings_id,cardinal_home,cardinal_scripts,cardinal_tftp,poll_schedule) VALUES ('1','/var/www/html','/var/www/html/scripts','/var/www/html/scripts/install/ci','2');"
-- sudo mv -f /var/www/html/scripts/install/ci/cardinalconfig.php /var/www/html/includes
-- sudo mv -f /var/www/html/scripts/install/ci/poller.php /var/www/html/scripts
+- mysql -u root --password="" cardinal -e "INSERT INTO settings (settings_id,cardinal_home,scout_dir,cardinal_tftp,poll_schedule) VALUES ('1','/var/www/html','/var/www/html/bin/scout.py','/var/www/html/bin','2');"
+- sudo mv -f /var/www/html/ci/cardinalconfig.php /var/www/html/includes
 - sudo cat /var/www/html/includes/cardinalconfig.php
 - sudo phpenmod mysqli
 - sudo php -m
+- pip install pyinstaller
 script: 
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/*.php
-- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/scripts/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/functions/*.php
-- sudo pyflakes /var/www/html/scripts/*.py
+- sudo pyflakes /var/www/html/bin/*.py
+- sudo pyinstaller --onefile /var/www/html/bin/scout.py
+- if [ $? = 0 ]; then echo "Yay! :) Scout was built successfully!" fi

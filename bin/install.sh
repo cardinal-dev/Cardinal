@@ -20,7 +20,6 @@ echo -e ""
 read -p "Ok, I got it. How about an username for the database? " varDbUsername
 echo -e ""
 read -p "Great! How about a password for the database? " varDbPassword
-echo "Nice! For security, please run this command after you are done configuring Cardinal: cat /dev/null > ~/.bash_history"
 echo -e ""
 read -p "Okay, now we need a name for the database. What is the database name? " varDbName
 echo -e ""

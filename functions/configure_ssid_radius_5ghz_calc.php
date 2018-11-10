@@ -57,13 +57,12 @@ $methodList = $_POST["method_list"];
 
 // Store SSID Data in Database 
 if ($_POST) {
-$ssidUpdate = "INSERT INTO ssids_5ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('$querySsid', '$queryVlan', '$queryBridgeId', '$queryRadioId', '$queryGigaId', '$radiusIp', '$sharedSecret', '$authPort', '$acctPort', '$radiusTimeout', '$radiusGroup', '$methodList')";
-$ssidQuery = mysqli_query($conn,$ssidUpdate);
-$ssidValue = mysqli_fetch_object($ssidQuery);
-
+	$ssidUpdate = "INSERT INTO ssids_5ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('$querySsid', '$queryVlan', '$queryBridgeId', '$queryRadioId', '$queryGigaId', '$radiusIp', '$sharedSecret', '$authPort', '$acctPort', '$radiusTimeout', '$radiusGroup', '$methodList')";
+	$ssidQuery = mysqli_query($conn,$ssidUpdate);
+	$ssidValue = mysqli_fetch_object($ssidQuery);
 // Redirect to this page.
-header('Location: ../configure_ssid_radius_5ghz.php?Success=1');
-exit();
+	header('Location: ../configure_ssid_radius_5ghz.php?Success=1');
+	exit();
 }
 
 // Clear POST Variables

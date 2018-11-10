@@ -52,6 +52,7 @@ if ($conn->query($sql) === TRUE) {
 }
 
 // Redirect to this page.
+
 header('Location: ../delete_aps.php?Success=1');
 
 $conn->close();

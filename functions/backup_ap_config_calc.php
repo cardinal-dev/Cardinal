@@ -57,7 +57,7 @@ $tftpBackupQuery = mysqli_query($conn,"SELECT ap_ip,ap_ssh_username,ap_ssh_passw
        $queryPass = $row["ap_ssh_password"];
        $queryTFTP = $_POST['tftp-ip'];
        $queryTFTPName = $_POST['config-name'];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_tftp_backup.py $queryIP $queryUser $queryPass $queryTFTP $queryTFTPName");
+       $pyCommand = escapeshellcmd("scout --tftp-backup $queryIP $queryUser $queryPass $queryTFTP $queryTFTPName");
        $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
        echo "Access Point Configuration Backup Initiated!";
