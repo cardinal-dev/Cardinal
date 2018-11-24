@@ -34,7 +34,7 @@ function db_connect() {
         // Try and connect to the database, if a connection has not been established yet
     if(!isset($conn)) {
              // Load configuration as an array. Use the actual location of your configuration file
-        $config = parse_ini_file('/var/www/html/scripts/install/ci/cardinalmysql.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
+        $config = parse_ini_file('/var/www/html/ci/cardinalmysql.ini'); // CHANGE THIS TO THE APPROPRIATE LOCATION!
         $conn = mysqli_connect($config['servername'],$config['username'],$config['password'],$config['dbname']);
     }
 
@@ -58,7 +58,7 @@ if ($configResult->num_rows > 0) {
     // store data of each row
     while($settingsRow = $configResult->fetch_assoc()) {
        $cardinalHome = $settingsRow['cardinal_home'];
-       $scriptsDir = $settingsRow['cardinal_scripts'];
+       $scoutDir = $settingsRow['scout_dir'];
        $cardinalTftp = $settingsRow['cardinal_tftp'];
        $pollSchedule = $settingsRow['poll_schedule'];
      }

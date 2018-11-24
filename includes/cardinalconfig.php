@@ -51,14 +51,14 @@ $conn = db_connect();
 
 // Query configuration information
 
-$cardinalConfig = "SELECT cardinal_home,cardinal_scripts,cardinal_tftp,poll_schedule FROM settings WHERE settings_id = 1";
+$cardinalConfig = "SELECT cardinal_home,scout_dir,cardinal_tftp,poll_schedule FROM settings WHERE settings_id = 1";
 $configResult = $conn->query($cardinalConfig);
 
 if ($configResult->num_rows > 0) {
     // store data of each row
     while($settingsRow = $configResult->fetch_assoc()) {
        $cardinalHome = $settingsRow['cardinal_home'];
-       $scriptsDir = $settingsRow['cardinal_scripts'];
+       $scoutDir = $settingsRow['scout_dir'];
        $cardinalTftp = $settingsRow['cardinal_tftp'];
        $pollSchedule = $settingsRow['poll_schedule'];
      }
@@ -66,4 +66,4 @@ if ($configResult->num_rows > 0) {
     echo "";
 }
 
-?> 
+?>

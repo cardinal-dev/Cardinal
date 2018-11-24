@@ -44,9 +44,6 @@ header('Location: index.php');
 <label>TFTP Server IP: </label>
 <input type="text" name="tftp-ip" required>
 <br>
-<label>Config Backup Name: </label>
-<input type="text" name="config-name" required>
-<br>
 <input type="submit" name="Submit" required>
 </font>
 </form>

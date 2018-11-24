@@ -55,7 +55,7 @@ if ($result->num_rows > 0) {
        $queryPass = $row["ap_ssh_password"];
        $queryNewIP = $_POST['ap_ip_change'];
        $querySubnetMask = $_POST['ap_subnetmask'];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_change_ap_ip.py $queryIP $queryUser $queryPass $queryNewIP $querySubnetMask");
+       $pyCommand = escapeshellcmd("scout --change-ip $queryIP $queryUser $queryPass $queryNewIP $querySubnetMask");
        $pyOutput = shell_exec($pyCommand);
        $phpMySQLUpdate = "UPDATE access_points SET ap_ip = '$queryNewIP' WHERE ap_id = '$varAPId'";
        $phpMySQLQuery = mysqli_query($conn,$phpMySQLUpdate);

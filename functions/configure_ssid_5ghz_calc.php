@@ -51,12 +51,12 @@ $queryGigaId = $_POST["giga_sub_id"];
 
 // Store SSID Data in Database 
 if ($_POST) {
-$ssidUpdate = "INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('$querySsid', '$queryVlan', '$queryWpa2', '$queryBridgeId', '$queryRadioId', '$queryGigaId')";
-$ssidQuery = mysqli_query($conn,$ssidUpdate);
-$ssidValue = mysqli_fetch_object($ssidQuery);
+	$ssidUpdate = "INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('$querySsid', '$queryVlan', '$queryWpa2', '$queryBridgeId', '$queryRadioId', '$queryGigaId')";
+	$ssidQuery = mysqli_query($conn,$ssidUpdate);
+	$ssidValue = mysqli_fetch_object($ssidQuery);
 // Redirect to this page.
-header('Location: ../configure_ssid_5ghz.php?Success=1');
-exit();
+	header('Location: ../configure_ssid_5ghz.php?Success=1');
+	exit();
 }
 
 // Clear POST Variables
