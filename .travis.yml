@@ -31,4 +31,3 @@ script:
 - sudo pyflakes /var/www/html/bin/*.py
 - cd /var/www/html/bin
 - sudo pyinstaller --onefile scout.py
-- sudo if [ $? = 0 ]; then echo "Yay! :) Scout was built successfully!" fi
