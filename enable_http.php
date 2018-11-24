@@ -53,7 +53,7 @@ if ($result->num_rows > 0) {
        $queryIP = $row["ap_ip"];
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
-       $pyCommand = escapeshellcmd("python $cardinalScripts/cisco_enable_http.py $queryIP $queryUser $queryPass");
+       $pyCommand = escapeshellcmd("scout --enable-http $queryIP $queryUser $queryPass");
        $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
        echo "Access Point Enable HTTP Functionality Initiated!";

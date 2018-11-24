@@ -40,32 +40,27 @@ header('Location: index.php');
 
 require_once('includes/cardinalconfig.php');
 
-// Add new access point form
+?>
 
-echo "<html>\n";
-echo "<form id=\"add_new_ap\" action=\"functions/add_new_ap_calc.php\" method=\"POST\">\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>Access Point Name:</label>\n";
-echo "<input type=\"text\" name=\"ap_name\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>Access Point IP Address:</label>\n";
-echo "<input type=\"text\" name=\"ap_ip\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
+<html>
+<form id="add_new_ap" action="functions/add_new_ap_calc.php" method="POST">
+<font face="Verdana">
+<label>Access Point Name:</label>
+<input type="text" name="ap_name" required>
+<br>
+<label>Access Point IP Address:</label>
+<input type="text" name="ap_ip" required>
+<br>
 
-// HTML Dropdown for choosing access point group 
+<label>Access Point Group:</label>
 
-echo "<label>Access Point Group:</label>\n";
+<?php $result = $conn->query("select ap_group_id,ap_group_name from access_point_groups"); ?>
 
-$result = $conn->query("select ap_group_id,ap_group_name from access_point_groups");
+<body>
+<form id="configure_ap_group">
+<select name="group_id">
 
-echo "<html>\n";
-echo "<head>\n";
-echo "</head>\n";
-echo "<body>\n";
-echo "<form id=\"configure_ap_group\">\n";
-echo "<select name='group_id'>";
+<?php
 
     while ($row = $result->fetch_assoc()) {
 
@@ -76,26 +71,22 @@ echo "<select name='group_id'>";
 
 }
 
-echo "</select>";
-echo "<br />";
-echo "<font face=\"Verdana\">\n";
-echo "<label>SSH Username:</label>\n";
-echo "<input type=\"text\" name=\"ssh_username\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>SSH Password:</label>\n";
-echo "<input type=\"password\" name=\"ssh_password\" required/>\n";
-echo "<br /> </font>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>SNMP Community:</label>\n";
-echo "<input type=\"password\" name=\"ap_snmp\" required/>\n";
-echo "<br /> </font>\n";
-echo "\n";
-echo "<input type=\"submit\" value=\"Register\">\n";
-echo "</form>\n";
-echo "</body>\n";
-echo "</script>\n";
-echo "</html>\n";
+?>
+
+</select>
+<br>
+<label>SSH Username:</label>
+<input type="text" name="ssh_username" required>
+<br>
+<label>SSH Password:</label>
+<input type="password" name="ssh_password" required>
+<label>SNMP Community:</label>
+<input type="password" name="ap_snmp" required>
+<input type="submit" value="Register">
+</form>
+</html>
+
+<?php
 
 $conn->close();
 

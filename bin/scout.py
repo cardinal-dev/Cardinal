@@ -76,6 +76,14 @@ if queryCommand == "--help":
    print("   scout.py --wr: write configuration to access point")
    print("   scout.py --erase: erase configuration on access point")
    print("   scout.py --count-clients: fetch client associations on access point")
+   print("   scout.py --get-name: fetch access point hostname via SNMP")
+   print("   scout.py --ping: ping access point")
+   print("   scout.py --get-mac: fetch access point MAC address via SNMP")
+   print("   scout.py --get-model: fetch access point model info via SNMP")
+   print("   scout.py --get-serial: fetch access point serial number via SNMP")
+   print("   scout.py --get-location: fetch access point location via SNMP")
+   print("   scout.py --get-ios-info: fetch access point IOS info via SNMP")
+   print("   scout.py --get-uptime: fetch access point uptime info via SNMP")
 
 # cisco_arp.py
 
@@ -1051,7 +1059,11 @@ if queryCommand == "--get-speed":
    remote_conn.send("sho int gi0\n")
    time.sleep(.10)
    sshBandwidth = remote_conn.recv(65535)
-   getBandwidth = subprocess.Popen("/bin/echo '%s' | /bin/grep -E -o '.{4}Mbps'"%sshBandwidth, shell=True)
+   getBandwidth = subprocess.check_output("echo '%s' | grep -E -o '.{4}Mbps' | tr -d 'Mbps'"%sshBandwidth, shell=True)
+   bandwidthSqlCursor = conn.cursor()
+   bandwidthSql = "UPDATE access_points SET ap_bandwidth = '%s' WHERE ap_ip = '%s'" % (getBandwidth,ip)
+   bandwidthSqlCursor.execute(bandwidthSql)
+   conn.commit()
 
 # cisco_tftp_backup.py
 
@@ -1168,5 +1180,119 @@ if queryCommand == "--count-clients":
    countCommand = remote_conn.recv(65535)
    remote_conn.send("show dot11 associations\n")
    time.sleep(.10)
-   countClients = remote_conn.recv(65535)
-   clientResults = subprocess.Popen("/bin/echo '%s' | /bin/grep -o [0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f] | wc -l"%countClients, shell=True)
+   countClient = remote_conn.recv(65535)
+   getClient = subprocess.check_output("echo '%s' | grep -o [0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f] | wc -l"%countClient, shell=True)
+   clientSqlCursor = conn.cursor()
+   clientSql = "UPDATE access_points SET ap_total_clients = '%s' WHERE ap_ip = '%s'" % (getClient,ip)
+   clientSqlCursor.execute(clientSql)
+   conn.commit()
+
+# --get-name
+
+if queryCommand == "--get-name":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   getApName = subprocess.check_output("snmpget -Oqv -v2c -c '%s' '%s' iso.3.6.1.2.1.1.5.0" % (snmp,ip), shell=True)
+   sqlApName = getApName.replace('"', '')
+   apNameCursor = conn.cursor()
+   apNameSql = "UPDATE access_points SET ap_name = '%s' WHERE ap_ip = '%s'" % (sqlApName,ip)
+   apNameCursor.execute(apNameSql)
+   conn.commit() 
+
+# --get-mac
+
+if queryCommand == "--get-mac":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   getApMac = subprocess.check_output("snmpget -Oqv -v2c -c '%s' '%s' iso.3.6.1.2.1.2.2.1.6.3" % (snmp,ip), shell=True)
+   sqlApMac = getApMac.replace('"', '')
+   apMacCursor = conn.cursor()
+   apMacSql = "UPDATE access_points SET ap_mac_addr = '%s' WHERE ap_ip = '%s'" % (sqlApMac,ip)
+   apMacCursor.execute(apMacSql)
+   conn.commit()
+
+# --ping
+
+if queryCommand == "--ping":
+   queryIP = sys.argv[2]
+   ip = queryIP
+   pingAp = subprocess.check_output("ping '%s' -c 10| head -n 2 | tail -n 1 | awk '{print $7}' | tr -d 'time='"%ip, shell=True)
+   pingApCursor = conn.cursor()
+   pingApSql = "UPDATE access_points SET ap_ping_ms = '%s' WHERE ap_ip = '%s'" % (pingAp,ip)
+   pingApCursor.execute(pingApSql)
+   conn.commit()
+
+# --get-model
+
+if queryCommand == "--get-model":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   getApModel = subprocess.check_output("snmpget -Oqv -v2c -c '%s' '%s' iso.3.6.1.2.1.47.1.1.1.1.13.1" % (snmp,ip), shell=True)
+   sqlApModel = getApModel.replace('"', '')
+   apModelCursor = conn.cursor()
+   apModelSql = "UPDATE access_points SET ap_model = '%s' WHERE ap_ip = '%s'" % (sqlApModel,ip)
+   apModelCursor.execute(apModelSql)
+   conn.commit()
+
+# --get-serial
+
+if queryCommand == "--get-serial":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   getApSerial = subprocess.check_output("snmpget -Oqv -v2c -c '%s' '%s' iso.3.6.1.2.1.47.1.1.1.1.11.1" % (snmp,ip), shell=True)
+   sqlApSerial = getApSerial.replace('"', '')
+   apSerialCursor = conn.cursor()
+   apSerialSql = "UPDATE access_points SET ap_serial = '%s' WHERE ap_ip = '%s'" % (sqlApSerial,ip)
+   apSerialCursor.execute(apSerialSql)
+   conn.commit()
+
+# --get-location
+
+if queryCommand == "--get-location":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   getApLocation = subprocess.check_output("snmpget -Oqv -v2c -c '%s' '%s' iso.3.6.1.2.1.1.6.0" % (snmp,ip), shell=True)
+   sqlApLocation = getApLocation.replace('"', '')
+   apLocationCursor = conn.cursor()
+   apLocationSql = "UPDATE access_points SET ap_location = '%s' WHERE ap_ip = '%s'" % (sqlApLocation,ip)
+   apLocationCursor.execute(apLocationSql)
+   conn.commit()
+
+# --get-ios-info
+
+if queryCommand == "--get-ios-info":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   getApIos = subprocess.check_output("snmpget -Oqv -v2c -c '%s' '%s' iso.3.6.1.2.1.1.1.0" % (snmp,ip), shell=True)
+   sqlApIos = getApIos.replace('"', '')
+   apIosCursor = conn.cursor()
+   apIosSql = "UPDATE access_points SET ap_ios_info = '%s' WHERE ap_ip = '%s'" % (sqlApIos,ip)
+   apIosCursor.execute(apIosSql)
+   conn.commit()
+
+# --get-uptime
+
+if queryCommand == "--get-uptime":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   getApUptime = subprocess.check_output("snmpget -Oqv -v2c -c '%s' '%s' iso.3.6.1.2.1.1.3.0" % (snmp,ip), shell=True)
+   sqlApUptime = getApUptime.replace('"', '')
+   apUptimeCursor = conn.cursor()
+   apUptimeSql = "UPDATE access_points SET ap_uptime = '%s' WHERE ap_ip = '%s'" % (sqlApUptime,ip)
+   apUptimeCursor.execute(apUptimeSql)
+   conn.commit()
+

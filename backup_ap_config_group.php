@@ -36,75 +36,15 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-// MySQL connection information
-
-require_once('includes/cardinalconfig.php');
-$result = $conn->query("select ap_group_id,ap_group_name from access_point_groups");
-
-// HTML Dropdown for AP
-
-echo "<html>\n";
-echo "<head>\n";
-echo "</head>\n";
-echo "<body>\n";
-echo "<font face=\"Verdana\">\n"; 
-echo "Choose AP Group:";
-echo "</font>";
-echo "<form id=\"configure_ap\" action=\"\" method=\"POST\">\n";
-echo "<select name='id'>";
-
-    while ($row = $result->fetch_assoc()) {
-
-                  unset($id, $name);
-                  $id = $row['ap_group_id'];
-                  $name = $row['ap_group_name'];
-                  echo '<option value="'.$id.'">'.$name.'</option>';
-
-}
-
-echo "</select>";
-echo "<br>";
-echo "</br>";
-
-// Configure SSID Parameters
-
-echo "<html>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<label>TFTP IP:</label>\n";
-echo "<input type=\"text\" name=\"tftp-ip\" required/>\n";
-echo "<br /> </font>\n";
-echo "<input type=\"submit\" value=\"Submit\">\n";
-echo "\n";
-echo "</form>\n";
-echo "</body>\n";
-echo "</html>\n";
-
-// Fetch POST data from configure_aps.html and execute SQL queries
-$varConfID = $_POST['id'];
-
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = $varConfID";
-$result = $conn->query($sql);
-
-// Get the data in place (so it can be passed to Python)
-
-if ($result->num_rows > 0) {
-    // store data of each row
-    while($row = $result->fetch_assoc()) {
-       $queryIP = $row["ap_ip"];
-       $queryUser = $row["ap_ssh_username"];
-       $queryPass = $row["ap_ssh_password"];
-       $queryTFTP = $_POST['tftp-ip'];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_tftp_backup_group.py $queryIP $queryUser $queryPass $queryTFTP");
-       $pyOutput = shell_exec($pyCommand);
-       echo "<font face=\"Verdana\">\n";
-       echo "Access Point Configuration Backup for Group $name Initiated!";
-       echo "</font>";
-     }
-} else {
-    echo "";
-}
-
-$conn->close();
-
 ?>
 
+<html>
+<form id="tftp_ap" action="functions/backup_ap_config_group_calc.php" method="POST">
+<font face="Verdana">
+<label>TFTP Server IP: </label>
+<input type="text" name="tftp-ip" required>
+<br>
+<input type="submit" name="Submit" required>
+</font>
+</form>
+</html>

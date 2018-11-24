@@ -40,6 +40,7 @@ read -p "Okay, now we need the base location of your Cardinal installation. What
 echo "Thank you for installing Cardinal!"
 
 # Let's create a php_cardinal.php configuration file based on user input (for Cardinal SQL connections)
+rm $varDbCredDir/cardinalmysql.ini
 touch $varDbCredDir/cardinalmysql.ini
 echo "[cardinal_mysql_config]" >> $varDbCredDir/cardinalmysql.ini
 echo 'servername'=""$varDatabaseIP"" >> $varDbCredDir/cardinalmysql.ini
@@ -63,9 +64,3 @@ mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO settings (set
 # Now, let's create a Cardinal admin
 hashedPass=$(python -c 'import crypt; print crypt.crypt("'$varCardinalPass'", "$6$random_salt")')
 mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO users (username,password) VALUES ('$varCardinalUser','$hashedPass')"
-
-# Add poller.php to crontab
-crontab -l > poller
-echo "*/'$varSchedulePoll' * * * * php" $varDirScripts"/poller.php" >> poller
-crontab poller
-rm poller

@@ -38,33 +38,37 @@ header('Location: index.php');
 
 // MySQL connection information
 
-require_once('includes/cardinalconfig.php');
+require_once(__DIR__ . '/../includes/cardinalconfig.php');
 
-// Fetch POST data from configure_aps.html and execute SQL queries
-$varConfID = $_POST['id'];
+// Fetch AP Session
 
-$sql = "SELECT ap_snmp,ap_ip FROM access_points WHERE ap_id = '$varConfID'";
-$result = $conn->query($sql);
+$varGroupId = $_SESSION['groupid'];
 
-if ($result->num_rows > 0) {
+// MySQL calculations for access point command
+
+$tftpBackupQuery = mysqli_query($conn,"SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = $varGroupId");
+
+// Get the data in place (so it can be passed to Python)
+
     // store data of each row
-    while($row = $result->fetch_assoc()) {
-       $querySNMP = $row["ap_snmp"];
+    while($row = mysqli_fetch_array($tftpBackupQuery)) {
        $queryIP = $row["ap_ip"];
-       $fetchSNMP = shell_exec("snmpget -v2c -c $querySNMP $queryIP iso.3.6.1.2.1.1.3.0");
+       $queryUser = $row["ap_ssh_username"];
+       $queryPass = $row["ap_ssh_password"];
+       $queryTFTP = $_POST['tftp-ip'];
+       $queryTFTPName = $_POST['config-name'];
+       $pyCommand = escapeshellcmd("scout --tftp-backup $queryIP $queryUser $queryPass $queryTFTP");
+       $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
-       echo $fetchSNMP;
-     }
-} else {
-    echo "";
-}
+       echo "Access Point Configuration Backup Initiated!";
+    }
 
-// Link back to the fetch_arp.php page
+// Link back to the backup_ap_config.php page
 echo "<br>";
 echo "<br>";
-echo "<a href=\"manage_aps.php\">Back to Manage APs Menu</a>";
+echo "<a href=\"../backup_ap_config.php\">Back to TFTP Backup Menu</a>";
 echo "</font>";
 
 $conn->close();
 
-?> 
+?>

@@ -28,5 +28,5 @@ script:
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/functions/*.php
 - sudo pyflakes /var/www/html/bin/*.py
-- sudo pyinstaller --onefile /var/www/html/bin/scout.py
-- if [ $? = 0 ]; then echo "Yay! :) Scout was built successfully!" fi
+- sudo pyinstaller --onefile scout.py
+- sudo if [ $? = 0 ]; then echo "Yay! :) Scout was built successfully!" fi

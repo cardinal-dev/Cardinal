@@ -52,7 +52,7 @@ if ($result->num_rows > 0) {
        $queryIP = $row["ap_ip"];
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_wr.py $queryIP $queryUser $queryPass");
+       $pyCommand = escapeshellcmd("scout --wr $queryIP $queryUser $queryPass");
        $pyOutput = shell_exec($pyCommand);
      }
 }

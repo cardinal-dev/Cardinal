@@ -54,7 +54,7 @@ if ($result->num_rows > 0) {
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
        $querySNMP = $row["ap_snmp"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_enable_snmp.py $queryIP $queryUser $queryPass $querySNMP");
+       $pyCommand = escapeshellcmd("scout --enable-snmp $queryIP $queryUser $queryPass $querySNMP");
        $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
        echo "Access Point Enable SNMP Functionality Initiated!";
