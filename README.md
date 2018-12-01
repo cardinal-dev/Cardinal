@@ -11,9 +11,7 @@ In her memory, I decided to name my project after her. Because she loved Cardina
 
 Thank you and I hope to see Cardinal reach far and wide!
 
-If anyone is interested in contributing to Cardinal, please contact me! Cardinal definitely needs a better frontend! I also know that some of the SSH & MySQL operations can be more efficient. Please contribute by opening an Issue on Cardinal's GitHub repo or by messaging me at cardinal-dev@mcclunetechnologies.net. 
-
-To the first two contributors, I will send you a Cardinal t-shirt! (black shirt with the Cardinal logo on front)
+If anyone is interested in contributing to Cardinal, please contact me! Cardinal definitely needs a better frontend! I also know that some of the SSH & MySQL operations can be more efficient. Please contribute by opening an Issue on Cardinal's GitHub repo or by messaging me at cardinal-dev@mcclunetechnologies.net.
 
 For installation instructions & documentation, please visit https://cardinal.mcclunetechnologies.net. 
 
