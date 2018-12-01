@@ -44,10 +44,10 @@ header('Location: index.php');
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/css/cardinal-dashboard.css" rel="stylesheet" type="text/css">
-	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
+        <link href="assets/css/jquery-ui.css" rel="stylesheet" type="text/css">
+	<script src="assets/js/jquery.min.js">
 	</script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js">
+	<script src="assets/js/jquery-ui.min.js">
 	</script>
 </head>
 
@@ -485,10 +485,9 @@ header('Location: index.php');
 		</div>
 	</div>
 
-	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css" rel="stylesheet" type="text/css">
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
+	<script src="assets/js/jquery.min.js">
 	</script> 
-	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js">
+	<script src="assets/js/jquery-ui.min.js">
 	</script>
 </body>
 </html>

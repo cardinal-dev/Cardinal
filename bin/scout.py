@@ -84,6 +84,7 @@ if queryCommand == "--help":
    print("   scout.py --get-location: fetch access point location via SNMP")
    print("   scout.py --get-ios-info: fetch access point IOS info via SNMP")
    print("   scout.py --get-uptime: fetch access point uptime info via SNMP")
+   print("   scout.py --reboot: reboot access point via SNMP")
 
 # cisco_arp.py
 
@@ -1296,3 +1297,11 @@ if queryCommand == "--get-uptime":
    apUptimeCursor.execute(apUptimeSql)
    conn.commit()
 
+# --reboot
+
+if queryCommand == "--reboot":
+   queryIP = sys.argv[2]
+   querySNMP = sys.argv[3]
+   ip = queryIP
+   snmp = querySNMP
+   subprocess.check_output("snmpset -v2c -c '%s' '%s' .1.3.6.1.4.1.9.2.9.9.0 i 2" % (snmp,ip), shell=True)
