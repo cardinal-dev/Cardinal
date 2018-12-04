@@ -36,30 +36,26 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-echo "<html>\n";
-echo "<head>\n";
-echo "<font face=\"Verdana\">\n";
-echo "</head>\n";
-echo "<body>\n";
-echo "<form id=\"configure_snmp\" action=\"\" method=\"POST\">\n";
-echo "<input type=\"button\" value=\"Enable SNMP\" name=\"enable-snmp\" onclick=\"askForEnableSNMP()\" />\n";
-echo "<input type=\"button\" value=\"Disable SNMP\" name=\"disable-snmp\" onclick=\"askForDisableSNMP()\" />\n";
-echo "</form>\n";
-echo "<script>\n";
-echo "form=document.getElementById(\"configure_snmp\");\n";
-echo "function askForEnableSNMP() {\n";
-echo "        form.action=\"enable_snmp.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "function askForDisableSNMP() {\n";
-echo "        form.action=\"disable_snmp.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "</font>\n";
-echo "</script>\n";
-echo "</body>\n";
-echo "</html>";
-
-
 ?>
 
+<html>
+<font face="Verdana">
+<body>
+<form id="configure_snmp" action="\" method="POST">
+<input type="button" value="Enable SNMP" name="enable-snmp" onclick="askForEnableSNMP()">
+<input type="button" value="Disable SNMP" name="disable-snmp" onclick="askForDisableSNMP()">
+</form>
+<script>
+  form=document.getElementById("configure_snmp")
+  function askForEnableSNMP() {
+  form.action="enable_snmp.php"
+  form.submit()
+}
+function askForDisableSNMP() {
+  form.action="disable_snmp.php"
+  form.submit()
+}
+</script>
+</font>
+</body>
+</html>

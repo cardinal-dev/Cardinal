@@ -36,27 +36,26 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-echo "<html>\n";
-echo "<head>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<body>\n";
-echo "<form id=\"configure_radius\" action=\"\" method=\"POST\">\n";
-echo "<input type=\"button\" value=\"Enable RADIUS\" name=\"enable-radius\" onclick=\"askForEnableRadius()\" />\n";
-echo "<input type=\"button\" value=\"Disable RADIUS\" name=\"disable-radius\" onclick=\"askForDisableRadius()\" />\n";
-echo "</form>\n";
-echo "<script>\n";
-echo "form=document.getElementById(\"configure_radius\");\n";
-echo "function askForEnableRadius() {\n";
-echo "        form.action=\"enable_radius.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "function askForDisableRadius() {\n";
-echo "        form.action=\"disable_radius.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "</font>\n";
-echo "</script>\n";
-echo "</body>\n";
-echo "</html>";
-
 ?>
+
+<html>
+<font face="Verdana">
+<body>
+<form id="configure_radius" action="\" method="POST">
+<input type="button" value="Enable RADIUS" name="enable-radius" onclick="askForEnableRADIUS()">
+<input type="button" value="Disable RADIUS" name="disable-radius" onclick="askForDisableRADIUS()">
+</form>
+<script>
+  form=document.getElementById("configure_radius")
+  function askForEnableRADIUS() {
+  form.action="enable_radius.php"
+  form.submit()
+}
+function askForDisableRADIUS() {
+  form.action="disable_radius.php"
+  form.submit()
+}
+</script>
+</font>
+</body>
+</html>

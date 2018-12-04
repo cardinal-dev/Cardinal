@@ -36,26 +36,26 @@ if (!isset($_SESSION['username'])) {
 header('Location: index.php');
 }
 
-echo "<html>\n";
-echo "<font face=\"Verdana\">\n";
-echo "<body>\n";
-echo "<form id=\"configure_http\" action=\"\" method=\"POST\">\n";
-echo "<input type=\"button\" value=\"Enable HTTP\" name=\"enable-http\" onclick=\"askForEnableHTTP()\" />\n";
-echo "<input type=\"button\" value=\"Disable HTTP\" name=\"disable-http\" onclick=\"askForDisableHTTP()\" />\n";
-echo "</form>\n";
-echo "<script>\n";
-echo "form=document.getElementById(\"configure_http\");\n";
-echo "function askForEnableHTTP() {\n";
-echo "        form.action=\"enable_http.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "function askForDisableHTTP() {\n";
-echo "        form.action=\"disable_http.php\";\n";
-echo "        form.submit();\n";
-echo "}\n";
-echo "</script>\n";
-echo "</font>\n";
-echo "</body>\n";
-echo "</html>";
-
 ?>
+
+<html>
+<font face="Verdana">
+<body>
+<form id="configure_http" action="\" method="POST">
+<input type="button" value="Enable HTTP" name="enable-http" onclick="askForEnableHTTP()">
+<input type="button" value="Disable HTTP" name="disable-http" onclick="askForDisableHTTP()">
+</form>
+<script>
+  form=document.getElementById("configure_http")
+  function askForEnableHTTP() {
+  form.action="enable_http.php"
+  form.submit()
+}
+function askForDisableHTTP() {
+  form.action="disable_http.php"
+  form.submit()
+}
+</script>
+</font>
+</body>
+</html>
