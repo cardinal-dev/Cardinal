@@ -85,6 +85,7 @@ if queryCommand == "--help":
    print("   scout.py --get-ios-info: fetch access point IOS info via SNMP")
    print("   scout.py --get-uptime: fetch access point uptime info via SNMP")
    print("   scout.py --reboot: reboot access point via SNMP")
+   print("   scout.py --change-name: change access point hostname")
 
 # cisco_arp.py
 
@@ -1305,3 +1306,40 @@ if queryCommand == "--reboot":
    ip = queryIP
    snmp = querySNMP
    subprocess.check_output("snmpset -v2c -c '%s' '%s' .1.3.6.1.4.1.9.2.9.9.0 i 2" % (snmp,ip), shell=True)
+
+# --change-name
+
+if queryCommand == "--change-name":
+   queryIP = sys.argv[2]
+   queryUser = sys.argv[3]
+   queryPass = sys.argv[4]
+   queryApName = sys.argv[5]
+   ip = queryIP
+   username = queryUser
+   password = queryPass
+   apName = queryApName
+   remote_conn_pre = paramiko.SSHClient()
+   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   remote_conn_pre.connect(ip, port = 22, username = username,
+                           password = password,
+                           look_for_keys = False, allow_agent = False)
+   remote_conn = remote_conn_pre.invoke_shell()
+   output = remote_conn.recv(65535)
+   remote_conn.send("enable\n")
+   time.sleep(.10)
+   output = remote_conn.recv(65535)
+   remote_conn.send('%s\n' % password)
+   time.sleep(.15)
+   output = remote_conn.recv(65535)
+   remote_conn.send("conf t\n")
+   time.sleep(.10)
+   output = remote_conn.recv(65535)
+   remote_conn.send('hostname %s' % apName)
+   time.sleep(.10)
+   output = remote_conn.recv(65535)
+   remote_conn.send("do wr\n")
+   time.sleep(.10)
+   apNameCursor = conn.cursor()
+   sqlApName = "UPDATE access_points SET ap_name = '%s' WHERE ap_ip = '%s'" % (apName,ip)
+   apNameCursor.execute(sqlApName)
+   conn.commit()
