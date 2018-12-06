@@ -44,7 +44,7 @@ require_once('includes/cardinalconfig.php');
 
 $varAPId = $_SESSION['apid'];
 
-$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = $varAPId";
+$sql = "SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp,ap_location FROM access_points WHERE ap_id = $varAPId";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -54,7 +54,8 @@ if ($result->num_rows > 0) {
        $queryUser = $row["ap_ssh_username"];
        $queryPass = $row["ap_ssh_password"];
        $querySNMP = $row["ap_snmp"];
-       $pyCommand = escapeshellcmd("python $scriptsDir/cisco_disable_snmp.py $queryIP $queryUser $queryPass $querySNMP");
+       $queryLocation = $row["ap_location"];
+       $pyCommand = escapeshellcmd("scout --disable-snmp $queryIP $queryUser $queryPass $querySNMP $queryLocation");
        $pyOutput = shell_exec($pyCommand);
        echo "<font face=\"Verdana\">\n";
        echo "Access Point Disable SNMP Functionality Initiated!";

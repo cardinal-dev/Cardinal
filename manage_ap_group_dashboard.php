@@ -74,29 +74,6 @@ $_SESSION['groupid'] = $varGroupId;
 			<div class="navbar-header">
 				<button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="./dashboard.php">Cardinal</a>
 			</div>
-
-
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav navbar-left">
-					<li>
-						<a href="./">Home</a>
-					</li>
-
-
-					<li>
-						<a href="http://cardinal.mcclunetechnologies.net">Developer</a>
-					</li>
-
-
-					<li>
-						<a href="https://github.com/falcon78921">Source</a>
-					</li>
-
-
-					<li>
-						<a href="https://github.com/falcon78921">Technical Support</a>
-					</li>
-				</ul>
 			</div>
 		</div>
 	</div>

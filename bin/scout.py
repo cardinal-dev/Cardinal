@@ -900,6 +900,9 @@ if queryCommand == "--disable-radius":
    remote_conn.send("no aaa new-model\n")
    time.sleep(.10)
    output = remote_conn.recv(65535)
+   remote_conn.send("\n")
+   time.sleep(.10)
+   output = remote_conn.recv(65535)
    remote_conn.send("do wr\n")
    time.sleep(.10)
    output = remote_conn.recv(65535)
@@ -911,10 +914,12 @@ if queryCommand == "--disable-snmp":
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    querySNMP = sys.argv[5]
+   queryLocation = sys.argv[6]
    ip = queryIP
    username = queryUser
    password = queryPass
    snmp = querySNMP
+   location = queryLocation
    remote_conn_pre = paramiko.SSHClient()
    remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
    remote_conn_pre.connect(ip, port = 22, username = username,
@@ -932,6 +937,9 @@ if queryCommand == "--disable-snmp":
    time.sleep(.10)
    output = remote_conn.recv(65535)
    remote_conn.send('no snmp-server community %s RW\n' % snmp)
+   time.sleep(.10)
+   output = remote_conn.recv(65535)
+   remote_conn.send('no snmp-server location %s\n' % location)
    time.sleep(.10)
    output = remote_conn.recv(65535)
    remote_conn.send('no snmp-server system-shutdown\n')
@@ -1074,12 +1082,10 @@ if queryCommand == "--tftp-backup":
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    queryTFTP = sys.argv[5]
-   queryTFTPName = sys.argv[6]
    ip = queryIP
    username = queryUser
    password = queryPass
    tftp = queryTFTP
-   tftpname = queryTFTPName
    remote_conn_pre = paramiko.SSHClient()
    remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
    remote_conn_pre.connect(ip, port = 22, username = username,
@@ -1099,7 +1105,7 @@ if queryCommand == "--tftp-backup":
    remote_conn.send('%s\n' % tftp)
    time.sleep(.15)
    output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % tftpname)
+   remote_conn.send("\n")
    time.sleep(.15)
    output = remote_conn.recv(65535)
 
