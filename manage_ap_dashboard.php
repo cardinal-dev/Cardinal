@@ -77,33 +77,8 @@ $_SESSION['apid'] = $varAPId;
 			<div class="navbar-header">
 				<button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="./dashboard.php">Cardinal</a>
 			</div>
-
-
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav navbar-left">
-					<li>
-						<a href="./">Home</a>
-					</li>
-
-
-					<li>
-						<a href="http://cardinal.mcclunetechnologies.net">Developer</a>
-					</li>
-
-
-					<li>
-						<a href="https://github.com/falcon78921">Source</a>
-					</li>
-
-
-					<li>
-						<a href="https://github.com/falcon78921">Technical Support</a>
-					</li>
-				</ul>
-			</div>
 		</div>
 	</div>
-
 
 	<div class="container-fluid">
 		<div class="row">
@@ -329,6 +304,47 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-notes">
                                                 Configure SNMP on A Single Access Point
+                                        </div>
+                                </div>
+                        </div>
+
+                                <div class="col-sm-6 col-md-4">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Deploy SSID
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="deploy_ssid" href="deploy_ssid_wizard.php"><img src="assets/img/cardinal5.png"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="deployssid" style="display:none;" title="Deploy SSID">
+                                                <iframe height="350" id="deploy_ssid_frame" name="deploy_ssid_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                        $(document).ready(function () {
+                                        $(".deploy_ssid").click(function () {
+                                           $("#deploy_ssid_frame").attr('src', $(this).attr("href"));
+                                           $("#deployssid").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#deploy_ssid_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                Deploy SSID to Access Point
                                         </div>
                                 </div>
                         </div>

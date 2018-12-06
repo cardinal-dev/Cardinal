@@ -322,7 +322,7 @@ header('Location: index.php');
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
 					<div class="chart-title">
-						Manage Cardinal Access Point
+						Manage Access Point
 					</div>
 
 
@@ -363,7 +363,7 @@ header('Location: index.php');
                         <div class="col-sm-6 col-md-4">
                                 <div class="chart-wrapper">
                                         <div class="chart-title">
-                                                Manage Cardinal Access Point Group
+                                                Manage Access Point Group
                                         </div>
 
 
