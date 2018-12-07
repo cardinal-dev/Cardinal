@@ -1,33 +1,42 @@
-sudo: true
-language: php
-php:
-- '7.0'
-services:
-- mysql
-install: 
-- source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/development/ci/travis-builder.sh)
-- composer global require nette/tester
-- composer update
-- sudo pip install pyinstaller
+--- 
+after_success: 
+  - "sbt coveralls"
 before_script: 
-- sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
-- sudo grep -o "/path/to/cardinalmysql.ini" /var/www/html/includes/cardinalconfig.php
-- sudo chown -R www-data:www-data /var/www/html
-- sudo chmod a+x /home/travis/.config/composer/vendor/nette/tester/src/tester.php
-- cd /home/travis/.config/composer/vendor/nette/tester
-- ls /home/travis/.config/composer/vendor/nette/tester
-- mysql -e 'CREATE DATABASE cardinal;'
-- mysql -u root --password="" cardinal < /var/www/html/sql/cardinal.sql
-- mysql -e 'SHOW TABLES from cardinal;'
-- mysql -u root --password="" cardinal -e "INSERT INTO settings (settings_id,cardinal_home,scout_dir,cardinal_tftp,poll_schedule) VALUES ('1','/var/www/html','/var/www/html/bin/scout.py','/var/www/html/bin','2');"
-- sudo mv -f /var/www/html/ci/cardinalconfig.php /var/www/html/includes
-- sudo cat /var/www/html/includes/cardinalconfig.php
-- sudo phpenmod mysqli
-- sudo php -m
+  - "sudo cp -r * /var/www/html"
+  - "sudo grep -o \"/path/to/cardinalmysql.ini\" /var/www/html/includes/cardinalconfig.php"
+  - "sudo chown -R www-data:www-data /var/www/html"
+  - "sudo chmod a+x /home/travis/.config/composer/vendor/nette/tester/src/tester.php"
+  - "cd /home/travis/.config/composer/vendor/nette/tester"
+  - "ls /home/travis/.config/composer/vendor/nette/tester"
+  - "mysql -e 'CREATE DATABASE cardinal;'"
+  - "mysql -u root --password=\"\" cardinal < /var/www/html/sql/cardinal.sql"
+  - "mysql -e 'SHOW TABLES from cardinal;'"
+  - "mysql -u root --password=\"\" cardinal -e \"INSERT INTO settings (settings_id,cardinal_home,scout_dir,cardinal_tftp,poll_schedule) VALUES ('1','/var/www/html','/var/www/html/bin/scout.py','/var/www/html/bin','2');\""
+  - "sudo mv -f /var/www/html/ci/cardinalconfig.php /var/www/html/includes"
+  - "sudo cat /var/www/html/includes/cardinalconfig.php"
+  - "sudo phpenmod mysqli"
+  - "sudo php -m"
+install: 
+  - "source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/development/ci/travis-builder.sh)"
+  - "composer global require nette/tester"
+  - "composer update"
+  - "sudo pip install pyinstaller"
+language: php
+notifications: 
+  email: 
+    recipients: 
+      - cardinal-dev@mcclunetechnologies.net
+php: 
+  - "7.0"
 script: 
-- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/*.php
-- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/*.php
-- sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/functions/*.php
-- sudo pyflakes /var/www/html/bin/*.py
-- cd /var/www/html/bin
-- sudo pyinstaller --onefile scout.py
+  - "sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/*.php"
+  - "sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/*.php"
+  - "sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/functions/*.php"
+  - "sudo pyflakes /var/www/html/bin/*.py"
+  - "cd /var/www/html/bin"
+  - "sudo pyinstaller --onefile scout.py"
+  - "sbt clean coverage test"
+services: 
+  - mysql
+sudo: true
+

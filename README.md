@@ -1,5 +1,6 @@
 ![alt text](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/09/cardinal.png)
 [![Build Status](https://travis-ci.org/falcon78921/Cardinal.svg?branch=master)](https://travis-ci.org/falcon78921/Cardinal)
+[![Coverage Status](https://coveralls.io/repos/github/falcon78921/Cardinal/badge.svg?branch=master)](https://coveralls.io/github/falcon78921/Cardinal?branch=master)
 
 <h1>Cardinal</h1>
 
