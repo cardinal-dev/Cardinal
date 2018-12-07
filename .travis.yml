@@ -31,3 +31,5 @@ script:
 - sudo pyflakes /var/www/html/bin/*.py
 - cd /var/www/html/bin
 - sudo pyinstaller --onefile scout.py
+after_success:
+- echo "Yay! Cardinal is ready for flight! :)"
