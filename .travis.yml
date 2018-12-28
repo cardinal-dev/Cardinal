@@ -8,7 +8,7 @@ install:
 - source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/development/ci/travis-builder.sh)
 - composer global require nette/tester
 - composer update
-- sudo pip install pyinstaller coverage
+- sudo pip install pyinstaller
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo grep -o "/path/to/cardinalmysql.ini" /var/www/html/includes/cardinalconfig.php
@@ -32,5 +32,4 @@ script:
 - cd /var/www/html/bin
 - sudo pyinstaller --onefile scout.py
 after_success:
-- bash <(curl -s https://codecov.io/bash)
 - echo "Yay! Cardinal is ready for flight! :)"
