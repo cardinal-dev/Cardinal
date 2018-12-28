@@ -32,4 +32,5 @@ script:
 - cd /var/www/html/bin
 - sudo pyinstaller --onefile scout.py
 after_success:
+- bash <(curl -s https://codecov.io/bash)
 - echo "Yay! Cardinal is ready for flight! :)"
