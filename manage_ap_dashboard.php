@@ -147,6 +147,48 @@ $_SESSION['apid'] = $varAPId;
                         <div class="col-sm-6 col-md-4">
                                 <div class="chart-wrapper">
                                         <div class="chart-title">
+                                                Change Access Point Name
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="change_ap_name" href="configure_ap_name.php"><img src="assets/img/cardinal12.png"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="changeapname" style="display:none;" title="Change Access Point Name">
+                                                <iframe height="350" id="change_ap_name_frame" name="change_ap_name_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                                $(document).ready(function () {
+                                                $(".change_ap_name").click(function () {
+                                                $("#change_ap_name_frame").attr('src', $(this).attr("href"));
+                                                $("#changeapname").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#change_ap_name_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                Change An Access Point's Hostname
+                                        </div>
+                                </div>
+                        </div>
+
+
+                        <div class="col-sm-6 col-md-4">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
                                                 TFTP Backup
                                         </div>
 
