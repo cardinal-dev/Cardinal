@@ -163,109 +163,22 @@ if scoutCommand == "--create-ssid-24":
 # cisco_configure_ssid_5ghz.py
 
 if scoutCommand == "--create-ssid-5":
-   queryIP = sys.argv[2]
-   queryUser = sys.argv[3]
-   queryPass = sys.argv[4]
-   querySSID = sys.argv[5]
-   queryWPA2 = sys.argv[6]
-   queryVlan = sys.argv[7]
-   queryBridgeGroup = sys.argv[8]
-   queryRadioSub = sys.argv[9]
-   queryGigaSub = sys.argv[10]
-   ip = queryIP
-   username = queryUser
-   password = queryPass
-   ssid = querySSID
-   wpa2pass = queryWPA2
-   vlan = queryVlan
-   bridgegroup = queryBridgeGroup
-   radiosub = queryRadioSub
-   gigasub = queryGigaSub
-   scoutSshConnect_pre = paramiko.SSHClient()
-   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   scoutSshConnect_pre.connect(ip, port = 22, username = username,
-                           password = password,
-                           look_for_keys = False, allow_agent = False)
-   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("enable\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('%s\n' % password)
-   time.sleep(.15)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("conf t\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("auth open\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("mbssid guest-mode\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("auth key-man wpa version 2\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('wpa-psk ascii %s\n' % wpa2pass)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('vlan %s\n' % vlan)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("end\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("conf t\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("int d1\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("mbssid\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('encryption vlan %s mode ciphers aes\n' % vlan)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("no shutdown\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("int d1\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('ssid %s\n' % ssid)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("exit\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('int d1.%s\n' % radiosub)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('int gi0.%s\n' % gigasub)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
-   scoutSshConnect.send("do wr\n")
-   time.sleep(.10)
-   output = scoutSshConnect.recv(65535)
+    ip = ipInfo()
+    username, password, scoutSsh, scoutSshConnect = sshInfo()
+    ssid = sys.argv[5]
+    wpa2pass = sys.argv[6]
+    vlan = sys.argv[7]
+    bridgegroup = sys.argv[8]
+    radiosub = sys.argv[9]
+    gigasub = sys.argv[10]
+    scoutSshConnect.send("enable\n" + "conf t\n" + 'dot11 ssid {0}\n'.format(ssid) + "auth open\n" + "mbssid guest-mode\n" 
+                         + "auth key-man wpa version 2\n" + 'wpa-psk ascii {0}\n'.format(wpa2pass) + 'vlan {0}\n'.format(vlan)
+                         + "end\n" + "conf t\n" + "int d1\n" + "mbssid\n" + 'encryption vlan {0} mode ciphers aes\n'.format(vlan)
+                         + "no shutdown\n" + 'dot11 ssid {0}\n'.format(ssid) + "int d1\n" + 'ssid {0}\n'.format(ssid) + "exit\n" +
+                         'int d1.{0}\n'.format(radiosub) + 'encapsulation dot1q {0}\n'.format(vlan) + 'bridge-group {0}\n'.format(bridgegroup)
+			 + 'int gi0.{0}\n'.format(gigasub) + 'encapsulation dot1q {0}\n'.format(vlan) + 'bridge-group {0}\n'.format(bridgegroup)
+                         + "do wr\n")
+    scoutSsh.close()
 
 # cisco_configure_ssid_radius.py
 
