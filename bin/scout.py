@@ -1,11 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
 
 ''' Cardinal - An Open Source Cisco Wireless Access Point Controller
 
 MIT License
 
-Copyright © 2017 falcon78921
+Copyright © 2019 falcon78921
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,11 +31,11 @@ import time
 import sys
 import subprocess
 import mysql.connector
-from ConfigParser import SafeConfigParser
+from configparser import ConfigParser
 
 # Connect to MySQL database
 
-mysqlConfig = SafeConfigParser()
+mysqlConfig = ConfigParser()
 mysqlConfig.read("/path/to/cardinalmysql.ini")
 mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
 mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
@@ -47,253 +46,123 @@ conn = mysql.connector.connect(host = mysqlHost, user = mysqlUser, passwd = mysq
 
 # Variable declarations
 
-queryCommand = sys.argv[1]
+scoutCommand = sys.argv[1]
+
+# IP information
+
+def ipInfo():
+    ip = sys.argv[2]
+    return ip
+
+# SSH information
+
+def sshInfo():
+    username = sys.argv[3]
+    password = sys.argv[4]
+    scoutSsh = paramiko.SSHClient()
+    scoutSsh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    scoutSsh.connect(ip, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
+    scoutSshConnect = scoutSsh.invoke_shell()
+    return username, password, scoutSsh, scoutSshConnect
 
 # Scout help & usage
 
-if queryCommand == "--help":
-   print("Scout: Cardinal CLI for managing Cisco access points")
-   print("Usage:")
-   print("   scout.py --get-arp: print access point ARP table")
-   print("   scout.py --led: trigger LED function for 30 seconds")
-   print("   scout.py --change-ip: change access point IP")
-   print("   scout.py --create-ssid-24: create a 2.4GHz SSID")
-   print("   scout.py --create-ssid-5: create a 5GHz SSID")
-   print("   scout.py --create-ssid-radius-24: create a 2.4GHz RADIUS SSID")
-   print("   scout.py --create-ssid-radius-5: create a 5GHz RADIUS SSID")
-   print("   scout.py --delete-ssid-24: delete a 2.4GHz SSID")
-   print("   scout.py --delete-ssid-5: delete a 5GHz SSID")
-   print("   scout.py --delete-ssid-radius-24: delete a 2.4GHz RADIUS SSID")
-   print("   scout.py --delete-ssid-radius-5: delete a 5GHz RADIUS SSID")
-   print("   scout.py --disable-http: disable access point HTTP server")
-   print("   scout.py --disable-radius: disable access point RADIUS function") 
-   print("   scout.py --disable-snmp: disable access point SNMP function")
-   print("   scout.py --enable-http: enable access point HTTP function")
-   print("   scout.py --enable-radius: enable access point RADIUS function")
-   print("   scout.py --enable-snmp: enable access point SNMP function")
-   print("   scout.py --get-speed: show access point link speed")
-   print("   scout.py --tftp-backup: backup access point config via TFTP")
-   print("   scout.py --wr: write configuration to access point")
-   print("   scout.py --erase: erase configuration on access point")
-   print("   scout.py --count-clients: fetch client associations on access point")
-   print("   scout.py --get-name: fetch access point hostname via SNMP")
-   print("   scout.py --ping: ping access point")
-   print("   scout.py --get-mac: fetch access point MAC address via SNMP")
-   print("   scout.py --get-model: fetch access point model info via SNMP")
-   print("   scout.py --get-serial: fetch access point serial number via SNMP")
-   print("   scout.py --get-location: fetch access point location via SNMP")
-   print("   scout.py --get-ios-info: fetch access point IOS info via SNMP")
-   print("   scout.py --get-uptime: fetch access point uptime info via SNMP")
-   print("   scout.py --reboot: reboot access point via SNMP")
-   print("   scout.py --change-name: change access point hostname")
+if scoutCommand == "--help":
+    print("Scout: Cardinal CLI for managing Cisco access points")
+    print("Usage:")
+    print("   scout.py --get-arp: print access point ARP table")
+    print("   scout.py --led: trigger LED function for 30 seconds")
+    print("   scout.py --change-ip: change access point IP")
+    print("   scout.py --create-ssid-24: create a 2.4GHz SSID")
+    print("   scout.py --create-ssid-5: create a 5GHz SSID")
+    print("   scout.py --create-ssid-radius-24: create a 2.4GHz RADIUS SSID")
+    print("   scout.py --create-ssid-radius-5: create a 5GHz RADIUS SSID")
+    print("   scout.py --delete-ssid-24: delete a 2.4GHz SSID")
+    print("   scout.py --delete-ssid-5: delete a 5GHz SSID")
+    print("   scout.py --delete-ssid-radius-24: delete a 2.4GHz RADIUS SSID")
+    print("   scout.py --delete-ssid-radius-5: delete a 5GHz RADIUS SSID")
+    print("   scout.py --disable-http: disable access point HTTP server")
+    print("   scout.py --disable-radius: disable access point RADIUS function") 
+    print("   scout.py --disable-snmp: disable access point SNMP function")
+    print("   scout.py --enable-http: enable access point HTTP function")
+    print("   scout.py --enable-radius: enable access point RADIUS function")
+    print("   scout.py --enable-snmp: enable access point SNMP function")
+    print("   scout.py --get-speed: show access point link speed")
+    print("   scout.py --tftp-backup: backup access point config via TFTP")
+    print("   scout.py --wr: write configuration to access point")
+    print("   scout.py --erase: erase configuration on access point")
+    print("   scout.py --count-clients: fetch client associations on access point")
+    print("   scout.py --get-name: fetch access point hostname via SNMP")
+    print("   scout.py --ping: ping access point")
+    print("   scout.py --get-mac: fetch access point MAC address via SNMP")
+    print("   scout.py --get-model: fetch access point model info via SNMP")
+    print("   scout.py --get-serial: fetch access point serial number via SNMP")
+    print("   scout.py --get-location: fetch access point location via SNMP")
+    print("   scout.py --get-ios-info: fetch access point IOS info via SNMP")
+    print("   scout.py --get-uptime: fetch access point uptime info via SNMP")
+    print("   scout.py --reboot: reboot access point via SNMP")
+    print("   scout.py --change-name: change access point hostname")
 
 # cisco_arp.py
 
-if queryCommand == "--get-arp":
-   queryIP = sys.argv[2]
-   queryUser = sys.argv[3]
-   queryPass = sys.argv[4]
-   ip = queryIP
-   username = queryUser
-   password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
-                        password = password,
-                        look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   arpCommand = remote_conn.recv(65535)
-   remote_conn.send("show ip arp\n")
-   time.sleep(.10)
-   arp = remote_conn.recv(65535)
-   print arp
+if scoutCommand == "--get-arp":
+    ip = ipInfo()
+    username, password, scoutSsh, scoutSshConnect = sshInfo()
+    scoutSshConnect.send("show ip arp\n")
+    time.sleep(.10)
+    arpCommand = scoutSshConnect.recv(65535)
+    scoutSsh.close()
+    arpCommandOutput = arpCommand.decode(encoding = 'UTF-8')
+    print(arpCommandOutput)
 
 # cisco_led.py
 
-if queryCommand == "--led":
-   queryIP = sys.argv[2]
-   queryUser = sys.argv[3]
-   queryPass = sys.argv[4]
-   ip = queryIP
-   username = queryUser
-   password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
-                        password = password,
-                        look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("led flash 30\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
+if scoutCommand == "--led":
+    ip = ipInfo()
+    username, password, scoutSsh, scoutSshConnect = sshInfo()
+    scoutSshConnect.send("led flash 30\n")
+    scoutSsh.close()
 
 # cisco_change_ap_ip.py
 
-if queryCommand == "--change-ip":
-   queryIP = sys.argv[2]
-   queryUser = sys.argv[3]
-   queryPass = sys.argv[4]
-   ip = queryIP
-   username = queryUser
-   password = queryPass
-   queryNewIp = sys.argv[5]
-   querySubnetMask = sys.argv[6]
-   newIp = queryNewIp
-   subnetMask = querySubnetMask
-   remote_conn_pre=paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port=22, username=username,
-                        password=password,
-                        look_for_keys=False, allow_agent=False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
-   time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int BVI1\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('ip address %s %s\n' % (newIp,subnetMask))
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-# Open Second SSH Connection for New IP (Cardinal)
-   remote_conn_pre2=paramiko.SSHClient()
-   remote_conn_pre2.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre2.connect(newIp, port = 22, username = username,
-                        password = password,
-                        look_for_keys = False, allow_agent = False)
-   remote_conn2 = remote_conn_pre2.invoke_shell()
-   output = remote_conn2.recv(65535)
-   remote_conn2.send("enable\n")
-   time.sleep(.10)
-   output = remote_conn2.recv(65535)
-   remote_conn2.send('%s\n' % password)
-   time.sleep(.15)
-   output = remote_conn2.recv(65535)
-   remote_conn2.send("conf t\n")
-   time.sleep(.10)
-   output = remote_conn2.recv(65535)
-   remote_conn2.send("do wr\n")
-   time.sleep(.10)
-   output = remote_conn2.recv(65535)
+if scoutCommand == "--change-ip":
+    ip = ipInfo()
+    username, password, scoutSsh, scoutSshConnect = sshInfo()
+    newIp = sys.argv[5]
+    subnetMask = sys.argv[6]
+    scoutSshConnect.send("enable\n" + "conf t\n" + "int BVI1\n" + 'ip address {0} {1}\n'.format(newIp,subnetMask))
+    scoutSsh.close()
+    # Open Second SSH Connection for New IP (Cardinal)
+    scoutSsh2 = paramiko.SSHClient()
+    scoutSsh2.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    scoutSsh2.connect(newIp, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
+    scoutSshConnect2 = scoutSsh2.invoke_shell()
+    scoutSshConnect2.send("enable\n" + "conf t\n" + "do wr\n")
+    scoutSsh2.close()
 
 # cisco_configure_ssid.py
 
-if queryCommand == "--create-ssid-24":
-   queryIP = sys.argv[2]
-   queryUser = sys.argv[3]
-   queryPass = sys.argv[4]
-   ip = queryIP
-   username = queryUser
-   password = queryPass
-   querySSID = sys.argv[5]
-   queryWPA2 = sys.argv[6]
-   queryVlan = sys.argv[7]
-   queryBridgeGroup = sys.argv[8]
-   queryRadioSub = sys.argv[9]
-   queryGigaSub = sys.argv[10]
-   ssid = querySSID
-   wpa2pass = queryWPA2
-   vlan = queryVlan
-   bridgegroup = queryBridgeGroup
-   radiosub = queryRadioSub
-   gigasub = queryGigaSub
-   remote_conn_pre=paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
-                        password = password,
-                        look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
-   time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("auth open\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid guest-mode\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("auth key-man wpa version 2\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('wpa-psk ascii %s\n' % wpa2pass)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('vlan %s\n' % vlan)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("end\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)  
-   remote_conn.send("conf t\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d0\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encryption vlan %s mode ciphers aes\n' % vlan)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("no shutdown\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d0\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('ssid %s\n' % ssid)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("exit\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int d0.%s\n' % radiosub)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int gi0.%s\n' % gigasub)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
-   time.sleep(.10)
-   output = remote_conn.recv(65535)
+if scoutCommand == "--create-ssid-24":
+    ip = ipInfo()
+    username, password, scoutSsh, scoutSshConnect = sshInfo()
+    ssid = sys.argv[5]
+    wpa2pass = sys.argv[6]
+    vlan = sys.argv[7]
+    bridgegroup = sys.argv[8]
+    radiosub = sys.argv[9]
+    gigasub = sys.argv[10]
+    scoutSshConnect.send("enable\n" + "conf t\n" + 'dot11 ssid {0}\n'.format(ssid) + "auth open\n" + "mbssid guest-mode\n" + 
+                         "auth key-man wpa version 2\n" + 'wpa-psk ascii {0}\n'.format(wpa2pass) + 'vlan {0}\n'.format(vlan) + "end\n" 
+                         + "conf t\n" + "int d0\n" + "mbssid\n" + 'encryption vlan {0} mode ciphers aes\n'.format(vlan) + 
+                         "no shutdown\n" + 'dot11 ssid {0}\n'.format(ssid) + "int d0\n" + 'ssid {0}\n'.format(ssid) + "exit\n" + 
+                         'int d0.{0}\n'.format(radiosub) + 'encapsulation dot1q {0}\n'.format(vlan) + 
+                         'bridge-group {0}\n'.format(bridgegroup) + 'int gi0.{0}\n'.format(gigasub) + 'encapsulation dot1q {0}\n'.format(vlan) +
+                         'bridge-group {0}\n'.format(bridgegroup) + "do wr\n")
+    scoutSsh.close()
 
 # cisco_configure_ssid_5ghz.py
 
-if queryCommand == "--create-ssid-5":
+if scoutCommand == "--create-ssid-5":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -312,95 +181,95 @@ if queryCommand == "--create-ssid-5":
    bridgegroup = queryBridgeGroup
    radiosub = queryRadioSub
    gigasub = queryGigaSub
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("auth open\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("auth open\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid guest-mode\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("mbssid guest-mode\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("auth key-man wpa version 2\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("auth key-man wpa version 2\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('wpa-psk ascii %s\n' % wpa2pass)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('wpa-psk ascii %s\n' % wpa2pass)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('vlan %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('vlan %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("end\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("end\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d1\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d1\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("mbssid\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encryption vlan %s mode ciphers aes\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encryption vlan %s mode ciphers aes\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("no shutdown\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("no shutdown\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d1\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d1\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("exit\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("exit\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int d1.%s\n' % radiosub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('int d1.%s\n' % radiosub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int gi0.%s\n' % gigasub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('int gi0.%s\n' % gigasub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_configure_ssid_radius.py
 
-if queryCommand == "--create-ssid-radius-24":
+if scoutCommand == "--create-ssid-radius-24":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -431,119 +300,119 @@ if queryCommand == "--create-ssid-radius-24":
    timeout = queryRadiusTimeout
    radiusgroup = queryRadiusGroup
    methodlist = queryMethodList
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("auth open\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("auth open\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid guest-mode\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("mbssid guest-mode\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('vlan %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('vlan %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("end\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("end\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d0\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d0\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("mbssid\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encryption vlan %s mode ciphers aes\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encryption vlan %s mode ciphers aes\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("no shutdown\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("no shutdown\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d0\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d0\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("exit\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("exit\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int d0.%s\n' % radiosub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('int d0.%s\n' % radiosub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int gi0.%s\n' % gigasub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('int gi0.%s\n' % gigasub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("aaa new-model\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("aaa new-model\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('radius-server host %s auth-port %s acct-port %s key %s\n' % (radiusip,authport,acctport,sharedsecret))
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('radius-server host %s auth-port %s acct-port %s key %s\n' % (radiusip,authport,acctport,sharedsecret))
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('radius-server timeout %s\n' % timeout)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('radius-server timeout %s\n' % timeout)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('aaa group server radius %s\n' % radiusgroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('aaa group server radius %s\n' % radiusgroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('server %s auth-port %s acct-port %s\n' % (radiusip,authport,acctport))
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('server %s auth-port %s acct-port %s\n' % (radiusip,authport,acctport))
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('aaa authentication login %s group %s\n' % (methodlist,radiusgroup))
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('aaa authentication login %s group %s\n' % (methodlist,radiusgroup))
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('authentication open eap %s\n' % methodlist)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('authentication open eap %s\n' % methodlist)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('authentication network-eap %s\n' % methodlist)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('authentication network-eap %s\n' % methodlist)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("authentication key-man wpa version 2\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("authentication key-man wpa version 2\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_configure_ssid_radius_5ghz.py
 
-if queryCommand == "--create-ssid-radius-5":
+if scoutCommand == "--create-ssid-radius-5":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -574,119 +443,119 @@ if queryCommand == "--create-ssid-radius-5":
    timeout = queryRadiusTimeout
    radiusgroup = queryRadiusGroup
    methodlist = queryMethodList
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("auth open\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("auth open\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid guest-mode\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("mbssid guest-mode\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('vlan %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('vlan %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("end\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("end\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d1\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d1\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("mbssid\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("mbssid\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encryption vlan %s mode ciphers aes\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encryption vlan %s mode ciphers aes\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("no shutdown\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("no shutdown\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d1\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d1\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("exit\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("exit\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int d1.%s\n' % radiosub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('int d1.%s\n' % radiosub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('int gi0.%s\n' % gigasub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('int gi0.%s\n' % gigasub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('encapsulation dot1q %s\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('encapsulation dot1q %s\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('bridge-group %s\n' % bridgegroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('bridge-group %s\n' % bridgegroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("aaa new-model\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("aaa new-model\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('radius-server host %s auth-port %s acct-port %s key %s\n' % (radiusip,authport,acctport,sharedsecret))
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('radius-server host %s auth-port %s acct-port %s key %s\n' % (radiusip,authport,acctport,sharedsecret))
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('radius-server timeout %s\n' % timeout)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('radius-server timeout %s\n' % timeout)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('aaa group server radius %s\n' % radiusgroup)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('aaa group server radius %s\n' % radiusgroup)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('server %s auth-port %s acct-port %s\n' % (radiusip,authport,acctport))
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('server %s auth-port %s acct-port %s\n' % (radiusip,authport,acctport))
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('aaa authentication login %s group %s\n' % (methodlist,radiusgroup))
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('aaa authentication login %s group %s\n' % (methodlist,radiusgroup))
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('authentication open eap %s\n' % methodlist)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('authentication open eap %s\n' % methodlist)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('authentication network-eap %s\n' % methodlist)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('authentication network-eap %s\n' % methodlist)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("authentication key-man wpa version 2\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("authentication key-man wpa version 2\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_delete_ssid.py
 
-if queryCommand == "--delete-ssid-24":
+if scoutCommand == "--delete-ssid-24":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -701,44 +570,44 @@ if queryCommand == "--delete-ssid-24":
    vlan = queryVlan
    radiosub = queryRadioSub
    gigasub = queryGigaSub
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no int d0.%s\n' % radiosub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no int d0.%s\n' % radiosub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no int gi0.%s\n' % gigasub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no int gi0.%s\n' % gigasub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d0\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d0\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no encryption vlan %s mode ciphers aes-ccm\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no encryption vlan %s mode ciphers aes-ccm\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_delete_ssid_5ghz.py
 
-if queryCommand == "--delete-ssid-5":
+if scoutCommand == "--delete-ssid-5":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -753,44 +622,44 @@ if queryCommand == "--delete-ssid-5":
    vlan = queryVlan
    radiosub = queryRadioSub
    gigasub = queryGigaSub
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no int d1.%s\n' % radiosub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no int d1.%s\n' % radiosub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no int gi0.%s\n' % gigasub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no int gi0.%s\n' % gigasub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d1\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d1\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no encryption vlan %s mode ciphers aes-ccm\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no encryption vlan %s mode ciphers aes-ccm\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_delete_ssid_radius.py
 
-if (queryCommand == "--delete-ssid-radius-24") or (queryCommand == "--delete-ssid-radius-5"):
+if (scoutCommand == "--delete-ssid-radius-24") or (scoutCommand == "--delete-ssid-radius-5"):
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -805,111 +674,111 @@ if (queryCommand == "--delete-ssid-radius-24") or (queryCommand == "--delete-ssi
    vlan = queryVlan
    radiosub = queryRadioSub
    gigasub = queryGigaSub
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no dot11 ssid %s\n' % ssid)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no dot11 ssid %s\n' % ssid)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no int d0.%s\n' % radiosub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no int d0.%s\n' % radiosub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no int gi0.%s\n' % gigasub)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no int gi0.%s\n' % gigasub)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("int d0\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("int d0\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no encryption vlan %s mode ciphers aes-ccm\n' % vlan)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no encryption vlan %s mode ciphers aes-ccm\n' % vlan)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_disable_http.py
 
-if queryCommand == "--disable-http":
+if scoutCommand == "--disable-http":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,  
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,  
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("no ip http server\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("no ip http server\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_disable_radius.py
 
-if queryCommand == "--disable-radius":
+if scoutCommand == "--disable-radius":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,  
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,  
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("no aaa new-model\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("no aaa new-model\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_disable_snmp.py
 
-if queryCommand == "--disable-snmp":
+if scoutCommand == "--disable-snmp":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -920,102 +789,102 @@ if queryCommand == "--disable-snmp":
    password = queryPass
    snmp = querySNMP
    location = queryLocation
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no snmp-server community %s RW\n' % snmp)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no snmp-server community %s RW\n' % snmp)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no snmp-server location %s\n' % location)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no snmp-server location %s\n' % location)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('no snmp-server system-shutdown\n')
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('no snmp-server system-shutdown\n')
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_enable_http.py
 
-if queryCommand == "--enable-http":
+if scoutCommand == "--enable-http":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,  
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,  
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("ip http server\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("ip http server\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_enable_radius.py
 
-if queryCommand == "--enable-radius":
+if scoutCommand == "--enable-radius":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,  
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,  
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("aaa new-model\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("aaa new-model\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_enable_snmp.py
 
-if queryCommand == "--enable-snmp":
+if scoutCommand == "--enable-snmp":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -1024,51 +893,51 @@ if queryCommand == "--enable-snmp":
    username = queryUser
    password = queryPass
    snmp = querySNMP
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('snmp-server community %s RW\n' % snmp)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('snmp-server community %s RW\n' % snmp)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('snmp-server system-shutdown\n')
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('snmp-server system-shutdown\n')
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_get_speed.py
 
-if queryCommand == "--get-speed":
+if scoutCommand == "--get-speed":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("sho int gi0\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("sho int gi0\n")
    time.sleep(.10)
-   sshBandwidth = remote_conn.recv(65535)
+   sshBandwidth = scoutSshConnect.recv(65535)
    getBandwidth = subprocess.check_output("echo '%s' | grep -E -o '.{4}Mbps' | tr -d 'Mbps'"%sshBandwidth, shell=True)
    bandwidthSqlCursor = conn.cursor()
    bandwidthSql = "UPDATE access_points SET ap_bandwidth = '%s' WHERE ap_ip = '%s'" % (getBandwidth,ip)
@@ -1077,7 +946,7 @@ if queryCommand == "--get-speed":
 
 # cisco_tftp_backup.py
 
-if queryCommand == "--tftp-backup":
+if scoutCommand == "--tftp-backup":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -1086,109 +955,109 @@ if queryCommand == "--tftp-backup":
    username = queryUser
    password = queryPass
    tftp = queryTFTP
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("copy running-config tftp\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("copy running-config tftp\n")
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % tftp)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % tftp)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("\n")
    time.sleep(.15)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_wr.py
 
-if queryCommand == "--wr":
+if scoutCommand == "--wr":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("wr\n")
    time.sleep(.15)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_write_default.py
 
-if queryCommand == "--erase":
+if scoutCommand == "--erase":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("write default\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("write default\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("y\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("y\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("reload\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("reload\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("y\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("y\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
+   output = scoutSshConnect.recv(65535)
 
 # cisco_count_clients.py
 
-if queryCommand == "--count-clients":
+if scoutCommand == "--count-clients":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
    ip = queryIP
    username = queryUser
    password = queryPass
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   countCommand = remote_conn.recv(65535)
-   remote_conn.send("show dot11 associations\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   countCommand = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("show dot11 associations\n")
    time.sleep(.10)
-   countClient = remote_conn.recv(65535)
+   countClient = scoutSshConnect.recv(65535)
    getClient = subprocess.check_output("echo '%s' | grep -o [0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f] | wc -l"%countClient, shell=True)
    clientSqlCursor = conn.cursor()
    clientSql = "UPDATE access_points SET ap_total_clients = '%s' WHERE ap_ip = '%s'" % (getClient,ip)
@@ -1197,7 +1066,7 @@ if queryCommand == "--count-clients":
 
 # --get-name
 
-if queryCommand == "--get-name":
+if scoutCommand == "--get-name":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1211,7 +1080,7 @@ if queryCommand == "--get-name":
 
 # --get-mac
 
-if queryCommand == "--get-mac":
+if scoutCommand == "--get-mac":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1225,18 +1094,18 @@ if queryCommand == "--get-mac":
 
 # --ping
 
-if queryCommand == "--ping":
-   queryIP = sys.argv[2]
-   ip = queryIP
+if scoutCommand == "--ping":
+   ip = ipInfo()
    pingAp = subprocess.check_output("ping '%s' -c 10| head -n 2 | tail -n 1 | awk '{print $7}' | tr -d 'time='"%ip, shell=True)
+   pingApOutput = pingAp.decode(encoding = 'UTF-8')
    pingApCursor = conn.cursor()
-   pingApSql = "UPDATE access_points SET ap_ping_ms = '%s' WHERE ap_ip = '%s'" % (pingAp,ip)
+   pingApSql = "UPDATE access_points SET ap_ping_ms = '%s' WHERE ap_ip = '%s'" % (pingApOutput,ip)
    pingApCursor.execute(pingApSql)
    conn.commit()
 
 # --get-model
 
-if queryCommand == "--get-model":
+if scoutCommand == "--get-model":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1250,7 +1119,7 @@ if queryCommand == "--get-model":
 
 # --get-serial
 
-if queryCommand == "--get-serial":
+if scoutCommand == "--get-serial":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1264,7 +1133,7 @@ if queryCommand == "--get-serial":
 
 # --get-location
 
-if queryCommand == "--get-location":
+if scoutCommand == "--get-location":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1278,7 +1147,7 @@ if queryCommand == "--get-location":
 
 # --get-ios-info
 
-if queryCommand == "--get-ios-info":
+if scoutCommand == "--get-ios-info":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1292,7 +1161,7 @@ if queryCommand == "--get-ios-info":
 
 # --get-uptime
 
-if queryCommand == "--get-uptime":
+if scoutCommand == "--get-uptime":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1306,7 +1175,7 @@ if queryCommand == "--get-uptime":
 
 # --reboot
 
-if queryCommand == "--reboot":
+if scoutCommand == "--reboot":
    queryIP = sys.argv[2]
    querySNMP = sys.argv[3]
    ip = queryIP
@@ -1315,7 +1184,7 @@ if queryCommand == "--reboot":
 
 # --change-name
 
-if queryCommand == "--change-name":
+if scoutCommand == "--change-name":
    queryIP = sys.argv[2]
    queryUser = sys.argv[3]
    queryPass = sys.argv[4]
@@ -1324,26 +1193,26 @@ if queryCommand == "--change-name":
    username = queryUser
    password = queryPass
    apName = queryApName
-   remote_conn_pre = paramiko.SSHClient()
-   remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-   remote_conn_pre.connect(ip, port = 22, username = username,
+   scoutSshConnect_pre = paramiko.SSHClient()
+   scoutSshConnect_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   scoutSshConnect_pre.connect(ip, port = 22, username = username,
                            password = password,
                            look_for_keys = False, allow_agent = False)
-   remote_conn = remote_conn_pre.invoke_shell()
-   output = remote_conn.recv(65535)
-   remote_conn.send("enable\n")
+   scoutSshConnect = scoutSshConnect_pre.invoke_shell()
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("enable\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('%s\n' % password)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('%s\n' % password)
    time.sleep(.15)
-   output = remote_conn.recv(65535)
-   remote_conn.send("conf t\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("conf t\n")
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send('hostname %s' % apName)
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send('hostname %s' % apName)
    time.sleep(.10)
-   output = remote_conn.recv(65535)
-   remote_conn.send("do wr\n")
+   output = scoutSshConnect.recv(65535)
+   scoutSshConnect.send("do wr\n")
    time.sleep(.10)
    apNameCursor = conn.cursor()
    sqlApName = "UPDATE access_points SET ap_name = '%s' WHERE ap_ip = '%s'" % (apName,ip)
