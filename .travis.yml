@@ -5,7 +5,7 @@ php:
 services:
 - mysql
 install: 
-- source <(curl -s https://raw.githubusercontent.com/falcon78921/Cardinal/development/ci/travis-builder.sh)
+- source <(curl -s https://raw.githubusercontent.com/cardinal-dev/Cardinal/master/ci/travis-builder.sh)
 - composer global require nette/tester
 - composer update
 - sudo pip install pyinstaller
