@@ -1,8 +1,8 @@
 sudo: true
 dist: xenial
-language: python
-python:
-- '3.6'
+language: php
+php:
+- '7.0'
 services:
 - mysql
 install: 
@@ -29,7 +29,7 @@ script:
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/includes/*.php
 - sudo php /home/travis/.config/composer/vendor/nette/tester/src/tester.php -C /var/www/html/functions/*.php
-- sudo pyflakes /var/www/html/bin/*.py
+- sudo pyflakes3 /var/www/html/bin/*.py
 - cd /var/www/html/bin
 - sudo pyinstaller --onefile scout.py
 after_success:
