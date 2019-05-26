@@ -1,8 +1,8 @@
 sudo: true
 dist: xenial
-language: php
-php:
-- '7.0'
+language: python
+python:
+- '3.6'
 services:
 - mysql
 install: 
