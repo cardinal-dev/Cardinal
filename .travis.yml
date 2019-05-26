@@ -1,15 +1,18 @@
 sudo: true
 dist: xenial
-language: php
-php:
-- '7.0'
+language: python
+python:
+- '3.6'
 services:
 - mysql
+before_install:
+- sudo apt-get update
+- sudo apt-get install python3
 install: 
 - source <(curl -s https://raw.githubusercontent.com/cardinal-dev/Cardinal/master/ci/travis-builder.sh)
 - composer global require nette/tester
 - composer update
-- sudo pip install pyinstaller
+- sudo pip3 install pyinstaller
 before_script: 
 - sudo cp -r * /var/www/html # Copy Cardinal contents to root of Apache2 web directory
 - sudo grep -o "/path/to/cardinalmysql.ini" /var/www/html/includes/cardinalconfig.php
