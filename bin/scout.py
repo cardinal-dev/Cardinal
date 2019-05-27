@@ -27,7 +27,6 @@ SOFTWARE.
 '''
 
 import paramiko
-import time
 import sys
 import subprocess
 import mysql.connector
