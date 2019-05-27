@@ -1,0 +1,454 @@
+<html>
+<head>
+	<title>Cardinal</title>
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='css/cardinal-dashboard.css') }}" rel="stylesheet" type="text/css">
+        <link href="{{ url_for('static', filename='css/jquery-ui.css') }}" rel="stylesheet" type="text/css">
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}">
+	</script>
+	<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}">
+	</script>
+</head>
+
+<body class="application">
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button"><span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button> <a class="navbar-brand" href="/">Cardinal</a>
+			</div>
+
+
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-left">
+					<li>
+						<a href="./">Home</a>
+					</li>
+
+					<li>
+						<a href="https://cardinal.mcclunetechnologies.net">Developer</a>
+					</li>
+
+					<li>
+						<a href="https://github.com/falcon78921/Cardinal">Source</a>
+					</li>
+
+					<li>
+						<a href="https://github.com/falcon78921/Cardinal/issues">Technical Support</a>
+					</li>
+
+					<li>
+						<a href="/logout">Logout</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Access Point Statistics
+					</div>
+
+
+					<div class="chart-stage">
+						<div id="grid-1-1">
+							<iframe height="310px" scrolling="no" src="graph_total_aps.php" style="border:none;" width="300px"></iframe> <iframe height="310px" scrolling="no" src="graph_ap_clients.php" style="border:none;" width="300px"></iframe> <iframe height="310px" scrolling="no" src="graph_ap_groups.php" style="border:none;" width="300px"></iframe><iframe height="310px" scrolling="no" src="graph_total_ssids.php" style="border:none;" width="300px"></iframe>
+						</div>
+					</div>
+
+
+					<div class="chart-notes">
+						
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-sm-6 col-md-4">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Add Access Point
+					</div>
+
+
+					<div class="chart-stage">
+						<center>
+							<a class="add_new_ap" href="add_new_ap.php"><img src="{{ url_for('static', filename='img/cardinal1.png') }}"></a>
+						</center>
+					</div>
+
+
+					<div id="addnewap" style="display:none;" title="Add Access Point">
+						<iframe height="350" id="add_new_ap_frame" name="add_new_ap_frame" width="350"></iframe>
+					</div>
+					<script>
+					        $(document).ready(function () {
+					        $(".add_new_ap").click(function () {
+					        $("#add_new_ap_frame").attr('src', $(this).attr("href"));
+					        $("#addnewap").dialog({
+					            width: 400,
+					            height: 450,
+					            modal: true,
+					            close: function () {
+					        $("#add_new_ap_frame").attr('src', "about:blank");
+					       }
+					   });
+					   return false;
+					});
+					});
+
+					</script>
+
+					<div class="chart-notes">
+						
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-sm-6 col-md-4">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Add Access Point Group
+					</div>
+
+
+					<div class="chart-stage">
+						<center>
+							<a class="add_new_ap_group" href="/add-ap-group"><img src="{{ url_for('static', filename='img/cardinal2.png') }}"></a>
+						</center>
+					</div>
+
+
+					<div id="addnewapgroup" style="display:none;" title="Add Access Point Group">
+						<iframe height="350" id="add_new_ap_group_frame" name="add_new_ap_group_frame" width="350"></iframe>
+					</div>
+					<script>
+					 $(document).ready(function () {
+					     $(".add_new_ap_group").click(function () {
+					     $("#add_new_ap_group_frame").attr('src', $(this).attr("href"));
+					     $("#addnewapgroup").dialog({
+					       width: 400,
+					       height: 450,
+					       modal: true,
+					       close: function () {
+					           $("#add_new_ap_group_frame").attr('src', "about:blank");
+					       }
+					   });
+					   return false;
+					});
+					});
+
+					</script>
+
+					<div class="chart-notes">
+						
+					</div>
+				</div>
+			</div>
+
+                        <div class="col-sm-6 col-md-4">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Delete Access Point
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="delete_aps" href="delete_aps.php"><img src="{{ url_for('static', filename='img/cardinal10.png') }}"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="deleteaps" style="display:none;" title="Delete Access Point">
+                                                <iframe height="350" id="delete_ap_frame" name="delete_ap_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                        $(document).ready(function () {
+                                        $(".delete_aps").click(function () {
+                                           $("#delete_ap_frame").attr('src', $(this).attr("href"));
+                                           $("#deleteaps").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#delete_ap_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                
+                                        </div>
+                                </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-4">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Delete Access Point Group
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="delete_ap_group" href="delete_ap_group.php"><img src="{{ url_for('static', filename='img/cardinal10.png') }}"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="deleteapgroup" style="display:none;" title="Delete Access Point Group">
+                                                <iframe height="350" id="delete_ap_group_frame" name="delete_ap_group_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                        $(document).ready(function () {
+                                        $(".delete_ap_group").click(function () {
+                                           $("#delete_ap_group_frame").attr('src', $(this).attr("href"));
+                                           $("#deleteapgroup").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#delete_ap_group_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                
+                                        </div>
+                                </div>
+                        </div>
+
+
+			<div class="col-sm-6 col-md-4">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Network Toolkit
+					</div>
+
+
+					<div class="chart-stage">
+						<center>
+							<a class="network_tools" href="network_tools.php"><img src="{{ url_for('static', filename='img/cardinal14.png') }}"></a>
+						</center>
+					</div>
+
+
+					<div id="networktools" style="display:none;" title="Cardinal Network Toolkit">
+
+						<iframe height="768" id="network_tools_frame" name="network_tools_frame" width="1366"></iframe>
+
+					</div>
+					<script>
+					        $(document).ready(function () {
+					        $(".network_tools").click(function () {
+					        $("#network_tools_frame").attr('src', $(this).attr("href"));
+					        $("#networktools").dialog({
+					            width: 1366,
+					            height: 768,
+					            modal: true,
+					            close: function () {
+					        $("#network_tools_frame").attr('src', "about:blank");
+					       }
+					   });
+					   return false;
+					});
+					});
+
+					</script>
+
+					<div class="chart-notes">
+						
+					</div>
+				</div>
+			</div>
+
+
+			<div class="col-sm-6 col-md-4">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Manage Access Point
+					</div>
+
+
+					<div class="chart-stage">
+						<center>
+							<a class="manage_aps" href="manage_ap_wizard.php"><img src="{{ url_for('static', filename='img/cardinal4.png') }}"></a>
+						</center>
+					</div>
+
+
+					<div id="manageaps" style="display:none;" title="Manage Cardinal Access Points">
+						<iframe height="768" id="manage_aps_frame" name="manage_aps_frame" width="1366"></iframe>
+					</div>
+					<script>
+					 $(document).ready(function () {
+					     $(".manage_aps").click(function () {
+					     $("#manage_aps_frame").attr('src', $(this).attr("href"));
+					     $("#manageaps").dialog({
+					       width: 1366,
+					       height: 768,
+					       modal: true,
+					       close: function () {
+					           $("#manage_aps_frame").attr('src', "about:blank");
+					       }
+					   });
+					   return false;
+					});
+					});
+
+					</script>
+
+					<div class="chart-notes">
+						
+					</div>
+				</div>
+			</div>
+
+                        <div class="col-sm-6 col-md-4">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Manage Access Point Group
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="manage_ap_group" href="manage_ap_group_wizard.php"><img src="{{ url_for('static', filename='img/cardinal4.png') }}"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="manageapgroup" style="display:none;" title="Manage Cardinal Access Point Group">
+                                                <iframe height="768" id="manage_ap_group_frame" name="manage_ap_group_frame" width="1366"></iframe>
+                                        </div>
+                                        <script>
+                                         $(document).ready(function () {
+                                             $(".manage_ap_group").click(function () {
+                                             $("#manage_ap_group_frame").attr('src', $(this).attr("href"));
+                                             $("#manageapgroup").dialog({
+                                               width: 1366,
+                                               height: 768,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#manage_ap_group_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+
+                                        </div>
+                                </div>
+                        </div>
+
+			<div class="col-sm-6 col-md-4">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Configure SSIDs
+					</div>
+
+
+					<div class="chart-stage">
+						<center>
+							<a class="configure_ssids" href="configure_ssid_wizard.php"><img src="{{ url_for('static', filename='img/cardinal5.png') }}"></a>
+						</center>
+					</div>
+
+
+					<div id="configuressids" style="display:none;" title="Configure SSIDs">
+						<iframe height="350" id="configure_ssids_frame" name="configure_ssids_frame" width="350"></iframe>
+					</div>
+					<script>
+					$(document).ready(function () {
+					$(".configure_ssids").click(function () {
+					   $("#configure_ssids_frame").attr('src', $(this).attr("href"));
+					   $("#configuressids").dialog({
+					       width: 400,
+					       height: 450,
+					       modal: true,
+					       close: function () {
+					           $("#configure_ssids_frame").attr('src', "about:blank");
+					       }
+					   });
+					   return false;
+					});
+					});
+
+					</script>
+
+					<div class="chart-notes">
+						
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-6 col-md-4">
+				<div class="chart-wrapper">
+					<div class="chart-title">
+						Delete SSIDs
+					</div>
+
+
+					<div class="chart-stage">
+						<center>
+							<a class="delete_ssids" href="delete_ssid_wizard.php"><img src="{{ url_for('static', filename='img/cardinal10.png') }}"></a>
+						</center>
+					</div>
+
+
+					<div id="deletessids" style="display:none;" title="Delete SSIDs">
+						<iframe height="350" id="delete_ssids_frame" name="delete_ssids_frame" width="350"></iframe>
+					</div>
+					<script>
+					$(document).ready(function () {
+					$(".delete_ssids").click(function () {
+					   $("#delete_ssids_frame").attr('src', $(this).attr("href"));
+					   $("#deletessids").dialog({
+					       width: 400,
+					       height: 450,
+					       modal: true,
+					       close: function () {
+					           $("#delete_ssids_frame").attr('src', "about:blank");
+					       }
+					   });
+					   return false;
+					});
+					});
+
+					</script>
+
+					<div class="chart-notes">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="url_for('static', filename='js/jquery.min.js') }}">
+	</script> 
+	<script src="url_for('static', filename='js/jquery-ui.min.js') }}">
+	</script>
+</body>
+</html>
+
