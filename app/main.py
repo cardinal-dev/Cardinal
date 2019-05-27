@@ -23,7 +23,7 @@ Cardinal.secret_key = "SECRET_KEY_HERE"
 # MySQL authentication
 
 mysqlConfig = ConfigParser()
-mysqlConfig.read("/home/cardinal/cardinal.ini")
+mysqlConfig.read("/path/to/cardinal.ini")
 mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
 mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
 mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
@@ -53,6 +53,7 @@ def login():
     loginCursor = conn.cursor()
     loginCursor.execute("SELECT password FROM users WHERE username = '{}'".format(username))
     hash = loginCursor.fetchone()[0]
+    conn.close()
     if check_password_hash(hash,password):
         session['username'] = username
         return redirect(url_for('dashboard'))
@@ -63,6 +64,26 @@ def login():
 def logout():
    session.pop('username', None)
    return redirect(url_for('index'))
+
+@Cardinal.route("/add-ap-group")
+def addApGroup():
+    if session.get("username") is not None:
+        return render_template("add-ap-group.html")
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/submit-add-ap-group", methods=["POST"])
+def submitAddApGroup():
+    apGroupName = request.form["ap_group_name"]
+    addApGroupCursor = conn.cursor()
+    addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
+    conn.commit()
+    if conn.commit():
+        conn.close()
+        return redirect(url_for('add-ap-group'))
+    else:
+        conn.close()
+        return "Error while writing entry to MySQL database."
 
 if __name__ == "__main__":
     Cardinal.run(debug=True, host='0.0.0.0')
