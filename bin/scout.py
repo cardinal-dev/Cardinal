@@ -477,6 +477,7 @@ if scoutCommand == "--reboot":
 if scoutCommand == "--change-name":
    ip = ipInfo()
    username, password, scoutSsh = sshInfo()
+   apName = sys.argv[5]
    stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "hostname {}".format(apName) + "do wr\n")
    apNameCursor = conn.cursor()
    sqlApName = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'".format(apName,ip)
