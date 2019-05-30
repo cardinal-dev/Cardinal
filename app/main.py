@@ -82,7 +82,7 @@ def submitAddAp():
     apSnmp = request.form["ap_snmp"]
     status = "Success! {} was successfully registered!".format(apName)
     addApCursor = conn.cursor()
-    addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, ap_snmp, ap_group_id))
+    addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
     conn.commit()
     return render_template('add-ap.html', status=status)
 
