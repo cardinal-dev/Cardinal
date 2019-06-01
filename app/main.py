@@ -68,7 +68,8 @@ def addAp():
     if session.get("username") is not None:
         apGroupCursor = conn.cursor()
         apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
-        return render_template("add-ap.html")
+        apGroups = apGroupCursor.fetchall()
+        return render_template("add-ap.html", apGroups=apGroups)
     else:
         return redirect(url_for('index'))
 
@@ -101,6 +102,56 @@ def submitAddApGroup():
     addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
     conn.commit()
     return render_template('add-ap-group.html', status=status)
+
+@Cardinal.route("/total-aps", methods=["GET"])
+def totalAps():
+    if session.get("username") is not None:
+        totalApsCursor = conn.cursor(buffered=True)
+        totalApsCursor.execute("SELECT * FROM access_points")
+        totalAps = totalApsCursor.rowcount
+        return render_template('total-aps.html', totalAps=totalAps)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/total-clients", methods=["GET"])
+def totalClients():
+    if session.get("username") is not None:
+        totalClientsCursor = conn.cursor(buffered=True)
+        totalClientsCursor.execute("SELECT SUM(ap_total_clients) AS totalClients FROM access_points WHERE ap_all_id = 2")
+        totalClients = totalClientsCursor.fetchone()[0]
+        return render_template('total-clients.html', totalClients=totalClients)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/total-ap-groups", methods=["GET"])
+def totalApGroups():
+    if session.get("username") is not None:
+        totalApGroupsCursor = conn.cursor(buffered=True)
+        totalApGroupsCursor.execute("SELECT COUNT(*) AS totalAPGroups FROM access_point_groups")
+        totalApGroups = totalApGroupsCursor.fetchone()[0]
+        return render_template('total-ap-groups.html', totalApGroups=totalApGroups)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/total-ssids", methods=["GET"])
+def totalSsids():
+    if session.get("username") is not None:
+        ssids24Cursor = conn.cursor(buffered=True)
+        ssids5Cursor = conn.cursor(buffered=True)
+        ssids24RadiusCursor = conn.cursor(buffered=True)
+        ssids5RadiusCursor = conn.cursor(buffered=True)
+        ssids24Cursor.execute("SELECT COUNT(*) FROM ssids_24ghz")
+        ssids5Cursor.execute("SELECT COUNT(*) FROM ssids_5ghz")
+        ssids24RadiusCursor.execute("SELECT COUNT(*) FROM ssids_24ghz_radius")
+        ssids5RadiusCursor.execute("SELECT COUNT(*) FROM ssids_5ghz_radius")
+        ssids24 = ssids24Cursor.fetchone()[0]
+        ssids5 = ssids5Cursor.fetchone()[0]
+        ssids24Radius = ssids24RadiusCursor.fetchone()[0]
+        ssids5Radius = ssids5RadiusCursor.fetchone()[0]
+        totalSsids = ssids24 + ssids5 + ssids24Radius + ssids5Radius
+        return render_template('total-ssids.html', totalSsids=totalSsids)
+    else:
+        return redirect(url_for('index'))
 
 if __name__ == "__main__":
     Cardinal.run(debug=True, host='0.0.0.0')

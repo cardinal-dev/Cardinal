@@ -10,24 +10,13 @@
 
 <label>Access Point Group:</label>
 
-<?php $result = $conn->query("select ap_group_id,ap_group_name from access_point_groups"); ?>
-
 <body>
 <form id="configure_ap_group">
 <select name="group_id">
 
-<?php
-
-    while ($row = $result->fetch_assoc()) {
-
-                  unset($id, $name);
-                  $id = $row['ap_group_id'];
-                  $name = $row['ap_group_name'];
-                  echo '<option value="'.$id.'">'.$name.'</option>';
-
-}
-
-?>
+{% for item in apGroups %}
+<option value="{{ item[0] }}">{{ item[1] }}</option>
+{% endfor %}
 
 </select>
 <br>
@@ -40,6 +29,8 @@
 <input type="password" name="ap_snmp" required>
 <input type="submit" value="Register">
 </form>
+<br>
+<br>
 {{ status }}
 </html>
 
