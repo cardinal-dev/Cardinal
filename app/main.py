@@ -28,6 +28,10 @@ mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
 mysqlDb = mysqlConfig.get('cardinal_mysql_config', 'dbname')
 conn = mysql.connector.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
 
+# Cardinal error defintions
+
+errNoGet = "I'm sorry, but you cannot access this resource directly by GET."
+
 # Flask routes
 
 @Cardinal.route("/")
@@ -51,9 +55,9 @@ def login():
     loginCursor = conn.cursor()
     loginCursor.execute("SELECT password FROM users WHERE username = '{}'".format(username))
     hash = loginCursor.fetchone()[0]
-    conn.close()
     if check_password_hash(hash,password):
         session['username'] = username
+        loginCursor.close()
         return redirect(url_for('dashboard'))
     else:
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
@@ -69,23 +73,26 @@ def addAp():
         apGroupCursor = conn.cursor()
         apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
         apGroups = apGroupCursor.fetchall()
+        apGroupCursor.close()
         return render_template("add-ap.html", apGroups=apGroups)
     else:
         return redirect(url_for('index'))
 
 @Cardinal.route("/submit-add-ap", methods=["POST"])
 def submitAddAp():
-    apName = request.form["ap_name"]
-    apIp = request.form["ap_ip"]
-    apSshUsername = request.form["ssh_username"]
-    apSshPassword = request.form["ssh_password"]
-    apGroupId = request.form["group_id"]
-    apSnmp = request.form["ap_snmp"]
-    status = "Success! {} was successfully registered!".format(apName)
-    addApCursor = conn.cursor()
-    addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
-    conn.commit()
-    return render_template('add-ap.html', status=status)
+    if request.method == 'POST':
+        apName = request.form["ap_name"]
+        apIp = request.form["ap_ip"]
+        apSshUsername = request.form["ssh_username"]
+        apSshPassword = request.form["ssh_password"]
+        apGroupId = request.form["group_id"]
+        apSnmp = request.form["ap_snmp"]
+        status = "Success! {} was successfully registered!".format(apName)
+        addApCursor = conn.cursor()
+        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
+        conn.commit()
+        addApCursor.close()
+        return redirect(url_for('addAp', status=status))
 
 @Cardinal.route("/add-ap-group", methods=["GET"])
 def addApGroup():
@@ -96,12 +103,14 @@ def addApGroup():
 
 @Cardinal.route("/submit-add-ap-group", methods=["POST"])
 def submitAddApGroup():
-    apGroupName = request.form["ap_group_name"]
-    status = "Success! {} was successfully registered!".format(apGroupName)
-    addApGroupCursor = conn.cursor()
-    addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
-    conn.commit()
-    return render_template('add-ap-group.html', status=status)
+    if request.method == 'POST':
+        apGroupName = request.form["ap_group_name"]
+        status = "Success! {} was successfully registered!".format(apGroupName)
+        addApGroupCursor = conn.cursor()
+        addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
+        addApGroupCursor.close()
+        conn.commit()
+        return render_template('add-ap-group.html', status=status)
 
 @Cardinal.route("/total-aps", methods=["GET"])
 def totalAps():
@@ -109,6 +118,7 @@ def totalAps():
         totalApsCursor = conn.cursor(buffered=True)
         totalApsCursor.execute("SELECT * FROM access_points")
         totalAps = totalApsCursor.rowcount
+        totalApsCursor.close()
         return render_template('total-aps.html', totalAps=totalAps)
     else:
         return redirect(url_for('index'))
@@ -119,6 +129,7 @@ def totalClients():
         totalClientsCursor = conn.cursor(buffered=True)
         totalClientsCursor.execute("SELECT SUM(ap_total_clients) AS totalClients FROM access_points WHERE ap_all_id = 2")
         totalClients = totalClientsCursor.fetchone()[0]
+        totalClientsCursor.close()
         return render_template('total-clients.html', totalClients=totalClients)
     else:
         return redirect(url_for('index'))
@@ -129,6 +140,7 @@ def totalApGroups():
         totalApGroupsCursor = conn.cursor(buffered=True)
         totalApGroupsCursor.execute("SELECT COUNT(*) AS totalAPGroups FROM access_point_groups")
         totalApGroups = totalApGroupsCursor.fetchone()[0]
+        totalApGroupsCursor.close()
         return render_template('total-ap-groups.html', totalApGroups=totalApGroups)
     else:
         return redirect(url_for('index'))
@@ -149,6 +161,10 @@ def totalSsids():
         ssids24Radius = ssids24RadiusCursor.fetchone()[0]
         ssids5Radius = ssids5RadiusCursor.fetchone()[0]
         totalSsids = ssids24 + ssids5 + ssids24Radius + ssids5Radius
+        ssids24Cursor.close()
+        ssids5Cursor.close()
+        ssids24RadiusCursor.close()
+        ssids5RadiusCursor.close()
         return render_template('total-ssids.html', totalSsids=totalSsids)
     else:
         return redirect(url_for('index'))
