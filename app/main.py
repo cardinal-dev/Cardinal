@@ -21,16 +21,12 @@ Cardinal.secret_key = "SECRET_KEY_HERE"
 # MySQL authentication
 
 mysqlConfig = ConfigParser()
-mysqlConfig.read("/path/to/cardinal.ini")
+mysqlConfig.read("/home/cardinal/cardinal.ini")
 mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
 mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
 mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
 mysqlDb = mysqlConfig.get('cardinal_mysql_config', 'dbname')
 conn = mysql.connector.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
-
-# Cardinal error defintions
-
-errNoGet = "I'm sorry, but you cannot access this resource directly by GET."
 
 # Flask routes
 
@@ -70,11 +66,12 @@ def logout():
 @Cardinal.route("/add-ap", methods=["GET"])
 def addAp():
     if session.get("username") is not None:
+        status = request.args.get('status')
         apGroupCursor = conn.cursor()
         apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
         apGroups = apGroupCursor.fetchall()
         apGroupCursor.close()
-        return render_template("add-ap.html", apGroups=apGroups)
+        return render_template("add-ap.html", status=status, apGroups=apGroups)
     else:
         return redirect(url_for('index'))
 
@@ -94,10 +91,36 @@ def submitAddAp():
         addApCursor.close()
         return redirect(url_for('addAp', status=status))
 
+@Cardinal.route("/delete-ap", methods=["GET"])
+def deleteAp():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        apCursor = conn.cursor()
+        apCursor.execute("SELECT ap_id,ap_name FROM access_points")
+        aps = apCursor.fetchall()
+        apCursor.close()
+        return render_template("delete-ap.html", aps=aps, status=status)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/submit-delete-ap", methods=["POST"])
+def submitDeleteAp():
+    if request.method == 'POST':
+        apId = request.form["ap_id"]
+        deleteApNameCursor = conn.cursor()
+        deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
+        apName = deleteApNameCursor.fetchone()[0]
+        status = "Success! {} was successfully registered!".format(apName)
+        deleteApCursor = conn.cursor()
+        deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
+        deleteApCursor.close()
+        return redirect(url_for('deleteAp', status=status))
+
 @Cardinal.route("/add-ap-group", methods=["GET"])
 def addApGroup():
     if session.get("username") is not None:
-        return render_template("add-ap-group.html")
+        status = request.args.get('status')
+        return render_template("add-ap-group.html", status=status)
     else:
         return redirect(url_for('index'))
 
@@ -111,6 +134,38 @@ def submitAddApGroup():
         addApGroupCursor.close()
         conn.commit()
         return render_template('add-ap-group.html', status=status)
+
+@Cardinal.route("/delete-ap-group", methods=["GET"])
+def deleteApGroup():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        deleteApGroupCursor = conn.cursor()
+        deleteApGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
+        apGroups = deleteApGroupCursor.fetchall()
+        deleteApGroupCursor.close()
+        return render_template("delete-ap-group.html", status=status, apGroups=apGroups)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/submit-delete-ap-group", methods=["POST"])
+def submitDeleteApGroup():
+    if request.method == 'POST':
+        apGroupId = request.form["ap_group_id"]
+        deleteApGroupNameCursor = conn.cursor()
+        deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupName = deleteApGroupNameCursor.fetchone()[0]
+        status = "Success! {} was successfully deleted!".format(apGroupName)
+        deleteApGroupCursor = conn.cursor()
+        deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+        deleteApGroupCursor.close()
+        return redirect(url_for('deleteApGroup', status=status))
+
+@Cardinal.route("/network-tools", methods=["GET"])
+def networkTools():
+    if session.get("username") is not None:
+        return render_template("network-tools.html")
+    else:
+        return redirect(url_for('index'))
 
 @Cardinal.route("/total-aps", methods=["GET"])
 def totalAps():
