@@ -21,7 +21,7 @@ Cardinal.secret_key = "SECRET_KEY_HERE"
 # MySQL authentication
 
 mysqlConfig = ConfigParser()
-mysqlConfig.read("/home/cardinal/cardinal.ini")
+mysqlConfig.read("/path/to/cardinal.ini")
 mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
 mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
 mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
