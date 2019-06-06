@@ -1,0 +1,20 @@
+<html>
+<font face="Verdana">
+Choose AP Group:
+<br>
+<body>
+<form id="delete_ap_group" action="/submit-delete-ap-group" method="POST">
+<select name="ap_group_id">
+
+{% for item in apGroups %}
+<option value="{{ item[0] }}">{{ item[1] }}</option>
+{% endfor %}
+
+</select>
+<input type="submit" value="Delete AP Group">
+</form>
+<br>
+<br>
+{{ status if status }}
+</body>
+</html>
