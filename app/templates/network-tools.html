@@ -1,19 +1,21 @@
 <html>
 <body>
-<form id="network_tools" action="" method="POST">
+<form id="network_tools" action="/" method="POST">
 <font face="Verdana">
 <label>Hostname/IP Address:</label>
 <input type="text" name="network_ip" required>
-<br /> </font>
+<br> 
+<br>
+
+<input type="submit" value="Nmap Scan" name="nmap" formaction="/do-nmap">
+<input type="submit" value="Ping" name="ping" formaction="/do-ping">
+<input type="submit" value="Traceroute" name="tracert" formaction="/do-tracert">
+<input type="submit" value="Dig" name="dig" formaction="/do-dig">
+<input type="submit" value="Curl" name="curl" formaction="/do-curl">
+
+</font>
+</script>
 </form>
-
-<input type="button" value="Nmap Scan" name="nmap" onclick="askForNmap()">
-<input type="button" value="Ping" name="ping" onclick="askForPing()">
-<input type="button" value="Traceroute" name="tracert" onclick="askForTracert()">
-<input type="button" value="Dig" name="dig" onclick="askForDig()">
-<input type="button" value="Whois Lookup" name="whois" onclick="askForWhois()">
-<input type="button" value="Curl" name="curl" onclick="askForCurl()">
-
 </body>
 </html>
 
