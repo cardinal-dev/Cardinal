@@ -4,6 +4,7 @@
 # Author: falcon78921
 
 import mysql.connector
+import os
 import subprocess
 from configparser import ConfigParser
 from flask import Flask
@@ -14,6 +15,10 @@ from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
 
+# System variables
+
+cardinalConfig = os.environ['CARDINAL_CONFIG']
+
 # Flask app intitialization
 
 Cardinal = Flask(__name__)
@@ -22,7 +27,7 @@ Cardinal.secret_key = "SECRET_KEY_HERE"
 # MySQL authentication
 
 mysqlConfig = ConfigParser()
-mysqlConfig.read("/home/cardinal/cardinal.ini")
+mysqlConfig.read("{}".format(cardinalConfig))
 mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
 mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
 mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
