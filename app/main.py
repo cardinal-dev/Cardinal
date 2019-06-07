@@ -4,6 +4,7 @@
 # Author: falcon78921
 
 import mysql.connector
+import subprocess
 from configparser import ConfigParser
 from flask import Flask
 from flask import render_template
@@ -21,7 +22,7 @@ Cardinal.secret_key = "SECRET_KEY_HERE"
 # MySQL authentication
 
 mysqlConfig = ConfigParser()
-mysqlConfig.read("/path/to/cardinal.ini")
+mysqlConfig.read("/home/cardinal/cardinal.ini")
 mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
 mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
 mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
@@ -167,6 +168,49 @@ def networkTools():
     else:
         return redirect(url_for('index'))
 
+@Cardinal.route("/tools-output", methods=["GET"])
+def networkToolsOutput():
+    if session.get("username") is not None:
+        commandOutput = request.args.get("commandOutput")
+        return render_template("network-tools-output.html", commandOutput=commandOutput)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/do-nmap", methods=["POST"])
+def doNmap():
+    if request.method == 'POST':
+        ip = request.form["network_ip"]
+        commandOutput = subprocess.check_output("nmap -v -A {}".format(ip), shell=True)
+        return redirect(url_for('networkToolsOutput', commandOutput=commandOutput))
+
+@Cardinal.route("/do-ping", methods=["POST"])
+def doPing():
+    if request.method == 'POST':
+        ip = request.form["network_ip"]
+        commandOutput = subprocess.check_output("ping -c 4 {}".format(ip), shell=True)
+        return redirect(url_for('networkToolsOutput', commandOutput=commandOutput))
+
+@Cardinal.route("/do-tracert", methods=["POST"])
+def doTracert():
+    if request.method == 'POST':
+        ip = request.form["network_ip"]
+        commandOutput = subprocess.check_output("traceroute {}".format(ip), shell=True)
+        return redirect(url_for('networkToolsOutput', commandOutput=commandOutput))
+
+@Cardinal.route("/do-dig", methods=["POST"])
+def doDig():
+    if request.method == 'POST':
+        ip = request.form["network_ip"]
+        commandOutput = subprocess.check_output("dig {}".format(ip), shell=True)
+        return redirect(url_for('networkToolsOutput', commandOutput=commandOutput))
+
+@Cardinal.route("/do-curl", methods=["POST"])
+def doCurl():
+    if request.method == 'POST':
+        ip = request.form["network_ip"]
+        commandOutput = subprocess.check_output("curl -I {}".format(ip), shell=True)
+        return redirect(url_for('networkToolsOutput', commandOutput=commandOutput))
+   
 @Cardinal.route("/total-aps", methods=["GET"])
 def totalAps():
     if session.get("username") is not None:
