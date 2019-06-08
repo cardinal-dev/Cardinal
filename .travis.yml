@@ -8,7 +8,7 @@ python:
 services:
 - mysql
 install:
-- sudo pip install pyinstaller paramiko pyflakes mysql-connector-python configparser
+- sudo pip3 install pyinstaller paramiko pyflakes mysql-connector-python configparser
 before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < sql/cardinal.sql
