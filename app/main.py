@@ -261,14 +261,53 @@ def manageApDashboard():
         apInfo = apInfoCursor.fetchall()
         for info in apInfo:
             apName = info[0]
+            apIp = info[1]
             apTotalClients = info[2]
             apBandwidth = info[3]
+        session['apName'] = apName
+        session['apIp'] = apIp
         session['apTotalClients'] = apTotalClients
         session['apBandwidth'] = apBandwidth
         apInfoCursor.close()
-        return render_template("manage-ap-dashboard.html", apName=apName)
+        return render_template("manage-ap-dashboard.html")
     else:
         return redirect(url_for('index'))
+
+@Cardinal.route("/choose-ap-group-dashboard", methods=["GET"])
+def chooseApGroupDashboard():
+    if session.get("username") is not None:
+        apGroupCursor = conn.cursor()
+        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
+        apGroups = apGroupCursor.fetchall()
+        apGroupCursor.close()
+        return render_template("choose-ap-group-dashboard.html", apGroups=apGroups)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/manage-ap-group-dashboard", methods=["POST"])
+def manageApGroupDashboard():
+    if request.method == 'POST':
+        apGroupId = request.form["ap_group_id"]
+        apGroupInfoCursor = conn.cursor()
+        apGroupInfoCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupInfo = apGroupInfoCursor.fetchall()
+        for info in apGroupInfo:
+            apGroupName = info[0]
+        session['apGroupName'] = apGroupName
+        apGroupInfoCursor.close()
+        return render_template("manage-ap-group-dashboard.html")
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/config-ap-ip", methods=["GET"])
+def configApIp():
+    if session.get("username") is not None:
+        return render_template("config-ap-ip.html")
+
+#@Cardinal.route("/do-config-ap-ip", methods=["POST"])
+#def doConfigApIp():
+#    if request.method == 'POST':
+#        apIp = session
 
 @Cardinal.route("/total-ap-clients", methods=["GET"])
 def totalApClients():
