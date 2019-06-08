@@ -1,7 +1,30 @@
 #!/usr/bin/env python3
 
-# Cardinal Flask Configuration
-# Author: falcon78921
+''' Cardinal - An Open Source Cisco Wireless Access Point Controller
+
+MIT License
+
+Copyright © 2019 falcon78921
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+'''
 
 import mysql.connector
 import os
@@ -120,6 +143,7 @@ def submitDeleteAp():
         deleteApCursor = conn.cursor()
         deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
         deleteApCursor.close()
+        conn.commit()
         return redirect(url_for('deleteAp', status=status))
 
 @Cardinal.route("/add-ap-group", methods=["GET"])
@@ -164,6 +188,7 @@ def submitDeleteApGroup():
         deleteApGroupCursor = conn.cursor()
         deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
         deleteApGroupCursor.close()
+        conn.commit()
         return redirect(url_for('deleteApGroup', status=status))
 
 @Cardinal.route("/network-tools", methods=["GET"])
@@ -215,6 +240,45 @@ def doCurl():
         ip = request.form["network_ip"]
         commandOutput = subprocess.check_output("curl -I {}".format(ip), shell=True)
         return redirect(url_for('networkToolsOutput', commandOutput=commandOutput))
+
+@Cardinal.route("/choose-ap-dashboard", methods=["GET"])
+def chooseApDashboard():
+    if session.get("username") is not None:
+        apCursor = conn.cursor()
+        apCursor.execute("SELECT ap_id,ap_name FROM access_points")
+        aps = apCursor.fetchall()
+        apCursor.close()
+        return render_template("choose-ap-dashboard.html", aps=aps)
+    else:
+        return redirect(url_for('index'))
+    
+@Cardinal.route("/manage-ap-dashboard", methods=["POST"])
+def manageApDashboard():
+    if request.method == 'POST':
+        apId = request.form["ap_id"]
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        for info in apInfo:
+            apName = info[0]
+            apTotalClients = info[2]
+            apBandwidth = info[3]
+        session['apTotalClients'] = apTotalClients
+        session['apBandwidth'] = apBandwidth
+        apInfoCursor.close()
+        return render_template("manage-ap-dashboard.html", apName=apName)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/total-ap-clients", methods=["GET"])
+def totalApClients():
+    if session.get("username") is not None:
+        return render_template("total-ap-clients.html")
+
+@Cardinal.route("/total-ap-bandwidth", methods=["GET"])
+def totalApBandwidth():
+    if session.get("username") is not None:
+        return render_template("total-ap-bandwidth.html")
    
 @Cardinal.route("/total-aps", methods=["GET"])
 def totalAps():

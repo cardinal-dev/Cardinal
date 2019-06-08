@@ -1,73 +1,13 @@
-<?php
-
-/* Cardinal - An Open Source Cisco Wireless Access Point Controller
-
-MIT License
-
-Copyright © 2017 falcon78921
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-*/
-
-// Cardinal Login Session
-
-session_start();
-
-// If user is not logged into Cardinal, then redirect them to the login page
-
-if (!isset($_SESSION['username'])) {
-header('Location: index.php');
-}
-
-// MySQL connection information
-
-require_once('includes/cardinalconfig.php');
-
-// Fetch POST data from file and execute Python commands & SQL queries
-$varAPId = $_POST['apid'];
-
-$apSql = "SELECT ap_name,ap_ip,ap_total_clients FROM access_points WHERE ap_id = '$varAPId'";
-$apResult = $conn->query($apSql);
-
-    // store data of each row
-    while($row = $apResult->fetch_assoc()) {
-       $queryAPName = $row["ap_name"];
-       $queryIP = $row["ap_ip"];
-       $queryClients = $row["ap_total_clients"];
-    }
-
-
-$_SESSION['apid'] = $varAPId;
-
-?>
-
 <html>
 <head>
 	<title>Cardinal</title>
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
-	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/cardinal-dashboard.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/jquery-ui.css" rel="stylesheet" type="text/css">
-	<script src="assets/js/jquery.min.js">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='css/cardinal-dashboard.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='css/jquery-ui.css') }}" rel="stylesheet" type="text/css">
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}">
 	</script>
-	<script src="assets/js/jquery-ui.min.js">
+	<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}">
 	</script>
 </head>
 
@@ -85,20 +25,20 @@ $_SESSION['apid'] = $varAPId;
 			<div class="col-sm-12">
 				<div class="chart-wrapper">
 					<div class="chart-title">
-						Access Point Statistics for <?php echo $queryAPName; ?>
+						Access Point Statistics for {{ apName if apName }}
 					</div>
 
 
 					<div class="chart-stage">
 						<div id="grid-1-1">
-						<iframe height="310px" scrolling="no" src="graph_per_ap_clients.php" style="border:none;" width="300px"></iframe>
-						<iframe height="310px" scrolling="no" src="graph_ap_bandwidth.php" style="border:none;" width="300px"></iframe>
+						<iframe height="310px" scrolling="no" src="/total-ap-clients" style="border:none;" width="300px"></iframe>
+						<iframe height="310px" scrolling="no" src="/total-ap-bandwidth" style="border:none;" width="300px"></iframe>
 						</div>
 					</div>
 
 
 					<div class="chart-notes">
-						Cardinal Access Point Statistics for <?php echo $queryAPName; ?>
+						Cardinal Access Point Statistics for {{ apName if apName }}
 					</div>
 				</div>
 			</div>
@@ -112,7 +52,7 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-stage">
                                                 <center>
-                                                        <a class="change_ap_ip" href="configure_ap_ip.php"><img src="assets/img/cardinal9.png"></a>
+                                                        <a class="change_ap_ip" href="/config-ap-ip"><img src="{{ url_for('static', filename='img/cardinal9.png') }}"></a>
                                                 </center>
                                         </div>
 
@@ -153,7 +93,7 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-stage">
                                                 <center>
-                                                        <a class="change_ap_name" href="configure_ap_name.php"><img src="assets/img/cardinal12.png"></a>
+                                                        <a class="change_ap_name" href="/config-ap-name"><img src="{{ url_for('static', filename='img/cardinal12.png') }}"></a>
                                                 </center>
                                         </div>
 
@@ -195,7 +135,7 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-stage">
                                                 <center>
-                                                        <a class="tftp_backup" href="backup_ap_config.php"><img src="assets/img/cardinal6.png"></a>
+                                                        <a class="tftp_backup" href="/backup-ap-config"><img src="{{ url_for('static', filename='img/cardinal6.png') }}"></a>
                                                 </center>
                                         </div>
 
@@ -236,7 +176,7 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-stage">
                                                 <center>
-                                                        <a class="configure_http" href="configure_http.php"><img src="assets/img/cardinal7.png"></a>
+                                                        <a class="configure_http" href="/config-ap-http"><img src="{{ url_for('static', filename='img/cardinal7.png') }}"></a>
                                                 </center>
                                         </div>
 
@@ -277,7 +217,7 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-stage">
                                                 <center>
-                                                        <a class="configure_radius" href="configure_radius.php"><img src="assets/img/cardinal8.png"></a>
+                                                        <a class="configure_radius" href="/config-ap-radius"><img src="{{ url_for('static', filename='img/cardinal8.png') }}"></a>
                                                 </center>
                                         </div>
 
@@ -318,7 +258,7 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-stage">
                                                 <center>
-                                                        <a class="configure_snmp" href="configure_snmp.php"><img src="assets/img/cardinal11.png"></a>
+                                                        <a class="configure_snmp" href="/config-ap-snmp"><img src="{{ url_for('static', filename='img/cardinal11.png') }}"></a>
                                                 </center>
                                         </div>
 
@@ -359,7 +299,7 @@ $_SESSION['apid'] = $varAPId;
 
                                         <div class="chart-stage">
                                                 <center>
-                                                        <a class="deploy_ssid" href="deploy_ssid_wizard.php"><img src="assets/img/cardinal5.png"></a>
+                                                        <a class="deploy_ssid" href="/deploy-ssid"><img src="{{ url_for('static', filename='img/cardinal5.png') }}"></a>
                                                 </center>
                                         </div>
 
@@ -392,10 +332,10 @@ $_SESSION['apid'] = $varAPId;
                         </div>
 
 
-	<link href="assets/css/jquery-ui.css" rel="stylesheet" type="text/css">
-	<script src="assets/js/jquery.min.js">
+	<link href="{{ url_for('static', filename='css/jquery-ui.css') }}" rel="stylesheet" type="text/css">
+	<script src="{{ url_for('static', filename='js/jquery.min.js') }}">
 	</script> 
-	<script src="assets/js/jquery-ui.min.js">
+	<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}">
 	</script>
 </body>
 </html>
