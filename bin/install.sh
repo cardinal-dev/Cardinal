@@ -39,7 +39,7 @@ echo -e ""
 read -p "Okay, now we need the base location of your Cardinal installation. What is the absolute path of your Cardinal installation? " varCardinalBase
 echo "Thank you for installing Cardinal!"
 
-# Let's create a php_cardinal.php configuration file based on user input (for Cardinal SQL connections)
+# Let's create a configuration file based on user input (for Cardinal SQL connections)
 rm $varDbCredDir/cardinalmysql.ini
 touch $varDbCredDir/cardinalmysql.ini
 echo "[cardinal_mysql_config]" >> $varDbCredDir/cardinalmysql.ini
@@ -47,12 +47,6 @@ echo 'servername'=""$varDatabaseIP"" >> $varDbCredDir/cardinalmysql.ini
 echo 'username'=""$varDbUsername"" >> $varDbCredDir/cardinalmysql.ini
 echo 'password'=""$varDbPassword"" >> $varDbCredDir/cardinalmysql.ini
 echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinalmysql.ini
-
-# Let's also give the non-web directory Apache read rights
-chown -R www-data:www-data $varDbCredDir
-chown -R www-data:www-data $varConfigDir
-chown -R www-data:www-data $varDirScripts
-chown -R www-data:www-data $varTftpDir
 
 # Now, let's create the MySQL database for Cardinal. We also want to import the SQL structure too!
 mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""

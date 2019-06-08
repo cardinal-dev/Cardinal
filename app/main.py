@@ -261,7 +261,6 @@ def manageApDashboard():
         apInfo = apInfoCursor.fetchall()
         for info in apInfo:
             apName = info[0]
-            apIp = info[1]
             apTotalClients = info[2]
             apBandwidth = info[3]
         session['apTotalClients'] = apTotalClients
