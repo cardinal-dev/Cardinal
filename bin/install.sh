@@ -1,7 +1,29 @@
 #!/bin/bash
 
-# Cardinal Install Script
-# falcon78921
+# Cardinal - An Open Source Cisco Wireless Access Point Controller
+
+# MIT License
+
+# Copyright © 2019 falcon78921
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 
 # This script is designed to configure Cardinal information, such as system variables, system dependencies, etc. 
 # If anything needs improvement, please open a pull request on my GitHub! Thanks!
@@ -32,9 +54,7 @@ echo -e ""
 echo "Cardinal Settings & Configuration"
 read -p "Okay, now we need a directory where Cisco IOS images reside. Where is this directory at? " varTftpDir
 echo -e ""
-read -p "Okay, now we need a directory where the Cardinal scripts will reside. Preferably, this should be OUTSIDE of the web root. What is the directory? " varDirScripts
-echo -e ""
-read -p "Okay, now we need a duration (in minutes) when Cardinal will pull info from access points (e.g. clients associated, bandwidth, etc.) What is the desired duration in minutes?" varSchedulePoll
+read -p "Okay, now we need a duration (in minutes) when Cardinal will pull info from access points (e.g. clients associated, bandwidth, etc.) What is the desired duration in minutes? " varSchedulePoll
 echo -e ""
 read -p "Okay, now we need the base location of your Cardinal installation. What is the absolute path of your Cardinal installation? " varCardinalBase
 echo "Thank you for installing Cardinal!"
@@ -50,10 +70,10 @@ echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinalmysql.ini
 
 # Now, let's create the MySQL database for Cardinal. We also want to import the SQL structure too!
 mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""
-mysql -u$varDbUsername --password=$varDbPassword $varDbName < $varCardinalBase/sql/cardinal.sql
+mysql -u$varDbUsername --password=$varDbPassword $varDbName < ../sql/cardinal.sql
 
 # Add Cardinal configuration to MySQL
-mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO settings (settings_id,cardinal_home,cardinal_scripts,cardinal_tftp,poll_schedule) VALUES ('1','$varConfigDir','$varDirScripts','$varTftpDir','$varSchedulePoll')"
+mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO settings (settings_id,cardinal_home,cardinal_tftp,poll_schedule) VALUES ('1','$varConfigDir','$varTftpDir','$varSchedulePoll')"
 
 # Now, let's create a Cardinal admin
 hashedPass=$(python -c 'import crypt; print crypt.crypt("'$varCardinalPass'", "$6$random_salt")')

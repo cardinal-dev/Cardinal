@@ -26,16 +26,21 @@ SOFTWARE.
 
 '''
 
+import os
 import paramiko
 import sys
 import subprocess
 import mysql.connector
 from configparser import ConfigParser
 
+# System variables
+
+cardinalConfig = os.environ['CARDINAL_CONFIG']
+
 # Connect to MySQL database
 
 mysqlConfig = ConfigParser()
-mysqlConfig.read("/path/to/cardinalmysql.ini")
+mysqlConfig.read("{}".format(cardinalConfig))
 mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
 mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
 mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
