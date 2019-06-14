@@ -1,20 +1,20 @@
-sudo: true
 dist: xenial
 language: python
 python:
-- '3.4'
 - '3.5'
 - '3.6'
+- '3.7'
 services:
 - mysql
 install:
-- python3 -m pip install pyinstaller paramiko pyflakes mysql-connector-python configparser
+- python3 -m pip install pyinstaller paramiko flake8 mysql-connector-python configparser
 before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
 - mysql -u root --password="" cardinal -e "INSERT INTO settings (settings_id,cardinal_home,scout_dir,cardinal_tftp,poll_schedule) VALUES ('1','/opt','/scout.py','/opt','2');"
 script:
+- flake8 . --count --select=E9,F63,F72,F82 --show-source --statistics
 - pyflakes bin/scout.py
 - pyflakes app/main.py
 - pyinstaller --onefile bin/scout.py
