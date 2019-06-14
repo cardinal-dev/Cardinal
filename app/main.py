@@ -80,9 +80,9 @@ def login():
     loginCursor = conn.cursor()
     loginCursor.execute("SELECT password FROM users WHERE username = '{}'".format(username))
     hash = loginCursor.fetchone()[0]
+    loginCursor.close()
     if check_password_hash(hash,password):
         session['username'] = username
-        loginCursor.close()
         return redirect(url_for('dashboard'))
     else:
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
@@ -116,8 +116,8 @@ def submitAddAp():
         status = "Success! {} was successfully registered!".format(apName)
         addApCursor = conn.cursor()
         addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
-        conn.commit()
         addApCursor.close()
+        conn.commit()
         return redirect(url_for('addAp', status=status))
 
 @Cardinal.route("/delete-ap", methods=["GET"])

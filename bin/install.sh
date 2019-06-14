@@ -76,5 +76,5 @@ mysql -u$varDbUsername --password=$varDbPassword $varDbName < ../sql/cardinal.sq
 mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO settings (settings_id,cardinal_home,cardinal_tftp,poll_schedule) VALUES ('1','$varConfigDir','$varTftpDir','$varSchedulePoll')"
 
 # Now, let's create a Cardinal admin
-hashedPass=$(python -c 'import crypt; print crypt.crypt("'$varCardinalPass'", "$6$random_salt")')
+hashedPass=$(python3 -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("'$varCardinalPass'", "sha256"))')
 mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO users (username,password) VALUES ('$varCardinalUser','$hashedPass')"
