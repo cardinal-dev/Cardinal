@@ -78,7 +78,7 @@ def login():
     username = request.form['username']
     password = request.form['password']
     loginCursor = conn.cursor()
-    loginCursor.execute("SELECT password FROM users WHERE username = '{}'".format(username))
+    loginCursor.execute("SELECT password FROM users WHERE username = '{}';".format(username))
     hash = loginCursor.fetchone()[0]
     loginCursor.close()
     if check_password_hash(hash,password):
@@ -97,7 +97,7 @@ def addAp():
     if session.get("username") is not None:
         status = request.args.get('status')
         apGroupCursor = conn.cursor()
-        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
+        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups;")
         apGroups = apGroupCursor.fetchall()
         apGroupCursor.close()
         return render_template("add-ap.html", status=status, apGroups=apGroups)
@@ -115,7 +115,7 @@ def submitAddAp():
         apSnmp = request.form["ap_snmp"]
         status = "Success! {} was successfully registered!".format(apName)
         addApCursor = conn.cursor()
-        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
+        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}';)".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
         addApCursor.close()
         conn.commit()
         return redirect(url_for('addAp', status=status))
@@ -125,7 +125,7 @@ def deleteAp():
     if session.get("username") is not None:
         status = request.args.get('status')
         apCursor = conn.cursor()
-        apCursor.execute("SELECT ap_id,ap_name FROM access_points")
+        apCursor.execute("SELECT ap_id,ap_name FROM access_points;")
         aps = apCursor.fetchall()
         apCursor.close()
         return render_template("delete-ap.html", aps=aps, status=status)
@@ -137,7 +137,7 @@ def submitDeleteAp():
     if request.method == 'POST':
         apId = request.form["ap_id"]
         deleteApNameCursor = conn.cursor()
-        deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
+        deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}';".format(apId))
         apName = deleteApNameCursor.fetchone()[0]
         status = "Success! {} was successfully registered!".format(apName)
         deleteApCursor = conn.cursor()
@@ -160,7 +160,7 @@ def submitAddApGroup():
         apGroupName = request.form["ap_group_name"]
         status = "Success! {} was successfully registered!".format(apGroupName)
         addApGroupCursor = conn.cursor()
-        addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
+        addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}');".format(apGroupName))
         addApGroupCursor.close()
         conn.commit()
         return render_template('add-ap-group.html', status=status)
@@ -170,7 +170,7 @@ def deleteApGroup():
     if session.get("username") is not None:
         status = request.args.get('status')
         deleteApGroupCursor = conn.cursor()
-        deleteApGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
+        deleteApGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups;")
         apGroups = deleteApGroupCursor.fetchall()
         deleteApGroupCursor.close()
         return render_template("delete-ap-group.html", status=status, apGroups=apGroups)
@@ -182,11 +182,11 @@ def submitDeleteApGroup():
     if request.method == 'POST':
         apGroupId = request.form["ap_group_id"]
         deleteApGroupNameCursor = conn.cursor()
-        deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+        deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}';".format(apGroupId))
         apGroupName = deleteApGroupNameCursor.fetchone()[0]
         status = "Success! {} was successfully deleted!".format(apGroupName)
         deleteApGroupCursor = conn.cursor()
-        deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+        deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}';".format(apGroupId))
         deleteApGroupCursor.close()
         conn.commit()
         return redirect(url_for('deleteApGroup', status=status))
@@ -245,7 +245,7 @@ def doCurl():
 def chooseApDashboard():
     if session.get("username") is not None:
         apCursor = conn.cursor()
-        apCursor.execute("SELECT ap_id,ap_name FROM access_points")
+        apCursor.execute("SELECT ap_id,ap_name FROM access_points;")
         aps = apCursor.fetchall()
         apCursor.close()
         return render_template("choose-ap-dashboard.html", aps=aps)
@@ -257,7 +257,7 @@ def manageApDashboard():
     if request.method == 'POST':
         apId = request.form["ap_id"]
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth FROM access_points WHERE ap_id = '{}';".format(apId))
         apInfo = apInfoCursor.fetchall()
         for info in apInfo:
             apName = info[0]
@@ -277,7 +277,7 @@ def manageApDashboard():
 def chooseApGroupDashboard():
     if session.get("username") is not None:
         apGroupCursor = conn.cursor()
-        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
+        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups;")
         apGroups = apGroupCursor.fetchall()
         apGroupCursor.close()
         return render_template("choose-ap-group-dashboard.html", apGroups=apGroups)
@@ -289,7 +289,7 @@ def manageApGroupDashboard():
     if request.method == 'POST':
         apGroupId = request.form["ap_group_id"]
         apGroupInfoCursor = conn.cursor()
-        apGroupInfoCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupInfoCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}';".format(apGroupId))
         apGroupInfo = apGroupInfoCursor.fetchall()
         for info in apGroupInfo:
             apGroupName = info[0]
@@ -323,7 +323,7 @@ def totalApBandwidth():
 def totalAps():
     if session.get("username") is not None:
         totalApsCursor = conn.cursor(buffered=True)
-        totalApsCursor.execute("SELECT * FROM access_points")
+        totalApsCursor.execute("SELECT * FROM access_points;")
         totalAps = totalApsCursor.rowcount
         totalApsCursor.close()
         return render_template('total-aps.html', totalAps=totalAps)
@@ -334,7 +334,7 @@ def totalAps():
 def totalClients():
     if session.get("username") is not None:
         totalClientsCursor = conn.cursor(buffered=True)
-        totalClientsCursor.execute("SELECT SUM(ap_total_clients) AS totalClients FROM access_points WHERE ap_all_id = 2")
+        totalClientsCursor.execute("SELECT SUM(ap_total_clients) AS totalClients FROM access_points WHERE ap_all_id = 2;")
         totalClients = totalClientsCursor.fetchone()[0]
         totalClientsCursor.close()
         return render_template('total-clients.html', totalClients=totalClients)
@@ -345,7 +345,7 @@ def totalClients():
 def totalApGroups():
     if session.get("username") is not None:
         totalApGroupsCursor = conn.cursor(buffered=True)
-        totalApGroupsCursor.execute("SELECT COUNT(*) AS totalAPGroups FROM access_point_groups")
+        totalApGroupsCursor.execute("SELECT COUNT(*) AS totalAPGroups FROM access_point_groups;")
         totalApGroups = totalApGroupsCursor.fetchone()[0]
         totalApGroupsCursor.close()
         return render_template('total-ap-groups.html', totalApGroups=totalApGroups)
@@ -359,10 +359,10 @@ def totalSsids():
         ssids5Cursor = conn.cursor(buffered=True)
         ssids24RadiusCursor = conn.cursor(buffered=True)
         ssids5RadiusCursor = conn.cursor(buffered=True)
-        ssids24Cursor.execute("SELECT COUNT(*) FROM ssids_24ghz")
-        ssids5Cursor.execute("SELECT COUNT(*) FROM ssids_5ghz")
-        ssids24RadiusCursor.execute("SELECT COUNT(*) FROM ssids_24ghz_radius")
-        ssids5RadiusCursor.execute("SELECT COUNT(*) FROM ssids_5ghz_radius")
+        ssids24Cursor.execute("SELECT COUNT(*) FROM ssids_24ghz;")
+        ssids5Cursor.execute("SELECT COUNT(*) FROM ssids_5ghz;")
+        ssids24RadiusCursor.execute("SELECT COUNT(*) FROM ssids_24ghz_radius;")
+        ssids5RadiusCursor.execute("SELECT COUNT(*) FROM ssids_5ghz_radius;")
         ssids24 = ssids24Cursor.fetchone()[0]
         ssids5 = ssids5Cursor.fetchone()[0]
         ssids24Radius = ssids24RadiusCursor.fetchone()[0]
