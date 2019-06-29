@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.60, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
 --
 -- Host: localhost    Database: cardinal
 -- ------------------------------------------------------
--- Server version	5.5.60-0ubuntu0.14.04.1
+-- Server version	5.7.26-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,7 +27,7 @@ CREATE TABLE `access_point_groups` (
   `ap_group_name` text NOT NULL,
   PRIMARY KEY (`ap_group_id`),
   UNIQUE KEY `access_point_groups` (`ap_group_name`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,19 +46,19 @@ CREATE TABLE `access_points` (
   `ap_ssh_password` text NOT NULL,
   `ap_snmp` text NOT NULL,
   `ap_total_clients` int(11) DEFAULT NULL,
-  `ap_bandwidth` text NOT NULL COMMENT '(in Mbps)',
-  `ap_mac_addr` text NOT NULL,
-  `ap_model` text NOT NULL,
-  `ap_serial` text NOT NULL,
-  `ap_location` text NOT NULL,
-  `ap_ios_info` text NOT NULL,
-  `ap_ping_ms` text NOT NULL,
-  `ap_uptime` text NOT NULL,
+  `ap_bandwidth` varchar(255) DEFAULT NULL,
+  `ap_mac_addr` varchar(255) DEFAULT NULL,
+  `ap_model` varchar(255) DEFAULT NULL,
+  `ap_serial` varchar(255) DEFAULT NULL,
+  `ap_location` varchar(255) DEFAULT NULL,
+  `ap_ios_info` varchar(255) DEFAULT NULL,
+  `ap_ping_ms` varchar(255) DEFAULT NULL,
+  `ap_uptime` varchar(255) DEFAULT NULL,
   `ap_all_id` int(11) DEFAULT '2',
   PRIMARY KEY (`ap_id`),
   UNIQUE KEY `ap_name` (`ap_name`(255)),
   UNIQUE KEY `ap_ip` (`ap_ip`(15))
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,7 +183,7 @@ CREATE TABLE `users` (
   `password` char(102) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1 COMMENT='For Cardinal User Management';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1 COMMENT='For Cardinal User Management';
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -195,4 +195,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-30  2:13:39
+-- Dump completed on 2019-06-25 22:39:07
