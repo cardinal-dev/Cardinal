@@ -60,13 +60,13 @@ read -p "Okay, now we need the base location of your Cardinal installation. What
 echo "Thank you for installing Cardinal!"
 
 # Let's create a configuration file based on user input (for Cardinal SQL connections)
-rm $varDbCredDir/cardinalmysql.ini
-touch $varDbCredDir/cardinalmysql.ini
-echo "[cardinal_mysql_config]" >> $varDbCredDir/cardinalmysql.ini
-echo 'servername'=""$varDatabaseIP"" >> $varDbCredDir/cardinalmysql.ini
-echo 'username'=""$varDbUsername"" >> $varDbCredDir/cardinalmysql.ini
-echo 'password'=""$varDbPassword"" >> $varDbCredDir/cardinalmysql.ini
-echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinalmysql.ini
+rm $varDbCredDir/cardinal.ini
+touch $varDbCredDir/cardinal.ini
+echo "[cardinal_config]" >> $varDbCredDir/cardinal.ini
+echo 'dbserver'=""$varDatabaseIP"" >> $varDbCredDir/cardinal.ini
+echo 'username'=""$varDbUsername"" >> $varDbCredDir/cardinal.ini
+echo 'password'=""$varDbPassword"" >> $varDbCredDir/cardinal.ini
+echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinal.ini
 
 # Now, let's create the MySQL database for Cardinal. We also want to import the SQL structure too!
 mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""

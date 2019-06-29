@@ -26,7 +26,7 @@ SOFTWARE.
 
 '''
 
-import mysql.connector
+import MySQLdb
 import os
 import subprocess
 from configparser import ConfigParser
@@ -40,7 +40,7 @@ from werkzeug.security import check_password_hash
 
 # System variables
 
-cardinalConfig = os.environ['CARDINAL_CONFIG']
+cardinalConfig = os.environ['CARDINALCONFIG']
 
 # Flask app intitialization
 
@@ -51,13 +51,16 @@ Cardinal.secret_key = "SECRET_KEY_HERE"
 
 mysqlConfig = ConfigParser()
 mysqlConfig.read("{}".format(cardinalConfig))
-mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
-mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
-mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
-mysqlDb = mysqlConfig.get('cardinal_mysql_config', 'dbname')
-conn = mysql.connector.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
+mysqlHost = mysqlConfig.get('cardinal', 'dbserver')
+mysqlUser = mysqlConfig.get('cardinal', 'username')
+mysqlPass = mysqlConfig.get('cardinal', 'password')
+mysqlDb = mysqlConfig.get('cardinal', 'dbname')
 
-# Flask routes
+def cardinalSql():
+    conn = MySQLdb.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
+    return conn
+
+# Cardinal Flask routes
 
 @Cardinal.route("/")
 def index():
@@ -77,10 +80,12 @@ def dashboard():
 def login():
     username = request.form['username']
     password = request.form['password']
+    conn = cardinalSql()
     loginCursor = conn.cursor()
-    loginCursor.execute("SELECT password FROM users WHERE username = '{}';".format(username))
+    loginCursor.execute("SELECT password FROM users WHERE username = '{}'".format(username))
     hash = loginCursor.fetchone()[0]
     loginCursor.close()
+    conn.close()
     if check_password_hash(hash,password):
         session['username'] = username
         return redirect(url_for('dashboard'))
@@ -96,10 +101,12 @@ def logout():
 def addAp():
     if session.get("username") is not None:
         status = request.args.get('status')
+        conn = cardinalSql()
         apGroupCursor = conn.cursor()
-        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups;")
+        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
         apGroups = apGroupCursor.fetchall()
         apGroupCursor.close()
+        conn.close()
         return render_template("add-ap.html", status=status, apGroups=apGroups)
     else:
         return redirect(url_for('index'))
@@ -114,20 +121,24 @@ def submitAddAp():
         apGroupId = request.form["group_id"]
         apSnmp = request.form["ap_snmp"]
         status = "Success! {} was successfully registered!".format(apName)
+        conn = cardinalSql()
         addApCursor = conn.cursor()
-        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}';)".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
+        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
         addApCursor.close()
         conn.commit()
+        conn.close()
         return redirect(url_for('addAp', status=status))
 
 @Cardinal.route("/delete-ap", methods=["GET"])
 def deleteAp():
     if session.get("username") is not None:
         status = request.args.get('status')
+        conn = cardinalSql()
         apCursor = conn.cursor()
-        apCursor.execute("SELECT ap_id,ap_name FROM access_points;")
+        apCursor.execute("SELECT ap_id,ap_name FROM access_points")
         aps = apCursor.fetchall()
         apCursor.close()
+        conn.close()
         return render_template("delete-ap.html", aps=aps, status=status)
     else:
         return redirect(url_for('index'))
@@ -136,14 +147,17 @@ def deleteAp():
 def submitDeleteAp():
     if request.method == 'POST':
         apId = request.form["ap_id"]
+        conn = cardinalSql()
         deleteApNameCursor = conn.cursor()
-        deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}';".format(apId))
+        deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
         apName = deleteApNameCursor.fetchone()[0]
+        deleteApNameCursor.close()
         status = "Success! {} was successfully registered!".format(apName)
         deleteApCursor = conn.cursor()
         deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
         deleteApCursor.close()
         conn.commit()
+        conn.close()
         return redirect(url_for('deleteAp', status=status))
 
 @Cardinal.route("/add-ap-group", methods=["GET"])
@@ -159,20 +173,24 @@ def submitAddApGroup():
     if request.method == 'POST':
         apGroupName = request.form["ap_group_name"]
         status = "Success! {} was successfully registered!".format(apGroupName)
+        conn = cardinalSql()
         addApGroupCursor = conn.cursor()
-        addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}');".format(apGroupName))
+        addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
         addApGroupCursor.close()
         conn.commit()
+        conn.close()
         return render_template('add-ap-group.html', status=status)
 
 @Cardinal.route("/delete-ap-group", methods=["GET"])
 def deleteApGroup():
     if session.get("username") is not None:
+        conn = cardinalSql()
         status = request.args.get('status')
         deleteApGroupCursor = conn.cursor()
-        deleteApGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups;")
+        deleteApGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
         apGroups = deleteApGroupCursor.fetchall()
         deleteApGroupCursor.close()
+        conn.close()
         return render_template("delete-ap-group.html", status=status, apGroups=apGroups)
     else:
         return redirect(url_for('index'))
@@ -181,14 +199,15 @@ def deleteApGroup():
 def submitDeleteApGroup():
     if request.method == 'POST':
         apGroupId = request.form["ap_group_id"]
+        conn = cardinalSql()
         deleteApGroupNameCursor = conn.cursor()
-        deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}';".format(apGroupId))
+        deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
         apGroupName = deleteApGroupNameCursor.fetchone()[0]
         status = "Success! {} was successfully deleted!".format(apGroupName)
         deleteApGroupCursor = conn.cursor()
-        deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}';".format(apGroupId))
-        deleteApGroupCursor.close()
+        deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
         conn.commit()
+        conn.close()
         return redirect(url_for('deleteApGroup', status=status))
 
 @Cardinal.route("/network-tools", methods=["GET"])
@@ -244,21 +263,26 @@ def doCurl():
 @Cardinal.route("/choose-ap-dashboard", methods=["GET"])
 def chooseApDashboard():
     if session.get("username") is not None:
+        conn = cardinalSql()
         apCursor = conn.cursor()
-        apCursor.execute("SELECT ap_id,ap_name FROM access_points;")
+        apCursor.execute("SELECT ap_id,ap_name FROM access_points")
         aps = apCursor.fetchall()
         apCursor.close()
+        conn.close()
         return render_template("choose-ap-dashboard.html", aps=aps)
     else:
         return redirect(url_for('index'))
-    
+
 @Cardinal.route("/manage-ap-dashboard", methods=["POST"])
 def manageApDashboard():
     if request.method == 'POST':
         apId = request.form["ap_id"]
+        conn = cardinalSql()
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth FROM access_points WHERE ap_id = '{}';".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth FROM access_points WHERE ap_id = '{}'".format(apId))
         apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        conn.close()
         for info in apInfo:
             apName = info[0]
             apIp = info[1]
@@ -268,7 +292,6 @@ def manageApDashboard():
         session['apIp'] = apIp
         session['apTotalClients'] = apTotalClients
         session['apBandwidth'] = apBandwidth
-        apInfoCursor.close()
         return render_template("manage-ap-dashboard.html")
     else:
         return redirect(url_for('index'))
@@ -276,10 +299,12 @@ def manageApDashboard():
 @Cardinal.route("/choose-ap-group-dashboard", methods=["GET"])
 def chooseApGroupDashboard():
     if session.get("username") is not None:
+        conn = cardinalSql()
         apGroupCursor = conn.cursor()
-        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups;")
+        apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
         apGroups = apGroupCursor.fetchall()
         apGroupCursor.close()
+        conn.close()
         return render_template("choose-ap-group-dashboard.html", apGroups=apGroups)
     else:
         return redirect(url_for('index'))
@@ -288,13 +313,14 @@ def chooseApGroupDashboard():
 def manageApGroupDashboard():
     if request.method == 'POST':
         apGroupId = request.form["ap_group_id"]
+        conn = cardinalSql()
         apGroupInfoCursor = conn.cursor()
-        apGroupInfoCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}';".format(apGroupId))
+        apGroupInfoCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
         apGroupInfo = apGroupInfoCursor.fetchall()
+        apGroupInfoCursor.close()
         for info in apGroupInfo:
             apGroupName = info[0]
         session['apGroupName'] = apGroupName
-        apGroupInfoCursor.close()
         return render_template("manage-ap-group-dashboard.html")
     else:
         return redirect(url_for('index'))
@@ -303,11 +329,6 @@ def manageApGroupDashboard():
 def configApIp():
     if session.get("username") is not None:
         return render_template("config-ap-ip.html")
-
-#@Cardinal.route("/do-config-ap-ip", methods=["POST"])
-#def doConfigApIp():
-#    if request.method == 'POST':
-#        apIp = session
 
 @Cardinal.route("/total-ap-clients", methods=["GET"])
 def totalApClients():
@@ -318,14 +339,16 @@ def totalApClients():
 def totalApBandwidth():
     if session.get("username") is not None:
         return render_template("total-ap-bandwidth.html")
-   
+
 @Cardinal.route("/total-aps", methods=["GET"])
 def totalAps():
     if session.get("username") is not None:
-        totalApsCursor = conn.cursor(buffered=True)
-        totalApsCursor.execute("SELECT * FROM access_points;")
-        totalAps = totalApsCursor.rowcount
+        conn = cardinalSql()
+        totalApsCursor = conn.cursor()
+        totalApsCursor.execute("SELECT COUNT(*) FROM access_points")
+        totalAps = totalApsCursor.fetchone()[0]
         totalApsCursor.close()
+        conn.close()
         return render_template('total-aps.html', totalAps=totalAps)
     else:
         return redirect(url_for('index'))
@@ -333,10 +356,12 @@ def totalAps():
 @Cardinal.route("/total-clients", methods=["GET"])
 def totalClients():
     if session.get("username") is not None:
-        totalClientsCursor = conn.cursor(buffered=True)
-        totalClientsCursor.execute("SELECT SUM(ap_total_clients) AS totalClients FROM access_points WHERE ap_all_id = 2;")
+        conn = cardinalSql()
+        totalClientsCursor = conn.cursor()
+        totalClientsCursor.execute("SELECT FORMAT(SUM(ap_total_clients),0) AS totalClients FROM access_points")
         totalClients = totalClientsCursor.fetchone()[0]
         totalClientsCursor.close()
+        conn.close()
         return render_template('total-clients.html', totalClients=totalClients)
     else:
         return redirect(url_for('index'))
@@ -344,10 +369,12 @@ def totalClients():
 @Cardinal.route("/total-ap-groups", methods=["GET"])
 def totalApGroups():
     if session.get("username") is not None:
-        totalApGroupsCursor = conn.cursor(buffered=True)
-        totalApGroupsCursor.execute("SELECT COUNT(*) AS totalAPGroups FROM access_point_groups;")
+        conn = cardinalSql()
+        totalApGroupsCursor = conn.cursor()
+        totalApGroupsCursor.execute("SELECT COUNT(*) FROM access_point_groups")
         totalApGroups = totalApGroupsCursor.fetchone()[0]
         totalApGroupsCursor.close()
+        conn.close()
         return render_template('total-ap-groups.html', totalApGroups=totalApGroups)
     else:
         return redirect(url_for('index'))
@@ -355,14 +382,15 @@ def totalApGroups():
 @Cardinal.route("/total-ssids", methods=["GET"])
 def totalSsids():
     if session.get("username") is not None:
-        ssids24Cursor = conn.cursor(buffered=True)
-        ssids5Cursor = conn.cursor(buffered=True)
-        ssids24RadiusCursor = conn.cursor(buffered=True)
-        ssids5RadiusCursor = conn.cursor(buffered=True)
-        ssids24Cursor.execute("SELECT COUNT(*) FROM ssids_24ghz;")
-        ssids5Cursor.execute("SELECT COUNT(*) FROM ssids_5ghz;")
-        ssids24RadiusCursor.execute("SELECT COUNT(*) FROM ssids_24ghz_radius;")
-        ssids5RadiusCursor.execute("SELECT COUNT(*) FROM ssids_5ghz_radius;")
+        conn = cardinalSql()
+        ssids24Cursor = conn.cursor()
+        ssids5Cursor = conn.cursor()
+        ssids24RadiusCursor = conn.cursor()
+        ssids5RadiusCursor = conn.cursor()
+        ssids24Cursor.execute("SELECT COUNT(*) FROM ssids_24ghz")
+        ssids5Cursor.execute("SELECT COUNT(*) FROM ssids_5ghz")
+        ssids24RadiusCursor.execute("SELECT COUNT(*) FROM ssids_24ghz_radius")
+        ssids5RadiusCursor.execute("SELECT COUNT(*) FROM ssids_5ghz_radius")
         ssids24 = ssids24Cursor.fetchone()[0]
         ssids5 = ssids5Cursor.fetchone()[0]
         ssids24Radius = ssids24RadiusCursor.fetchone()[0]
@@ -372,6 +400,7 @@ def totalSsids():
         ssids5Cursor.close()
         ssids24RadiusCursor.close()
         ssids5RadiusCursor.close()
+        conn.close()
         return render_template('total-ssids.html', totalSsids=totalSsids)
     else:
         return redirect(url_for('index'))
