@@ -348,7 +348,7 @@ def doConfigApIp():
             apIp = info[1]
             apSshUsername = info[2]
             apSshPassword = info[3]
-        scoutApIp = subprocess.check_output("scout --change-ip {0} {1} {2} {3} {4}".format(apIp,apSshUsername,apSshPassword,apNewIp,apSubnetMask), shell=True)
+        subprocess.check_output("scout --change-ip {0} {1} {2} {3} {4}".format(apIp,apSshUsername,apSshPassword,apNewIp,apSubnetMask), shell=True)
         status = "{}'s IP was successfully updated!".format(apName)
         sqlChangeApIpCursor = conn.cursor()
         sqlChangeApIpCursor.execute("UPDATE access_points SET ap_ip = '{0}' WHERE ap_id = '{1}'".format(apNewIp,apId))
@@ -377,7 +377,7 @@ def doConfigApName():
             apIp = info[1]
             apSshUsername = info[2]
             apSshPassword = info[3]
-        scoutApName = subprocess.check_output("scout --change-name {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,apNewName), shell=True)
+        subprocess.check_output("scout --change-name {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,apNewName), shell=True)
         status = "AP Name Changed from {0} to {1}".format(apName,apNewName)
         sqlChangeApNameCursor = conn.cursor()
         sqlChangeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apName,apId))

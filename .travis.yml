@@ -15,8 +15,7 @@ before_script:
 - mysql -e 'SHOW TABLES from cardinal;'
 - mysql -u root --password="" cardinal -e "INSERT INTO settings (settings_id,cardinal_home,scout_dir,cardinal_tftp,poll_schedule) VALUES ('1','/opt','/scout.py','/opt','2');"
 script:
-- python3 ci/sqltest.py
 - flake8 . --count --select=E9,F63,F72,F82 --show-source --statistics
-- pyflakes bin/scout.py
-- pyflakes app/main.py
+- pyflakes bin/scout.py app/main.py ci/sqltest.py
+- python3 ci/sqltest.py
 - pyinstaller --onefile bin/scout.py
