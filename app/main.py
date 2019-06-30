@@ -335,7 +335,7 @@ def configApIp():
 @Cardinal.route("/do-config-ap-ip", methods=["POST"])
 def doConfigApIp():
     if request.method == 'POST':
-        apId = session.get['apId']
+        apId = session['ap_id']
         apNewIp = request.form["ap_new_ip"]
         apSubnetMask = request.form["ap_subnetmask"]
         conn = cardinalSql()
@@ -365,7 +365,7 @@ def configApName():
 @Cardinal.route("/do-config-ap-name", methods=["POST"])
 def doConfigApName():
     if request.method == 'POST':
-        apId = session.get['apId']
+        apId = session['apId']
         apNewName = request.form["ap_name"]
         conn = cardinalSql()
         apInfoCursor = conn.cursor()

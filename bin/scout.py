@@ -35,16 +35,16 @@ from configparser import ConfigParser
 
 # System variables
 
-cardinalConfig = os.environ['CARDINAL_CONFIG']
+cardinalConfig = os.environ['CARDINALCONFIG']
 
 # Connect to MySQL database
 
 mysqlConfig = ConfigParser()
 mysqlConfig.read("{}".format(cardinalConfig))
-mysqlHost = mysqlConfig.get('cardinal_mysql_config', 'servername')
-mysqlUser = mysqlConfig.get('cardinal_mysql_config', 'username')
-mysqlPass = mysqlConfig.get('cardinal_mysql_config', 'password')
-mysqlDb = mysqlConfig.get('cardinal_mysql_config', 'dbname')
+mysqlHost = mysqlConfig.get('cardinal', 'dbserver')
+mysqlUser = mysqlConfig.get('cardinal', 'username')
+mysqlPass = mysqlConfig.get('cardinal', 'password')
+mysqlDb = mysqlConfig.get('cardinal', 'dbname')
 
 conn = mysql.connector.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
 
