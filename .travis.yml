@@ -7,7 +7,7 @@ python:
 services:
 - mysql
 install:
-- python3 -m pip install pyinstaller paramiko flake8 mysqlclient configparser
+- python3 -m pip install -r requirements.txt
 before_script:
 - chmod +x ci/sqltest.py
 - mysql -e 'CREATE DATABASE cardinal;'

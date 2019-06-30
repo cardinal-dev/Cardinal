@@ -288,6 +288,7 @@ def manageApDashboard():
             apIp = info[1]
             apTotalClients = info[2]
             apBandwidth = info[3]
+        session['apId'] = apId
         session['apName'] = apName
         session['apIp'] = apIp
         session['apTotalClients'] = apTotalClients
@@ -328,7 +329,61 @@ def manageApGroupDashboard():
 @Cardinal.route("/config-ap-ip", methods=["GET"])
 def configApIp():
     if session.get("username") is not None:
-        return render_template("config-ap-ip.html")
+        status = request.args.get('status')
+        return render_template("config-ap-ip.html", status=status)
+
+@Cardinal.route("/do-config-ap-ip", methods=["POST"])
+def doConfigApIp():
+    if request.method == 'POST':
+        apId = session.get['apId']
+        apNewIp = request.form["ap_new_ip"]
+        apSubnetMask = request.form["ap_subnetmask"]
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        scoutApIp = subprocess.check_output("scout --change-ip {0} {1} {2} {3} {4}".format(apIp,apSshUsername,apSshPassword,apNewIp,apSubnetMask), shell=True)
+        status = "{}'s IP was successfully updated!".format(apName)
+        sqlChangeApIpCursor = conn.cursor()
+        sqlChangeApIpCursor.execute("UPDATE access_points SET ap_ip = '{0}' WHERE ap_id = '{1}'".format(apNewIp,apId))
+        sqlChangeApIpCursor.close()
+        conn.close()
+        return redirect(url_for('configApIp', status=status))
+
+@Cardinal.route("/config-ap-name", methods=["GET"])
+def configApName():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("config-ap-name.html", status=status)
+
+@Cardinal.route("/do-config-ap-name", methods=["POST"])
+def doConfigApName():
+    if request.method == 'POST':
+        apId = session.get['apId']
+        apNewName = request.form["ap_name"]
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        scoutApName = subprocess.check_output("scout --change-name {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,apNewName), shell=True)
+        status = "AP Name Changed from {0} to {1}".format(apName,apNewName)
+        sqlChangeApNameCursor = conn.cursor()
+        sqlChangeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apName,apId))
+        sqlChangeApNameCursor.close()
+        conn.close()
+        return redirect(url_for('configApName', status=status))
 
 @Cardinal.route("/total-ap-clients", methods=["GET"])
 def totalApClients():
