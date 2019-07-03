@@ -16,7 +16,7 @@ before_script:
 - mysql -u root --password="" cardinal -e "INSERT INTO settings (settings_id,cardinal_home,scout_dir,cardinal_tftp,poll_schedule) VALUES ('1','/opt','/scout.py','/opt','2');"
 script:
 - flake8 . --count --select=E9,F63,F72,F82 --show-source --statistics
-- pyflakes bin/*.py app/*.py ci/*.py
+- pyflakes bin/*.py app/*.py ci/tests/*.py
 - python3 ci/tests/sqltest.py
 - python3 ci/tests/qa-get-speed.py
 - pyinstaller --onefile bin/scout.py
