@@ -31,7 +31,7 @@ SOFTWARE.
 import re
 import pathlib
 
-with pathlib.Path("../templates/getspeed").open(mode='r') as file:
+with pathlib.Path("ci/templates/getspeed").open(mode='r') as file:
     getSpeedString = file.read().replace("\n", '')
     getSpeedList = getSpeedString.split(",")
     getSpeed = getSpeedList[9].strip("Mbps")
