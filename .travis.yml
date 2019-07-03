@@ -9,7 +9,7 @@ services:
 install:
 - python3 -m pip install -r requirements.txt
 before_script:
-- chmod +x ci/sqltest.py
+- chmod +x ci/tests/*.py
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
