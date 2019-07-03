@@ -335,7 +335,7 @@ def configApIp():
 @Cardinal.route("/do-config-ap-ip", methods=["POST"])
 def doConfigApIp():
     if request.method == 'POST':
-        apId = session['ap_id']
+        apId = session.get('apId', None)
         apNewIp = request.form["ap_new_ip"]
         apSubnetMask = request.form["ap_subnetmask"]
         conn = cardinalSql()

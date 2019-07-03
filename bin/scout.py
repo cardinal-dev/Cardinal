@@ -27,48 +27,50 @@ SOFTWARE.
 '''
 
 import os
+import time
+import jinja2
+import subprocess
 import paramiko
 import sys
-import subprocess
-import mysql.connector
+import MySQLdb
 from configparser import ConfigParser
 
-# System variables
+# CARDINAL SETTINGS
 
-cardinalConfig = os.environ['CARDINALCONFIG']
+cardinalConfigFile = os.environ['CARDINALCONFIG']
+cardinalConfig = ConfigParser()
+cardinalConfig.read("{}".format(cardinalConfigFile))
 
-# Connect to MySQL database
+# BEGIN CARDINAL SETTING DECLARATIONS
 
-mysqlConfig = ConfigParser()
-mysqlConfig.read("{}".format(cardinalConfig))
-mysqlHost = mysqlConfig.get('cardinal', 'dbserver')
-mysqlUser = mysqlConfig.get('cardinal', 'username')
-mysqlPass = mysqlConfig.get('cardinal', 'password')
-mysqlDb = mysqlConfig.get('cardinal', 'dbname')
+mysqlHost = cardinalConfig.get('cardinal', 'dbserver')
+mysqlUser = cardinalConfig.get('cardinal', 'username')
+mysqlPass = cardinalConfig.get('cardinal', 'password')
+mysqlDb = cardinalConfig.get('cardinal', 'dbname')
+commandDir = cardinalConfig.get('cardinal', 'commanddir')
 
-conn = mysql.connector.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
+# CARDINAL SYSTEM VARIABLES
 
-# Variable declarations
-
+fileLoader = jinja2.FileSystemLoader('{}'.format(commandDir))
+env = jinja2.Environment(loader=fileLoader)
 scoutCommand = sys.argv[1]
 
-# IP information
+# MySQL CONNECTION
 
-def ipInfo():
-    ip = sys.argv[2]
-    return ip
+conn = MySQLdb.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
 
-# SSH information
+# SSH INFORMATION
 
 def sshInfo():
+    ip = sys.argv[2]
     username = sys.argv[3]
     password = sys.argv[4]
     scoutSsh = paramiko.SSHClient()
     scoutSsh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     scoutSsh.connect(ip, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
-    return username, password, scoutSsh
+    return ip, username, password, scoutSsh
 
-# Scout help & usage
+# SCOUT HELP & USAGE
 
 if scoutCommand == "--help":
     print("Scout: Cardinal CLI for managing Cisco access points")
@@ -109,8 +111,7 @@ if scoutCommand == "--help":
 # cisco_arp.py
 
 if scoutCommand == "--get-arp":
-    ip = ipInfo()
-    username, password, scoutSsh = sshInfo()
+    ip, username, password, scoutSsh = sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("show ip arp\n")
     arpCommandOutput = stdout.read()
     scoutSsh.close()
@@ -119,32 +120,40 @@ if scoutCommand == "--get-arp":
 # cisco_led.py
 
 if scoutCommand == "--led":
-    ip = ipInfo()
-    username, password, scoutSsh = sshInfo()
+    ip, username, password, scoutSsh = sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("led flash 30\n")
     scoutSsh.close()
 
 # cisco_change_ap_ip.py
 
 if scoutCommand == "--change-ip":
-    ip = ipInfo()
-    username, password, scoutSsh = sshInfo()
+    ip, username, password, scoutSsh = sshInfo()
     newIp = sys.argv[5]
     subnetMask = sys.argv[6]
-    stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "conf t\n" + "int BVI1\n" + 'ip address {0} {1}\n'.format(newIp,subnetMask))
+    cmdTemplate = env.get_template("scout_change_ap_ip")
+    cmds = cmdTemplate.render(password=password,newIp=newIp,subnetMask=subnetMask)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
     scoutSsh.close()
-    # Open Second SSH Connection for New IP (Cardinal)
     scoutSsh2 = paramiko.SSHClient()
     scoutSsh2.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     scoutSsh2.connect(newIp, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
-    stdin, stdout, stderr = scoutSsh2.exec_command("enable\n" + "conf t\n" + "do wr\n")
+    cmdTemplate2 = env.get_template("scout_do_wr")
+    cmds2 = cmdTemplate.render(password=password)
+    scoutCommands2 = cmds2.splitlines()
+    channel2 = scoutSsh2.invoke_shell()
+    for command2 in scoutCommands2:
+        channel2.send('{}\n'.format(command2))
+        time.sleep(1)
     scoutSsh2.close()
 
 # cisco_configure_ssid.py
 
 if scoutCommand == "--create-ssid-24":
-    ip = ipInfo()
-    username, password, scoutSsh = sshInfo()
+    ip, username, password, scoutSsh = sshInfo()
     ssid = sys.argv[5]
     wpa2Pass = sys.argv[6]
     vlan = sys.argv[7]
@@ -327,8 +336,8 @@ if scoutCommand == "--get-speed":
    username, password, scoutSsh = sshInfo()
    stdin, stdout, stderr = scoutSsh.exec_command("sho int gi0\n")
    sshOut = stdout.read()
-   sshBandwidth = print(sshOut.decode('ascii').strip("\n"))
-   getBandwidth = subprocess.check_output("echo {} | grep -E -o '.{4}Mbps' | tr -d 'Mbps'".format(sshBandwidth), shell=True)
+   sshBandwidth = sshOut.decode('ascii').strip("\n").split(",")
+   getBandwidth = sshBandwidth[9].strip("Mbps")
    bandwidthSqlCursor = conn.cursor()
    bandwidthSql = "UPDATE access_points SET ap_bandwidth = '{0}' WHERE ap_ip = '{1}'".format(getBandwidth,ip)
    bandwidthSqlCursor.execute(bandwidthSql)

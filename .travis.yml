@@ -18,4 +18,5 @@ script:
 - flake8 . --count --select=E9,F63,F72,F82 --show-source --statistics
 - pyflakes bin/scout.py app/main.py ci/sqltest.py
 - python3 ci/sqltest.py
+- python3 ci/tests/qa-get-speed.py
 - pyinstaller --onefile bin/scout.py
