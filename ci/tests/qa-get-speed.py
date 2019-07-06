@@ -28,7 +28,6 @@ SOFTWARE.
 
 # THIS IS ONLY A TEST FILE!
 
-import re
 import pathlib
 
 with pathlib.Path("ci/templates/getspeed").open(mode='r') as file:
