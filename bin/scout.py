@@ -346,7 +346,7 @@ if scoutCommand == "--get-speed":
 
 if scoutCommand == "--tftp-backup":
    ip, username, password, scoutSsh = connInfo()
-   tftp = sys.argv[5]
+   tftpIp = sys.argv[5]
    cmdTemplate = env.get_template("scout_do_tftp_backup")
    cmds = cmdTemplate.render(password=password,tftpIp=tftpIp)
    scoutCommands = cmds.splitlines()
