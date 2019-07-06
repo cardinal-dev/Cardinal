@@ -287,7 +287,13 @@ if (scoutCommand == "--delete-ssid-radius-24") or (scoutCommand == "--delete-ssi
 
 if scoutCommand == "--disable-http":
    ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "no ip http server\n" + "do wr\n")
+   cmdTemplate = env.get_template("scout_disable_ap_http")
+   cmds = cmdTemplate.render(password=password)
+   scoutCommands = cmds.splitlines()
+   channel = scoutSsh.invoke_shell()
+   for command in scoutCommands:
+       channel.send('{}\n'.format(command))
+       time.sleep(1)
    scoutSsh.close()
 
 # cisco_disable_radius.py
@@ -310,7 +316,13 @@ if scoutCommand == "--disable-snmp":
 
 if scoutCommand == "--enable-http":
    ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "ip http server\n" + "do wr\n")
+   cmdTemplate = env.get_template("scout_enable_ap_http")
+   cmds = cmdTemplate.render(password=password)
+   scoutCommands = cmds.splitlines()
+   channel = scoutSsh.invoke_shell()
+   for command in scoutCommands:
+       channel.send('{}\n'.format(command))
+       time.sleep(1)
    scoutSsh.close()
 
 # cisco_enable_radius.py
@@ -489,10 +501,16 @@ if scoutCommand == "--reboot":
 # --change-name
 
 if scoutCommand == "--change-name":
-   ip = connInfo()
-   username, password, scoutSsh = connInfo()
+   ip, username, password, scoutSsh = connInfo()
    apName = sys.argv[5]
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "hostname {}".format(apName) + "do wr\n")
+   cmdTemplate = env.get_template("scout_change_ap_name")
+   cmds = cmdTemplate.render(apName=apName,password=password)
+   scoutCommands = cmds.splitlines()
+   channel = scoutSsh.invoke_shell()
+   for command in scoutCommands:
+       channel.send('{}\n'.format(command))
+       time.sleep(1)
+   scoutSsh.close()
    apNameCursor = conn.cursor()
    sqlApName = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'".format(apName,ip)
    apNameCursor.execute(sqlApName)
