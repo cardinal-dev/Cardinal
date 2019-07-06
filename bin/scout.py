@@ -347,7 +347,13 @@ if scoutCommand == "--get-speed":
 if scoutCommand == "--tftp-backup":
    ip, username, password, scoutSsh = connInfo()
    tftp = sys.argv[5]
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "copy running-config tftp\n" + "{}\n".format(tftp) + "\n")
+   cmdTemplate = env.get_template("scout_do_tftp_backup")
+   cmds = cmdTemplate.render(password=password,tftpIp=tftpIp)
+   scoutCommands = cmds.splitlines()
+   channel = scoutSsh.invoke_shell()
+   for command in scoutCommands:
+       channel.send('{}\n'.format(command))
+       time.sleep(1)
    scoutSsh.close()
 
 # cisco_wr.py
