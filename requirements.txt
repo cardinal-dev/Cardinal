@@ -5,3 +5,4 @@ mysqlclient
 configparser
 werkzeug
 flask
+jinja2
