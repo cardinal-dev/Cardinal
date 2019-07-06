@@ -263,14 +263,14 @@ if scoutCommand == "--delete-ssid-5":
    vlan = sys.argv[6]
    radioSub = sys.argv[7]
    gigaSub = sys.argv[8]
-    cmdTemplate = env.get_template("scout_delete_ssid_5")
-    cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
-    scoutCommands = cmds.splitlines()
-    channel = scoutSsh.invoke_shell()
-    for command in scoutCommands:
-        channel.send('{}\n'.format(command))
-        time.sleep(1)
-    scoutSsh.close()
+   cmdTemplate = env.get_template("scout_delete_ssid_5")
+   cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
+   scoutCommands = cmds.splitlines()
+   channel = scoutSsh.invoke_shell()
+   for command in scoutCommands:
+       channel.send('{}\n'.format(command))
+       time.sleep(1)
+   scoutSsh.close()
 
 # cisco_delete_ssid_radius.py
 
