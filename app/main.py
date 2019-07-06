@@ -365,7 +365,7 @@ def configApName():
 @Cardinal.route("/do-config-ap-name", methods=["POST"])
 def doConfigApName():
     if request.method == 'POST':
-        apId = session['apId']
+        apId = session.get('apId', None)
         apNewName = request.form["ap_name"]
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
@@ -410,6 +410,50 @@ def doApTftpBackup():
         status = "TFTP Config Backup for {} Successfully Initiated!".format(apName)
         conn.close()
         return redirect(url_for('manageApTftpBackup', status=status))
+
+@Cardinal.route("/config-ap-http", methods=["GET"])
+def configApHttp():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("config-ap-http.html", status=status)
+
+@Cardinal.route("/do-enable-ap-http", methods=["POST"])
+def doEnableApHttp():
+    if request.method == 'POST':
+        apId = session.get('apId', None)
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --enable-http {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        status = "HTTP Server for {} Successfully Enabled".format(apName)
+        conn.close()
+        return redirect(url_for('configApHttp', status=status))
+
+@Cardinal.route("/do-disable-ap-http", methods=["POST"])
+def doDisableApHttp():
+    if request.method == 'POST':
+        apId = session.get('apId', None)
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --disable-http {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        status = "HTTP Server for {} Successfully Disabled".format(apName)
+        conn.close()
+        return redirect(url_for('configApHttp', status=status))
 
 @Cardinal.route("/total-ap-clients", methods=["GET"])
 def totalApClients():
