@@ -385,6 +385,32 @@ def doConfigApName():
         conn.close()
         return redirect(url_for('configApName', status=status))
 
+@Cardinal.route("/manage-ap-tftp-backup", methods=["GET"])
+def manageApTftpBackup():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("manage-ap-tftp-backup.html", status=status)
+
+@Cardinal.route("/do-ap-tftp-backup", methods=["POST"])
+def doApTftpBackup():
+    if request.method == 'POST':
+        apId = session.get('apId', None)
+        tftpIp = request.form["tftp_ip"]
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
+        status = "TFTP Config Backup for {} Successfully Initiated!".format(apName)
+        conn.close()
+        return redirect(url_for('manageApTftpBackup', status=status))
+
 @Cardinal.route("/total-ap-clients", methods=["GET"])
 def totalApClients():
     if session.get("username") is not None:

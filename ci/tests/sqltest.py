@@ -26,6 +26,8 @@ SOFTWARE.
 
 '''
 
+# THIS IS ONLY A TEST FILE
+
 import MySQLdb
 from configparser import ConfigParser
 
