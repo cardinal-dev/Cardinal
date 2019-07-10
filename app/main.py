@@ -321,6 +321,7 @@ def manageApGroupDashboard():
         apGroupInfoCursor.close()
         for info in apGroupInfo:
             apGroupName = info[0]
+        session['apGroupId'] = apGroupId
         session['apGroupName'] = apGroupName
         return render_template("manage-ap-group-dashboard.html")
     else:
@@ -391,6 +392,12 @@ def manageApTftpBackup():
         status = request.args.get('status')
         return render_template("manage-ap-tftp-backup.html", status=status)
 
+@Cardinal.route("/manage-ap-tftp-group-backup", methods=["GET"])
+def manageApTftpGroupBackup():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("manage-ap-tftp-group-backup.html", status=status)
+
 @Cardinal.route("/do-ap-tftp-backup", methods=["POST"])
 def doApTftpBackup():
     if request.method == 'POST':
@@ -409,6 +416,24 @@ def doApTftpBackup():
         subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
         status = "TFTP Config Backup for {} Successfully Initiated!".format(apName)
         conn.close()
+        if request.form["group_backup"] == 'True':
+            apGroupId = session.get('apGroupId', None)
+            apGroupName = session.get('apGroupName', None)
+            tftpIp = request.form["tftp_ip"]
+            conn = cardinalSql()
+            apInfoCursor = conn.cursor()
+            apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+            apInfo = apInfoCursor.fetchall()
+            apInfoCursor.close()
+            for info in apInfo:
+                apGroupName = info[0]
+                apIp = info[1]
+                apSshUsername = info[2]
+                apSshPassword = info[3]
+                subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
+            status = "TFTP Config Backup for {} Successfully Initiated!".format(apGroupName)
+            conn.close()
+            return redirect(url_for('manageApTftpBackupGroup', status=status))
         return redirect(url_for('manageApTftpBackup', status=status))
 
 @Cardinal.route("/config-ap-http", methods=["GET"])
@@ -454,6 +479,94 @@ def doDisableApHttp():
         status = "HTTP Server for {} Successfully Disabled".format(apName)
         conn.close()
         return redirect(url_for('configApHttp', status=status))
+
+@Cardinal.route("/config-ap-radius", methods=["GET"])
+def configApRadius():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("config-ap-radius.html", status=status)
+
+@Cardinal.route("/do-enable-ap-radius", methods=["POST"])
+def doEnableApRadius():
+    if request.method == 'POST':
+        apId = session.get('apId', None)
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --enable-radius {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        status = "RADIUS for {} Successfully Enabled".format(apName)
+        conn.close()
+        return redirect(url_for('configApRadius', status=status))
+
+@Cardinal.route("/do-disable-ap-http", methods=["POST"])
+def doDisableApRadius():
+    if request.method == 'POST':
+        apId = session.get('apId', None)
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --disable-radius {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        status = "RADIUS Server for {} Successfully Disabled".format(apName)
+        conn.close()
+        return redirect(url_for('configApRadius', status=status))
+
+@Cardinal.route("/config-ap-snmp", methods=["GET"])
+def configApSnmp():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("config-ap-snmp.html", status=status)
+
+@Cardinal.route("/do-enable-ap-snmp", methods=["POST"])
+def doEnableApSnmp():
+    if request.method == 'POST':
+        apId = session.get('apId', None)
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --enable-snmp {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        status = "SNMP for {} Successfully Enabled".format(apName)
+        conn.close()
+        return redirect(url_for('configApSnmp', status=status))
+
+@Cardinal.route("/do-disable-ap-snmp", methods=["POST"])
+def doDisableApSnmp():
+    if request.method == 'POST':
+        apId = session.get('apId', None)
+        conn = cardinalSql()
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --disable-snmp {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        status = "SNMP Server for {} Successfully Disabled".format(apName)
+        conn.close()
+        return redirect(url_for('configApSnmp', status=status))
 
 @Cardinal.route("/total-ap-clients", methods=["GET"])
 def totalApClients():
