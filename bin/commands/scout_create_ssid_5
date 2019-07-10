@@ -1,4 +1,5 @@
 enable
+{{ password }}
 conf t
 dot11 ssid {{ ssid }}
 auth open
