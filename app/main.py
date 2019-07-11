@@ -82,13 +82,21 @@ def login():
     password = request.form['password']
     conn = cardinalSql()
     loginCursor = conn.cursor()
-    loginCursor.execute("SELECT password FROM users WHERE username = '{}'".format(username))
-    hash = loginCursor.fetchone()[0]
+    loginSql = loginCursor.execute("SELECT username,password FROM users WHERE username = '{}'".format(username))
+    userInfo = loginCursor.fetchall()
     loginCursor.close()
     conn.close()
-    if check_password_hash(hash,password):
+    if loginSql > 0:
+        for info in userInfo:
+            dbUsername = info[0]
+            dbHash = info[1]
+    else:
+        return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
+    if check_password_hash(dbHash,password):
         session['username'] = username
         return redirect(url_for('dashboard'))
+    elif dbUsername is None:
+        return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
     else:
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
 
