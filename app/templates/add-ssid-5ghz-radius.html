@@ -1,0 +1,46 @@
+<html>
+<form id="add_radius_ssid_5" action="/do-add-ssid-5ghz-radius" method="POST">
+<font face="Verdana">
+<label>SSID Name: </label>
+<input type="text" name="ssid_name" required>
+<br>
+<label>VLAN: </label>
+<input type="text" name="vlan" required>
+<br>
+<label>Bridge Group ID: </label>
+<input type="text" name="bridge_group_id" required>
+<br>
+<label>5GHz Radio Sub Interface ID: </label>
+<input type="text" name="5_sub_id" required>
+<br>
+<label>Gigabit Sub Interface ID: </label>
+<input type="text" name="giga_sub_id" required>
+<br>
+<label>RADIUS Server: </label>
+<input type="text" name="radius_ip" required>
+<br>
+<label>Shared Secret: </label>
+<input type="password" name="shared_secret" required>
+<br>
+<label>Authorization Port: </label>
+<input type="text" name="auth_port" required>
+<br>
+<label>Accounting Port: </label>
+<input type="text" name="acct_port" required>
+<br>
+<label>RADIUS Server Timeout (in seconds): </label>
+<input type="text" name="radius_timeout" required>
+<br>
+<label>RADIUS Group: </label>
+<input type="text" name="radius_group" required>
+<br>
+<label>Method List: </label>
+<input type="text" name="method_list" required>
+<br>
+<br>
+<input type="submit" name="Submit" required>
+</font>
+</form>
+<button onclick="window.location.href='/add-ssids'">Back to Add SSID Wizard</button>
+{{ status if status }}
+</html>

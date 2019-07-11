@@ -364,30 +364,30 @@
 			<div class="col-sm-6 col-md-4">
 				<div class="chart-wrapper">
 					<div class="chart-title">
-						Configure SSIDs
+						Add SSIDs
 					</div>
 
 
 					<div class="chart-stage">
 						<center>
-							<a class="configure_ssids" href="configure_ssid_wizard.php"><img src="{{ url_for('static', filename='img/cardinal5.png') }}"></a>
+							<a class="add_ssids" href="/add-ssids"><img src="{{ url_for('static', filename='img/cardinal5.png') }}"></a>
 						</center>
 					</div>
 
 
-					<div id="configuressids" style="display:none;" title="Configure SSIDs">
-						<iframe height="350" id="configure_ssids_frame" name="configure_ssids_frame" width="350"></iframe>
+					<div id="addssids" style="display:none;" title="Add SSIDs">
+						<iframe height="350" id="add_ssids_frame" name="add_ssids_frame" width="350"></iframe>
 					</div>
 					<script>
 					$(document).ready(function () {
-					$(".configure_ssids").click(function () {
-					   $("#configure_ssids_frame").attr('src', $(this).attr("href"));
-					   $("#configuressids").dialog({
+					$(".add_ssids").click(function () {
+					   $("#add_ssids_frame").attr('src', $(this).attr("href"));
+					   $("#addssids").dialog({
 					       width: 400,
 					       height: 450,
 					       modal: true,
 					       close: function () {
-					           $("#configure_ssids_frame").attr('src', "about:blank");
+					           $("#add_ssids_frame").attr('src', "about:blank");
 					       }
 					   });
 					   return false;
@@ -411,7 +411,7 @@
 
 					<div class="chart-stage">
 						<center>
-							<a class="delete_ssids" href="delete_ssid_wizard.php"><img src="{{ url_for('static', filename='img/cardinal10.png') }}"></a>
+							<a class="delete_ssids" href="/delete-ssids"><img src="{{ url_for('static', filename='img/cardinal10.png') }}"></a>
 						</center>
 					</div>
 
@@ -451,4 +451,3 @@
 	</script>
 </body>
 </html>
-
