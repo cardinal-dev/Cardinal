@@ -568,6 +568,36 @@ def doDisableApSnmp():
         conn.close()
         return redirect(url_for('configApSnmp', status=status))
 
+@Cardinal.route("/add-ssids", methods=["GET"])
+def addSsids():
+    if session.get("username") is not None:
+        return render_template("add-ssids.html")
+
+@Cardinal.route("/add-ssid-24ghz", methods=["GET"])
+def addSsid24Ghz():
+    if session.get("username") is not None:
+        return render_template("add-ssid-24ghz.html")
+
+@Cardinal.route("/add-ssid-5ghz", methods=["GET"])
+def addSsid5Ghz():
+    if session.get("username") is not None:
+        return render_template("add-ssid-5ghz.html")
+
+@Cardinal.route("/add-ssid-24ghz-radius", methods=["GET"])
+def addSsid24GhzRadius():
+    if session.get("username") is not None:
+        return render_template("add-ssid-24ghz-radius.html")
+
+@Cardinal.route("/add-ssid-5ghz-radius", methods=["GET"])
+def addSsid5GhzRadius():
+    if session.get("username") is not None:
+        return render_template("add-ssid-5ghz-radius.html")
+
+@Cardinal.route("/delete-ssids", methods=["GET"])
+def deleteSsids():
+    if session.get("username") is not None:
+        return render_template("delete-ssids.html")
+
 @Cardinal.route("/total-ap-clients", methods=["GET"])
 def totalApClients():
     if session.get("username") is not None:

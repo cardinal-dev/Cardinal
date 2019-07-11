@@ -1,0 +1,28 @@
+<html>
+<form id="add_ssid" action="/do-add-ssid-24ghz" method="POST">
+<font face="Verdana">
+<label>SSID Name: </label>
+<input type="text" name="ssid_name" required>
+<br>
+<label>WPA2-PSK (Minimum 8 Characters): </label>
+<input type="password" name="wpa2_psk" required>
+<br>
+<label>VLAN: </label>
+<input type="text" name="vlan" required>
+<br>
+<label>Bridge Group ID: </label>
+<input type="text" name="bridge_group_id" required>
+<br>
+<label>2.4GHz Radio Sub Interface ID: </label>
+<input type="text" name="24_sub_id" required>
+<br>
+<label>Gigabit Sub Interface ID: </label>
+<input type="text" name="giga_sub_id" required>
+<br>
+<br>
+<input type="submit" name="Submit" required>
+</font>
+</form>
+<button onclick="window.location.href='/add-ssids'">Back to Add SSID Wizard</button>
+{{ status if status }}
+</html>
