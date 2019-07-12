@@ -1,17 +1,17 @@
 <html>
 <font face="Verdana">
-Choose AP:
+Choose SSID:
 <br>
 <body>
-<form id="delete_ap" action="/do-delete-ap" method="POST">
-<select name="ap_id">
+<form id="delete_ssid" action="/do-delete-ssid-5ghz" method="POST">
+<select name="ssid_id">
 
-{% for item in aps %}
+{% for item in ssids %}
 <option value="{{ item[0] }}">{{ item[1] }}</option>
 {% endfor %}
 
 </select>
-<input type="submit" value="Delete AP">
+<input type="submit" value="Delete SSID">
 </form>
 <br>
 <br>
