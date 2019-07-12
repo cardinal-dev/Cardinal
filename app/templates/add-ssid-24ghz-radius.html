@@ -11,7 +11,7 @@
 <input type="text" name="bridge_group_id" required>
 <br>
 <label>2.4GHz Radio Sub Interface ID: </label>
-<input type="text" name="24_sub_id" required>
+<input type="text" name="radio_sub_id" required>
 <br>
 <label>Gigabit Sub Interface ID: </label>
 <input type="text" name="giga_sub_id" required>
@@ -39,8 +39,11 @@
 <br>
 <br>
 <input type="submit" name="Submit" required>
-</font>
 </form>
 <button onclick="window.location.href='/add-ssids'">Back to Add SSID Wizard</button>
+<br>
+<br>
 {{ status if status }}
+</font>
 </html>
+
