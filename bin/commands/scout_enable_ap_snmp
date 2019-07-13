@@ -1,0 +1,6 @@
+enable
+{{ password }}
+conf t
+snmp-server community {{ snmp }} RW
+snmp-server system-shutdown
+do wr

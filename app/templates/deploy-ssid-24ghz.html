@@ -3,7 +3,7 @@
 Choose SSID:
 <br>
 <body>
-<form id="delete_ssid" action="/do-delete-ssid-24ghz" method="POST">
+<form id="deploy_ssid" action="/do-deploy-ssid-24ghz" method="POST">
 <select name="ssid_id">
 
 {% for item in ssids %}
@@ -11,9 +11,9 @@ Choose SSID:
 {% endfor %}
 
 </select>
-<input type="submit" value="Delete SSID">
+<input type="submit" value="Deploy SSID">
 </form>
-<button onclick="window.location.href='/delete-ssids'">Back to Delete SSID Wizard</button>
+<button onclick="window.location.href='/deploy-ssids'">Back to Deploy SSID Wizard</button>
 <br>
 <br>
 {{ status if status }}
