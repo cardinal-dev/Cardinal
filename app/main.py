@@ -689,6 +689,83 @@ def doAddSsid5GhzRadius():
         status = "Success! {} was successfully registered!".format(ssidName)
         return redirect(url_for('addSsid5GhzRadius', status=status))
 
+@Cardinal.route("/deploy-ssids", methods=["GET"])
+def deploySsids():
+    if session.get("username") is not None:
+        return render_template("deploy-ssids.html")
+
+@Cardinal.route("/deploy-ssid-24ghz", methods=["GET"])
+def deploySsid24Ghz():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deleteSsidCursor = conn.cursor()
+        deleteSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
+        ssids = deleteSsidCursor.fetchall()
+        deleteSsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-24ghz.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/do-deploy-24ghz-ssid", methods=["POST"])
+def doDeploySsid24Ghz():
+    ssidId = request.form["ssid_id"]
+    apId = session.get('apId', None)
+    apName = session.get('apName', None) 
+    apGroupId = session.get('apGroupId', None)
+    apGroupName = session.get('apGroupName', None)
+    conn = cardinalSql()
+    if request.method == 'POST' and apId is not None:
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        ssidInfoCursor = conn.cursor()
+        ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+        ssidInfo = ssidInfoCursor.fetchall()
+        for ssidData in ssidInfo:
+            ssid = ssidData[0]
+            vlan = ssidData[1]
+            wpa2Pass = ssidData[2]
+            bridgeGroup = ssidData[3]
+            radioSub = ssidData[4]
+            gigaSub = ssidData[5]
+        for info in apInfo:
+            apName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+        subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+        status = "The Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
+        conn.close()
+        return redirect(url_for('deploySsid24Ghz', status=status))
+    if request.method == 'POST' and apGroupId is not None:
+        apInfoCursor = conn.cursor()
+        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apInfo = apInfoCursor.fetchall()
+        apInfoCursor.close()
+        ssidInfoCursor = conn.cursor()
+        ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+        ssidInfo = ssidInfoCursor.fetchall()
+        ssidInfoCursor.close()
+        for ssidData in ssidInfo:
+            ssid = ssidData[0]
+            vlan = ssidData[1]
+            wpa2Pass = ssidData[2]
+            bridgeGroup = ssidData[3]
+            radioSub = ssidData[4]
+            gigaSub = ssidData[5]
+        for info in apInfo:
+            apGroupName = info[0]
+            apIp = info[1]
+            apSshUsername = info[2]
+            apSshPassword = info[3]
+            subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+        status = "The Deployment of 2.4GHz SSID {0} Has Been Successfully Initiated for AP Group {1}".format(ssid,apGroupName)
+        conn.close()
+        return redirect(url_for('deploySsid24Ghz', status=status))
+
 @Cardinal.route("/delete-ssids", methods=["GET"])
 def deleteSsids():
     if session.get("username") is not None:

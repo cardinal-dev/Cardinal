@@ -240,7 +240,7 @@ if scoutCommand == "--create-ssid-radius-5":
 
 # cisco_delete_ssid.py
 
-if scoutCommand == "--delete-ssid-24":
+if (scoutCommand == "--delete-ssid-24") or (scoutCommand == "--delete-ssid-radius-24"):
     ip, username, password, scoutSsh = connInfo()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
@@ -254,265 +254,294 @@ if scoutCommand == "--delete-ssid-24":
         channel.send('{}\n'.format(command))
         time.sleep(1)
     scoutSsh.close()
-
-# cisco_delete_ssid_5ghz.py
-
-if scoutCommand == "--delete-ssid-5":
-   ip, username, password, scoutSsh = connInfo()
-   ssid = sys.argv[5]
-   vlan = sys.argv[6]
-   radioSub = sys.argv[7]
-   gigaSub = sys.argv[8]
-   cmdTemplate = env.get_template("scout_delete_ssid_5")
-   cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
-   scoutCommands = cmds.splitlines()
-   channel = scoutSsh.invoke_shell()
-   for command in scoutCommands:
-       channel.send('{}\n'.format(command))
-       time.sleep(1)
-   scoutSsh.close()
-
-# cisco_delete_ssid_radius.py
-
-if (scoutCommand == "--delete-ssid-radius-24") or (scoutCommand == "--delete-ssid-radius-5"):
-   ip, username, password, scoutSsh = connInfo()
-   ssid = sys.argv[5]
-   vlan = sys.argv[6]
-   radioSub = sys.argv[7]
-   gigaSub = sys.argv[8]
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "no dot11 ssid {}\n".format(ssid) + "no int d0.{}\n".format(radioSub) + "no int gi0.{}\n".format(gigaSub) + "int d0\n" + "no encryption vlan {} mode ciphers aes-ccm\n".format(vlan) + "do wr\n")
-   scoutSsh.close()
+if (scoutCommand == "--delete-ssid-5") or (scoutCommand == "--delete-ssid-radius-5"):
+    ip, username, password, scoutSsh = connInfo()
+    ssid = sys.argv[5]
+    vlan = sys.argv[6]
+    radioSub = sys.argv[7]
+    gigaSub = sys.argv[8]
+    cmdTemplate = env.get_template("scout_delete_ssid_5")
+    cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_disable_http.py
 
 if scoutCommand == "--disable-http":
-   ip, username, password, scoutSsh = connInfo()
-   cmdTemplate = env.get_template("scout_disable_ap_http")
-   cmds = cmdTemplate.render(password=password)
-   scoutCommands = cmds.splitlines()
-   channel = scoutSsh.invoke_shell()
-   for command in scoutCommands:
-       channel.send('{}\n'.format(command))
-       time.sleep(1)
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_disable_ap_http")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_disable_radius.py
 
 if scoutCommand == "--disable-radius":
-   ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "no aaa new-model\n" + "\n" + "do wr\n")
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_disable_ap_radius")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_disable_snmp.py
 
 if scoutCommand == "--disable-snmp":
-   ip, username, password, scoutSsh = connInfo()
-   snmp = sys.argv[5]
-   location = sys.argv[6]
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "no snmp-server community {} RW\n".format(snmp) + "no snmp-server location {}\n".format(location) + "no snmp-server system-shutdown\n" + "do wr\n")
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_disable_ap_snmp")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_enable_http.py
 
 if scoutCommand == "--enable-http":
-   ip, username, password, scoutSsh = connInfo()
-   cmdTemplate = env.get_template("scout_enable_ap_http")
-   cmds = cmdTemplate.render(password=password)
-   scoutCommands = cmds.splitlines()
-   channel = scoutSsh.invoke_shell()
-   for command in scoutCommands:
-       channel.send('{}\n'.format(command))
-       time.sleep(1)
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_enable_ap_http")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_enable_radius.py
 
 if scoutCommand == "--enable-radius":
-   ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "%s\n".format(password) + "conf t\n" + "aaa new-model\n" + "do wr\n")
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_enable_ap_radius")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_enable_snmp.py
 
 if scoutCommand == "--enable-snmp":
-   ip, username, password, scoutSsh = connInfo()
-   snmp = sys.argv[5]
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "conf t\n" + "snmp-server community {} RW\n".format(snmp) + "snmp-server system-shutdown\n" + "do wr\n")
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_enable_ap_snmp")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_get_speed.py
 
 if scoutCommand == "--get-speed":
-   ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("sho int gi0\n")
-   sshOut = stdout.read()
-   sshBandwidth = sshOut.decode('ascii').strip("\n").split(",")
-   getBandwidth = sshBandwidth[9].strip("Mbps")
-   bandwidthSqlCursor = conn.cursor()
-   bandwidthSql = "UPDATE access_points SET ap_bandwidth = '{0}' WHERE ap_ip = '{1}'".format(getBandwidth,ip)
-   bandwidthSqlCursor.execute(bandwidthSql)
-   scoutSsh.close()
-   conn.commit()
+    ip, username, password, scoutSsh = connInfo()
+    stdin, stdout, stderr = scoutSsh.exec_command("sho int gi0\n")
+    sshOut = stdout.read()
+    sshBandwidth = sshOut.decode('ascii').strip("\n").split(",")
+    getBandwidth = sshBandwidth[9].strip("Mbps")
+    bandwidthSqlCursor = conn.cursor()
+    bandwidthSql = "UPDATE access_points SET ap_bandwidth = '{0}' WHERE ap_ip = '{1}'".format(getBandwidth,ip)
+    bandwidthSqlCursor.execute(bandwidthSql)
+    scoutSsh.close()
+    conn.commit()
+    conn.close()
 
 # cisco_tftp_backup.py
 
 if scoutCommand == "--tftp-backup":
-   ip, username, password, scoutSsh = connInfo()
-   tftpIp = sys.argv[5]
-   cmdTemplate = env.get_template("scout_do_tftp_backup")
-   cmds = cmdTemplate.render(password=password,tftpIp=tftpIp)
-   scoutCommands = cmds.splitlines()
-   channel = scoutSsh.invoke_shell()
-   for command in scoutCommands:
-       channel.send('{}\n'.format(command))
-       time.sleep(1)
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    tftpIp = sys.argv[5]
+    cmdTemplate = env.get_template("scout_do_tftp_backup")
+    cmds = cmdTemplate.render(password=password,tftpIp=tftpIp)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_wr.py
 
 if scoutCommand == "--wr":
-   ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "wr\n")
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_do_wr")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_write_default.py
 
 if scoutCommand == "--erase":
-   ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("enable\n" + "{}\n".format(password) + "write default\n" + "y\n" + "reload\n" + "y\n")
-   scoutSsh.close()
+    ip, username, password, scoutSsh = connInfo()
+    cmdTemplate = env.get_template("scout_write_default")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
 
 # cisco_count_clients.py
 
 if scoutCommand == "--count-clients":
-   ip, username, password, scoutSsh = connInfo()
-   stdin, stdout, stderr = scoutSsh.exec_command("show dot11 associations\n")
-   sshOut = stdout.read()
-   countClient = print(sshOut.decode('ascii').strip("\n"))
-   getClient = subprocess.check_output("echo {} | grep -o [0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f] | wc -l".format(countClient), shell=True)
-   clientSqlCursor = conn.cursor()
-   clientSql = "UPDATE access_points SET ap_total_clients = '{0}' WHERE ap_ip = '{1}'".format(getClient,ip)
-   clientSqlCursor.execute(clientSql)
-   scoutSsh.close()
-   conn.commit()
+    ip, username, password, scoutSsh = connInfo()
+    stdin, stdout, stderr = scoutSsh.exec_command("show dot11 associations\n")
+    sshOut = stdout.read()
+    countClient = print(sshOut.decode('ascii').strip("\n"))
+    getClient = subprocess.check_output("echo {} | grep -o [0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f] | wc -l".format(countClient), shell=True)
+    clientSqlCursor = conn.cursor()
+    clientSql = "UPDATE access_points SET ap_total_clients = '{0}' WHERE ap_ip = '{1}'".format(getClient,ip)
+    clientSqlCursor.execute(clientSql)
+    scoutSsh.close()
+    conn.commit()
+    conn.close()
 
 # --get-name
 
 if scoutCommand == "--get-name":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   getApName = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.5.0".format(snmp,ip), shell=True)
-   sqlApName = getApName.replace('"', '')
-   apNameCursor = conn.cursor()
-   apNameSql = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'" % (sqlApName,ip)
-   apNameCursor.execute(apNameSql)
-   conn.commit() 
+    ip = connInfo()
+    snmp = sys.argv[2]
+    getApName = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.5.0".format(snmp,ip), shell=True)
+    sqlApName = getApName.replace('"', '')
+    apNameCursor = conn.cursor()
+    apNameSql = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'" % (sqlApName,ip)
+    apNameCursor.execute(apNameSql)
+    conn.commit()
+    conn.close() 
 
 # --get-mac
 
 if scoutCommand == "--get-mac":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   getApMac = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.2.2.1.6.3".format(snmp,ip), shell=True)
-   sqlApMac = getApMac.replace('"', '')
-   apMacCursor = conn.cursor()
-   apMacSql = "UPDATE access_points SET ap_mac_addr = '{0}' WHERE ap_ip = '{1}'".format(sqlApMac,ip)
-   apMacCursor.execute(apMacSql)
-   conn.commit()
+    ip = connInfo()
+    snmp = sys.argv[2]
+    getApMac = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.2.2.1.6.3".format(snmp,ip), shell=True)
+    sqlApMac = getApMac.replace('"', '')
+    apMacCursor = conn.cursor()
+    apMacSql = "UPDATE access_points SET ap_mac_addr = '{0}' WHERE ap_ip = '{1}'".format(sqlApMac,ip)
+    apMacCursor.execute(apMacSql)
+    conn.commit()
+    conn.close()
 
 # --ping
 
 if scoutCommand == "--ping":
-   ip = connInfo()
-   pingAp = subprocess.check_output("ping {} -c 10| head -n 2 | tail -n 1 | awk '{print $7}' | tr -d 'time='".format(ip), shell=True)
-   pingApOutput = pingAp.decode(encoding = 'UTF-8')
-   pingApCursor = conn.cursor()
-   pingApSql = "UPDATE access_points SET ap_ping_ms = '{0}' WHERE ap_ip = '{1}'".format(pingApOutput,ip)
-   pingApCursor.execute(pingApSql)
-   conn.commit()
+    ip = connInfo()
+    pingAp = subprocess.check_output("ping {} -c 10| head -n 2 | tail -n 1 | awk '{print $7}' | tr -d 'time='".format(ip), shell=True)
+    pingApOutput = pingAp.decode(encoding = 'UTF-8')
+    pingApCursor = conn.cursor()
+    pingApSql = "UPDATE access_points SET ap_ping_ms = '{0}' WHERE ap_ip = '{1}'".format(pingApOutput,ip)
+    pingApCursor.execute(pingApSql)
+    conn.commit()
+    conn.close()
 
 # --get-model
 
 if scoutCommand == "--get-model":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   getApModel = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.47.1.1.1.1.13.1".format(snmp,ip), shell=True)
-   sqlApModel = getApModel.replace('"', '')
-   apModelCursor = conn.cursor()
-   apModelSql = "UPDATE access_points SET ap_model = '{0}' WHERE ap_ip = '{1}'".format(sqlApModel,ip)
-   apModelCursor.execute(apModelSql)
-   conn.commit()
+    ip = connInfo()
+    snmp = sys.argv[2]
+    getApModel = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.47.1.1.1.1.13.1".format(snmp,ip), shell=True)
+    sqlApModel = getApModel.replace('"', '')
+    apModelCursor = conn.cursor()
+    apModelSql = "UPDATE access_points SET ap_model = '{0}' WHERE ap_ip = '{1}'".format(sqlApModel,ip)
+    apModelCursor.execute(apModelSql)
+    conn.commit()
+    conn.close()
 
 # --get-serial
 
 if scoutCommand == "--get-serial":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   getApSerial = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.47.1.1.1.1.11.1".format(snmp,ip), shell=True)
-   sqlApSerial = getApSerial.replace('"', '')
-   apSerialCursor = conn.cursor()
-   apSerialSql = "UPDATE access_points SET ap_serial = '{0}' WHERE ap_ip = '{1}'" % (sqlApSerial,ip)
-   apSerialCursor.execute(apSerialSql)
-   conn.commit()
+    ip = connInfo()
+    snmp = sys.argv[2]
+    getApSerial = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.47.1.1.1.1.11.1".format(snmp,ip), shell=True)
+    sqlApSerial = getApSerial.replace('"', '')
+    apSerialCursor = conn.cursor()
+    apSerialSql = "UPDATE access_points SET ap_serial = '{0}' WHERE ap_ip = '{1}'" % (sqlApSerial,ip)
+    apSerialCursor.execute(apSerialSql)
+    conn.commit()
+    conn.close()
 
 # --get-location
 
 if scoutCommand == "--get-location":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   getApLocation = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.6.0".format(snmp,ip), shell=True)
-   sqlApLocation = getApLocation.replace('"', '')
-   apLocationCursor = conn.cursor()
-   apLocationSql = "UPDATE access_points SET ap_location = '{0}' WHERE ap_ip = '{1}'".format(sqlApLocation,ip)
-   apLocationCursor.execute(apLocationSql)
-   conn.commit()
+    ip = connInfo()
+    snmp = sys.argv[2]
+    getApLocation = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.6.0".format(snmp,ip), shell=True)
+    sqlApLocation = getApLocation.replace('"', '')
+    apLocationCursor = conn.cursor()
+    apLocationSql = "UPDATE access_points SET ap_location = '{0}' WHERE ap_ip = '{1}'".format(sqlApLocation,ip)
+    apLocationCursor.execute(apLocationSql)
+    conn.commit()
+    conn.close()
 
 # --get-ios-info
 
 if scoutCommand == "--get-ios-info":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   getApIos = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.1.0".format(snmp,ip), shell=True)
-   sqlApIos = getApIos.replace('"', '')
-   apIosCursor = conn.cursor()
-   apIosSql = "UPDATE access_points SET ap_ios_info = '{0}' WHERE ap_ip = '{1}'".format(sqlApIos,ip)
-   apIosCursor.execute(apIosSql)
-   conn.commit()
+    ip = connInfo()
+    snmp = sys.argv[2]
+    getApIos = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.1.0".format(snmp,ip), shell=True)
+    sqlApIos = getApIos.replace('"', '')
+    apIosCursor = conn.cursor()
+    apIosSql = "UPDATE access_points SET ap_ios_info = '{0}' WHERE ap_ip = '{1}'".format(sqlApIos,ip)
+    apIosCursor.execute(apIosSql)
+    conn.commit()
+    conn.close()
 
 # --get-uptime
 
 if scoutCommand == "--get-uptime":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   getApUptime = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.3.0".format(snmp,ip), shell=True)
-   sqlApUptime = getApUptime.replace('"', '')
-   apUptimeCursor = conn.cursor()
-   apUptimeSql = "UPDATE access_points SET ap_uptime = '{0}' WHERE ap_ip = '{1}'".format(sqlApUptime,ip)
-   apUptimeCursor.execute(apUptimeSql)
-   conn.commit()
+    ip = connInfo()
+    snmp = sys.argv[2]
+    getApUptime = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.3.0".format(snmp,ip), shell=True)
+    sqlApUptime = getApUptime.replace('"', '')
+    apUptimeCursor = conn.cursor()
+    apUptimeSql = "UPDATE access_points SET ap_uptime = '{0}' WHERE ap_ip = '{1}'".format(sqlApUptime,ip)
+    apUptimeCursor.execute(apUptimeSql)
+    conn.commit()
+    conn.close()
 
 # --reboot
 
 if scoutCommand == "--reboot":
-   ip = connInfo()
-   snmp = sys.argv[2]
-   subprocess.check_output("snmpset -v2c -c {0} {1} .1.3.6.1.4.1.9.2.9.9.0 i 2".format(snmp,ip), shell=True)
+    ip = connInfo()
+    snmp = sys.argv[2]
+    subprocess.check_output("snmpset -v2c -c {0} {1} .1.3.6.1.4.1.9.2.9.9.0 i 2".format(snmp,ip), shell=True) 
 
 # --change-name
 
 if scoutCommand == "--change-name":
-   ip, username, password, scoutSsh = connInfo()
-   apName = sys.argv[5]
-   cmdTemplate = env.get_template("scout_change_ap_name")
-   cmds = cmdTemplate.render(apName=apName,password=password)
-   scoutCommands = cmds.splitlines()
-   channel = scoutSsh.invoke_shell()
-   for command in scoutCommands:
-       channel.send('{}\n'.format(command))
-       time.sleep(1)
-   scoutSsh.close()
-   apNameCursor = conn.cursor()
-   sqlApName = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'".format(apName,ip)
-   apNameCursor.execute(sqlApName)
-   scoutSsh.close()
-   conn.commit()
+    ip, username, password, scoutSsh = connInfo()
+    apName = sys.argv[5]
+    cmdTemplate = env.get_template("scout_change_ap_name")
+    cmds = cmdTemplate.render(apName=apName,password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(1)
+    scoutSsh.close()
+    apNameCursor = conn.cursor()
+    sqlApName = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'".format(apName,ip)
+    apNameCursor.execute(sqlApName)
+    conn.commit()
+    conn.close()
