@@ -26,6 +26,7 @@ SOFTWARE.
 
 '''
 
+import logging
 import MySQLdb
 import os
 import subprocess
@@ -38,16 +39,17 @@ from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
 
-# System variables
+# SYSTEM VARIABLES
 
 cardinalConfig = os.environ['CARDINALCONFIG']
+logging.basicConfig(filename='/var/log/cardinal/cardinal.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
-# Flask app intitialization
+# FLASK APP INITIALIZATION
 
 Cardinal = Flask(__name__)
 Cardinal.secret_key = "SECRET_KEY_HERE"
 
-# MySQL authentication
+# MySQL AUTHENTICATION & HANDLING
 
 mysqlConfig = ConfigParser()
 mysqlConfig.read("{}".format(cardinalConfig))
@@ -60,7 +62,7 @@ def cardinalSql():
     conn = MySQLdb.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
     return conn
 
-# Cardinal Flask routes
+# CARDINAL FLASK ROUTES
 
 @Cardinal.route("/")
 def index():
@@ -91,13 +93,16 @@ def login():
             dbUsername = info[0]
             dbHash = info[1]
     else:
+        logging.warning("Unauthorized access detected. Someone tried logging into Cardinal but was unsuccessful.")
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
     if check_password_hash(dbHash,password):
         session['username'] = username
         return redirect(url_for('dashboard'))
     elif dbUsername is None:
+        logging.warning("Unauthorized access detected. Someone tried logging into Cardinal but was unsuccessful.")
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
     else:
+        logging.warning("Unauthorized access detected. Someone tried logging into Cardinal but was unsuccessful.")
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
 
 @Cardinal.route("/logout")
@@ -161,12 +166,16 @@ def doDeleteAp():
         apName = deleteApNameCursor.fetchone()[0]
         deleteApNameCursor.close()
         status = "Success! {} was successfully registered!".format(apName)
-        deleteApCursor = conn.cursor()
-        deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
-        deleteApCursor.close()
-        conn.commit()
-        conn.close()
-        return redirect(url_for('deleteAp', status=status))
+        try:
+            deleteApCursor = conn.cursor()
+            deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
+            deleteApCursor.close()
+        except MySQLdb.Error as e:
+            status = e
+        finally:
+            conn.commit()
+            conn.close()
+            return redirect(url_for('deleteAp', status=status))
 
 @Cardinal.route("/add-ap-group", methods=["GET"])
 def addApGroup():
@@ -344,7 +353,7 @@ def configApIp():
 @Cardinal.route("/do-config-ap-ip", methods=["POST"])
 def doConfigApIp():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         apNewIp = request.form["ap_new_ip"]
         apSubnetMask = request.form["ap_subnetmask"]
         conn = cardinalSql()
@@ -374,7 +383,7 @@ def configApName():
 @Cardinal.route("/do-config-ap-name", methods=["POST"])
 def doConfigApName():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         apNewName = request.form["ap_name"]
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
@@ -409,7 +418,7 @@ def manageApTftpGroupBackup():
 @Cardinal.route("/do-ap-tftp-backup", methods=["POST"])
 def doApTftpBackup():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         tftpIp = request.form["tftp_ip"]
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
@@ -453,7 +462,7 @@ def configApHttp():
 @Cardinal.route("/do-enable-ap-http", methods=["POST"])
 def doEnableApHttp():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -472,7 +481,7 @@ def doEnableApHttp():
 @Cardinal.route("/do-disable-ap-http", methods=["POST"])
 def doDisableApHttp():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -497,7 +506,7 @@ def configApRadius():
 @Cardinal.route("/do-enable-ap-radius", methods=["POST"])
 def doEnableApRadius():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -516,7 +525,7 @@ def doEnableApRadius():
 @Cardinal.route("/do-disable-ap-http", methods=["POST"])
 def doDisableApRadius():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -541,7 +550,7 @@ def configApSnmp():
 @Cardinal.route("/do-enable-ap-snmp", methods=["POST"])
 def doEnableApSnmp():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -560,7 +569,7 @@ def doEnableApSnmp():
 @Cardinal.route("/do-disable-ap-snmp", methods=["POST"])
 def doDisableApSnmp():
     if request.method == 'POST':
-        apId = session.get('apId', None)
+        apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -708,17 +717,24 @@ def deploySsid24Ghz():
     else:
         return redirect(url_for('index'))
 
-@Cardinal.route("/do-deploy-24ghz-ssid", methods=["POST"])
+@Cardinal.route("/do-deploy-ssid-24ghz", methods=["POST"])
 def doDeploySsid24Ghz():
     ssidId = request.form["ssid_id"]
-    apId = session.get('apId', None)
-    apName = session.get('apName', None) 
-    apGroupId = session.get('apGroupId', None)
-    apGroupName = session.get('apGroupName', None)
+    apId = session.get('apId')
+    apName = session.get('apName')
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     if request.method == 'POST' and apId is not None:
+        checkSsidRelationship = conn.cursor()
+        checkSsidRelationship.execute("SELECT ssid_id FROM ssids_24ghz_deployed WHERE ap_id = '{}'".format(apId))
+        checkSsidId = checkSsidRelationship.fetchone()[0]
+        if checkSsidId == ssidId:
+            status = "Sorry, this SSID is already deployed to {}".format(apName)
+            logging.error("{0} already has the SSID deployed".format(apName))
+            return redirect(url_for('deploySsid24Ghz'), status=status)
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         ssidInfoCursor = conn.cursor()
@@ -742,7 +758,7 @@ def doDeploySsid24Ghz():
         return redirect(url_for('deploySsid24Ghz', status=status))
     if request.method == 'POST' and apGroupId is not None:
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apInfoCursor.execute("SELECT ap_id,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         ssidInfoCursor = conn.cursor()
@@ -757,11 +773,20 @@ def doDeploySsid24Ghz():
             radioSub = ssidData[4]
             gigaSub = ssidData[5]
         for info in apInfo:
-            apGroupName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            apSshPassword = info[3]
+            apId = info[0]
+            apGroupName = info[1]
+            apIp = info[2]
+            apSshUsername = info[3]
+            apSshPassword = info[4]
+            checkSsidRelationship = conn.cursor()
+            checkSsidRelationship.execute("SELECT ssid_id FROM ssids_24ghz_deployed WHERE ap_id = '{}'".format(apId))
+            checkSsidId = checkSsidRelationship.fetchone()[0]
+            if checkSsidId == apId:
+                status = "Sorry, this SSID is already deployed to {}".format(apName)
+                logging.error("{0} already has the SSID deployed".format(apName))
             subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+            deploySsidSql = conn.cursor()
+            deploySsidSql.execute("INSERT INTO ssids_24ghz_deployed (ap_id, ssid_id) VALUES ('{0}','{1}')".format(apId,ssid))
         status = "The Deployment of 2.4GHz SSID {0} Has Been Successfully Initiated for AP Group {1}".format(ssid,apGroupName)
         conn.close()
         return redirect(url_for('deploySsid24Ghz', status=status))
@@ -795,12 +820,16 @@ def doDeleteSsid24Ghz():
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
         status = "Success! {} was successfully deleted!".format(ssidName)
-        deleteSsidCursor = conn.cursor()
-        deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
-        deleteSsidCursor.close()
-        conn.commit()
-        conn.close()
-        return redirect(url_for('deleteSsid24Ghz', status=status))
+        try:
+            deleteSsidCursor = conn.cursor()
+            deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            deleteSsidCursor.close()
+        except MySQLdb.Error as e:
+            status = e
+        finally:
+            conn.commit()
+            conn.close()
+            return redirect(url_for('deleteSsid24Ghz', status=status))
 
 @Cardinal.route("/delete-ssid-5ghz", methods=["GET"])
 def deleteSsid5Ghz():
@@ -904,6 +933,11 @@ def totalApClients():
 def totalApBandwidth():
     if session.get("username") is not None:
         return render_template("total-ap-bandwidth.html")
+
+@Cardinal.route("/ap-ip-address", methods=["GET"])
+def apIpAddress():
+    if session.get("username") is not None:
+        return render_template("ap-ip-address.html")
 
 @Cardinal.route("/total-aps", methods=["GET"])
 def totalAps():

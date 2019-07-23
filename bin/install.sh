@@ -68,6 +68,10 @@ echo 'username'=""$varDbUsername"" >> $varDbCredDir/cardinal.ini
 echo 'password'=""$varDbPassword"" >> $varDbCredDir/cardinal.ini
 echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinal.ini
 
+# Let's create a log file for Cardinal UI
+mkdir -p /var/log/cardinal
+touch /var/log/cardinal/cardinal.log
+
 # Now, let's create the MySQL database for Cardinal. We also want to import the SQL structure too!
 mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""
 mysql -u$varDbUsername --password=$varDbPassword $varDbName < ../sql/cardinal.sql
