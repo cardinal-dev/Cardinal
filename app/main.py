@@ -731,7 +731,7 @@ def doDeploySsid24Ghz():
         checkSsidId = checkSsidRelationship.fetchone()[0]
         if checkSsidId == ssidId:
             status = "Sorry, this SSID is already deployed to {}".format(apName)
-            logging.error("{0} already has the SSID deployed".format(apName))
+            logging.error("{} already has the SSID deployed".format(apName))
             return redirect(url_for('deploySsid24Ghz'), status=status)
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))

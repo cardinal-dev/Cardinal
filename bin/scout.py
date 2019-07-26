@@ -142,7 +142,7 @@ if scoutCommand == "--change-ip":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
     scoutSsh2 = paramiko.SSHClient()
     scoutSsh2.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -153,7 +153,7 @@ if scoutCommand == "--change-ip":
     channel2 = scoutSsh2.invoke_shell()
     for command2 in scoutCommands2:
         channel2.send('{}\n'.format(command2))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh2.close()
 
 # cisco_configure_ssid.py
@@ -167,12 +167,12 @@ if scoutCommand == "--create-ssid-24":
     radioSub = sys.argv[9]
     gigaSub = sys.argv[10]
     cmdTemplate = env.get_template("scout_create_ssid_24")
-    cmds = cmdTemplate.render(ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
+    cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_configure_ssid_5ghz.py
@@ -186,12 +186,12 @@ if scoutCommand == "--create-ssid-5":
     radioSub = sys.argv[9]
     gigaSub = sys.argv[10]
     cmdTemplate = env.get_template("scout_create_ssid_5")
-    cmds = cmdTemplate.render(ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
+    cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_configure_ssid_radius.py
@@ -211,12 +211,12 @@ if scoutCommand == "--create-ssid-radius-24":
     radiusGroup = sys.argv[15]
     methodList = sys.argv[16]
     cmdTemplate = env.get_template("scout_create_radius_ssid_24")
-    cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
+    cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_configure_ssid_radius_5ghz.py
@@ -236,12 +236,12 @@ if scoutCommand == "--create-ssid-radius-5":
     radiusGroup = sys.argv[15]
     methodList = sys.argv[16]
     cmdTemplate = env.get_template("scout_create_radius_ssid_5")
-    cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
+    cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_delete_ssid.py
@@ -253,12 +253,12 @@ if (scoutCommand == "--delete-ssid-24") or (scoutCommand == "--delete-ssid-radiu
     radioSub = sys.argv[7]
     gigaSub = sys.argv[8]
     cmdTemplate = env.get_template("scout_delete_ssid_24")
-    cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
+    cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 if (scoutCommand == "--delete-ssid-5") or (scoutCommand == "--delete-ssid-radius-5"):
     ip, username, password, scoutSsh = sshInfo()
@@ -267,12 +267,12 @@ if (scoutCommand == "--delete-ssid-5") or (scoutCommand == "--delete-ssid-radius
     radioSub = sys.argv[7]
     gigaSub = sys.argv[8]
     cmdTemplate = env.get_template("scout_delete_ssid_5")
-    cmds = cmdTemplate.render(ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
+    cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_disable_http.py
@@ -285,7 +285,7 @@ if scoutCommand == "--disable-http":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_disable_radius.py
@@ -298,7 +298,7 @@ if scoutCommand == "--disable-radius":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_disable_snmp.py
@@ -311,7 +311,7 @@ if scoutCommand == "--disable-snmp":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_enable_http.py
@@ -324,7 +324,7 @@ if scoutCommand == "--enable-http":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_enable_radius.py
@@ -337,7 +337,7 @@ if scoutCommand == "--enable-radius":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_enable_snmp.py
@@ -350,7 +350,7 @@ if scoutCommand == "--enable-snmp":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_get_speed.py
@@ -367,6 +367,7 @@ if scoutCommand == "--get-speed":
     scoutSsh.close()
     conn.commit()
     conn.close()
+    print(getBandwidth + 'Mbps')
 
 # cisco_tftp_backup.py
 
@@ -379,7 +380,7 @@ if scoutCommand == "--tftp-backup":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_wr.py
@@ -392,7 +393,7 @@ if scoutCommand == "--wr":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_write_default.py
@@ -405,7 +406,7 @@ if scoutCommand == "--erase":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
 
 # cisco_count_clients.py
@@ -429,12 +430,13 @@ if scoutCommand == "--get-name":
     ip = ipInfo()
     snmp = sys.argv[3]
     getApName = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.5.0".format(snmp,ip), shell=True)
-    sqlApName = getApName.replace('"', '')
+    sqlApName = getApName.decode(sys.stdout.encoding).replace('"','')
     apNameCursor = conn.cursor()
     apNameSql = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'".format(sqlApName,ip)
     apNameCursor.execute(apNameSql)
     conn.commit()
-    conn.close() 
+    conn.close()
+    print(sqlApName)
 
 # --get-mac
 
@@ -442,24 +444,26 @@ if scoutCommand == "--get-mac":
     ip = ipInfo()
     snmp = sys.argv[3]
     getApMac = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.2.2.1.6.3".format(snmp,ip), shell=True)
-    sqlApMac = getApMac.replace('"', '')
+    sqlApMac = getApMac.decode(sys.stdout.encoding).replace('"', '')
     apMacCursor = conn.cursor()
     apMacSql = "UPDATE access_points SET ap_mac_addr = '{0}' WHERE ap_ip = '{1}'".format(sqlApMac,ip)
     apMacCursor.execute(apMacSql)
     conn.commit()
     conn.close()
+    print(sqlApMac)
 
 # --ping
 
 if scoutCommand == "--ping":
     ip = ipInfo()
-    pingAp = subprocess.check_output("ping {} -c 10| head -n 2 | tail -n 1 | awk '{print $7}' | tr -d 'time='".format(ip), shell=True)
-    pingApOutput = pingAp.decode(encoding = 'UTF-8')
+    pingAp = subprocess.check_output('ping -w 4 -q {} | cut -d "/" -s -f5'.format(ip), shell=True)
+    getApPing = pingAp.decode(sys.stdout.encoding)
     pingApCursor = conn.cursor()
-    pingApSql = "UPDATE access_points SET ap_ping_ms = '{0}' WHERE ap_ip = '{1}'".format(pingApOutput,ip)
+    pingApSql = "UPDATE access_points SET ap_ping_ms = '{0}' WHERE ap_ip = '{1}'".format(getApPing,ip)
     pingApCursor.execute(pingApSql)
     conn.commit()
     conn.close()
+    print(getApPing)
 
 # --get-model
 
@@ -467,12 +471,13 @@ if scoutCommand == "--get-model":
     ip = ipInfo()
     snmp = sys.argv[3]
     getApModel = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.47.1.1.1.1.13.1".format(snmp,ip), shell=True)
-    sqlApModel = getApModel.replace('"', '')
+    sqlApModel = getApModel.decode(sys.stdout.encoding).replace('"', '')
     apModelCursor = conn.cursor()
     apModelSql = "UPDATE access_points SET ap_model = '{0}' WHERE ap_ip = '{1}'".format(sqlApModel,ip)
     apModelCursor.execute(apModelSql)
     conn.commit()
     conn.close()
+    print(sqlApModel)
 
 # --get-serial
 
@@ -480,12 +485,13 @@ if scoutCommand == "--get-serial":
     ip = ipInfo()
     snmp = sys.argv[3]
     getApSerial = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.47.1.1.1.1.11.1".format(snmp,ip), shell=True)
-    sqlApSerial = getApSerial.replace('"', '')
+    sqlApSerial = getApSerial.decode(sys.stdout.encoding).replace('"', '')
     apSerialCursor = conn.cursor()
-    apSerialSql = "UPDATE access_points SET ap_serial = '{0}' WHERE ap_ip = '{1}'" % (sqlApSerial,ip)
+    apSerialSql = "UPDATE access_points SET ap_serial = '{0}' WHERE ap_ip = '{1}'".format(sqlApSerial,ip)
     apSerialCursor.execute(apSerialSql)
     conn.commit()
     conn.close()
+    print(sqlApSerial)
 
 # --get-location
 
@@ -493,12 +499,13 @@ if scoutCommand == "--get-location":
     ip = ipInfo()
     snmp = sys.argv[3]
     getApLocation = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.6.0".format(snmp,ip), shell=True)
-    sqlApLocation = getApLocation.replace('"', '')
+    sqlApLocation = getApLocation.decode(sys.stdout.encoding).replace('"', '')
     apLocationCursor = conn.cursor()
     apLocationSql = "UPDATE access_points SET ap_location = '{0}' WHERE ap_ip = '{1}'".format(sqlApLocation,ip)
     apLocationCursor.execute(apLocationSql)
     conn.commit()
     conn.close()
+    print(sqlApLocation)
 
 # --get-ios-info
 
@@ -506,12 +513,13 @@ if scoutCommand == "--get-ios-info":
     ip = ipInfo()
     snmp = sys.argv[3]
     getApIos = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.1.0".format(snmp,ip), shell=True)
-    sqlApIos = getApIos.replace('"', '')
+    sqlApIos = getApIos.decode(sys.stdout.encoding).replace('"', '')
     apIosCursor = conn.cursor()
     apIosSql = "UPDATE access_points SET ap_ios_info = '{0}' WHERE ap_ip = '{1}'".format(sqlApIos,ip)
     apIosCursor.execute(apIosSql)
     conn.commit()
     conn.close()
+    print(sqlApIos)
 
 # --get-uptime
 
@@ -519,12 +527,13 @@ if scoutCommand == "--get-uptime":
     ip = ipInfo()
     snmp = sys.argv[3]
     getApUptime = subprocess.check_output("snmpget -Oqv -v2c -c {0} {1} iso.3.6.1.2.1.1.3.0".format(snmp,ip), shell=True)
-    sqlApUptime = getApUptime.replace('"', '')
+    sqlApUptime = getApUptime.decode(sys.stdout.encoding).replace('"', '')
     apUptimeCursor = conn.cursor()
     apUptimeSql = "UPDATE access_points SET ap_uptime = '{0}' WHERE ap_ip = '{1}'".format(sqlApUptime,ip)
     apUptimeCursor.execute(apUptimeSql)
     conn.commit()
     conn.close()
+    print(sqlApUptime)
 
 # --reboot
 
@@ -544,7 +553,7 @@ if scoutCommand == "--change-name":
     channel = scoutSsh.invoke_shell()
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
-        time.sleep(1)
+        time.sleep(.10)
     scoutSsh.close()
     apNameCursor = conn.cursor()
     sqlApName = "UPDATE access_points SET ap_name = '{0}' WHERE ap_ip = '{1}'".format(apName,ip)
