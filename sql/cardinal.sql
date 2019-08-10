@@ -110,11 +110,11 @@ CREATE TABLE `ssids_24ghz_deployed` (
   `ap_id` int(11) NOT NULL,
   `ssid_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_assoc_id`),
+  UNIQUE KEY `ap_id` (`ap_id`,`ssid_id`),
   KEY `ssid_id` (`ssid_id`),
-  KEY `ap_id` (`ap_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_24ghz` (`ap_ssid_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,4 +214,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-17 21:49:47
+-- Dump completed on 2019-08-10  1:18:51

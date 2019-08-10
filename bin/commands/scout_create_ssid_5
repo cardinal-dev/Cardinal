@@ -7,8 +7,6 @@ mbssid guest-mode
 auth key-man wpa version 2
 wpa-psk ascii {{ wpa2Pass }}
 vlan {{ vlan }}
-end
-conf t
 int d1
 mbssid
 encryption vlan {{ vlan }} mode ciphers aes
@@ -16,7 +14,6 @@ no shutdown
 dot11 ssid {{ ssid }}
 int d1
 ssid {{ ssid }}
-exit
 int d1.{{ radioSub }}
 encapsulation dot1q {{ vlan }}
 bridge-group {{ bridgeGroup }}
