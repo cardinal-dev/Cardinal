@@ -1,0 +1,47 @@
+Cisco IOS Software, C1140 Software (C1140-K9W7-M), Version 15.2(2)JB, RELEASE SOFTWARE (fc1)
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2012 by Cisco Systems, Inc.
+Compiled Tue 11-Dec-12 04:23 by prod_rel_team
+
+ROM: Bootstrap program is C1140 boot loader
+BOOTLDR: C1140 Boot Loader (C1140-BOOT-M) Version 12.4(18a)JA3, RELEASE SOFTWARE (fc1)
+
+Prodigy uptime is 40 minutes
+System returned to ROM by watchdog timer expired
+System image file is "flash:/c1140-k9w7-mx.152-2.JB/c1140-k9w7-mx.152-2.JB"
+Last reload reason: 
+
+
+
+This product contains cryptographic features and is subject to United
+States and local country laws governing import, export, transfer and
+use. Delivery of Cisco cryptographic products does not imply
+third-party authority to import, export, distribute or use encryption.
+Importers, exporters, distributors and users are responsible for
+compliance with U.S. and local country laws. By using this product you
+agree to comply with applicable laws and regulations. If you are unable
+to comply with U.S. and local laws, return this product immediately.
+
+A summary of U.S. laws governing Cisco cryptographic products may be found at:
+http://www.cisco.com/wwl/export/crypto/tool/stqrg.html
+
+If you require further assistance please contact us by sending email to
+export@cisco.com.
+
+cisco AIR-AP1142N-A-K9    (PowerPC405ex) processor (revision B0) with 81910K/49152K bytes of memory.
+Processor board ID FTX1433K2GR
+PowerPC405ex CPU at 586Mhz, revision number 0x147E
+Last reset from watchdog timer expired
+1 Gigabit Ethernet interface
+2 802.11 Radios
+
+32K bytes of flash-simulated non-volatile configuration memory.
+Base ethernet MAC Address: F8:66:F2:92:A6:5D
+Part Number                          : 73-11451-08
+PCA Assembly Number                  : 800-30554-06
+PCA Revision Number                  : A0
+PCB Serial Number                    : FOC14321M32
+Top Assembly Part Number             : 800-31273-04
+Top Assembly Serial Number           : FTX1433K2GR
+Top Revision Number                  : A0
+Product/Model Number                 : AIR-LAP1142N-A-K9  

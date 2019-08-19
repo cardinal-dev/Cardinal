@@ -25,6 +25,6 @@
 # SOFTWARE.
 
 rm /usr/bin/scout
-pyinstaller --onefile scout.py
+pyinstaller --onefile scout/scout.py
 cp dist/scout /usr/bin
 rm -r dist build scout.spec __pycache__
