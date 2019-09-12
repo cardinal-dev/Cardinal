@@ -703,6 +703,11 @@ def deploySsids():
     if session.get("username") is not None:
         return render_template("deploy-ssids.html")
 
+@Cardinal.route("/deploy-ssids-group", methods=["GET"])
+def deploySsidsGroup():
+    if session.get("username") is not None:
+        return render_template("deploy-ssids-group.html")
+
 @Cardinal.route("/deploy-ssid-24ghz", methods=["GET"])
 def deploySsid24Ghz():
     if session.get("username") is not None:
@@ -717,13 +722,26 @@ def deploySsid24Ghz():
     else:
         return redirect(url_for('index'))
 
+@Cardinal.route("/deploy-ssid-24ghz-group", methods=["GET"])
+def deploySsid24GhzGroup():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-24ghz-group.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
 @Cardinal.route("/do-deploy-ssid-24ghz", methods=["POST"])
 def doDeploySsid24Ghz():
+    conn = cardinalSql()
     ssidId = request.form["ssid_id"]
     apId = session.get('apId')
     apName = session.get('apName')
-    apGroupId = session.get('apGroupId')
-    apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     try:
         checkSsidRelationship = conn.cursor()
@@ -755,44 +773,63 @@ def doDeploySsid24Ghz():
             apSshPassword = info[3]
         subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
         status = "The Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
-        return redirect(url_for('deploySsid24Ghz', status=status))
     finally:
         conn.commit()
         conn.close()
-    if request.method == 'POST' and apGroupId is not None:
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_id,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        ssidInfoCursor = conn.cursor()
-        ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
-        ssidInfo = ssidInfoCursor.fetchall()
-        ssidInfoCursor.close()
-        for ssidData in ssidInfo:
-            ssid = ssidData[0]
-            vlan = ssidData[1]
-            wpa2Pass = ssidData[2]
-            bridgeGroup = ssidData[3]
-            radioSub = ssidData[4]
-            gigaSub = ssidData[5]
-        for info in apInfo:
-            apId = info[0]
-            apGroupName = info[1]
-            apIp = info[2]
-            apSshUsername = info[3]
-            apSshPassword = info[4]
-            checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("SELECT ssid_id FROM ssids_24ghz_deployed WHERE ap_id = '{}'".format(apId))
-            checkSsidId = checkSsidRelationship.fetchone()[0]
-            if checkSsidId == apId:
-                status = "Sorry, this SSID is already deployed to {}".format(apName)
-                logging.error("{0} already has the SSID deployed".format(apName))
-            subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
-            deploySsidSql = conn.cursor()
-            deploySsidSql.execute("INSERT INTO ssids_24ghz_deployed (ap_id, ssid_id) VALUES ('{0}','{1}')".format(apId,ssid))
-        status = "The Deployment of 2.4GHz SSID {0} Has Been Successfully Initiated for AP Group {1}".format(ssid,apGroupName)
-        conn.close()
         return redirect(url_for('deploySsid24Ghz', status=status))
+
+@Cardinal.route("/do-deploy-ssid-24ghz-group", methods=["POST"])
+def doDeploySsid24GhzGroup():
+    conn = cardinalSql()
+    ssidId = request.form["ssid_id"]
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
+    apGroupCheck = conn.cursor()
+    apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apIdsSql = apGroupCheck.fetchall()
+    apGroupCheck.close()
+    apIds = []
+    for value in apIdsSql:
+        apIds.append(value[0])
+    for apId in apIds:
+        try:
+            checkSsidRelationship = conn.cursor()
+            checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+            checkSsidRelationship.close()
+        except MySQLdb.Error as e:
+            getApName = conn.cursor()
+            getApName.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
+            apName = getApName.fetchone()[0]
+            getApName.close()
+            conn.close()
+            status = "{0} already has the SSID deployed: {1}".format(apName,e)
+            logging.error("{0} already has the SSID deployed: {1}".format(apName,e))
+            return redirect(url_for('deploySsid24GhzGroup', status=status))
+        else:
+            apInfoCursor = conn.cursor()
+            apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfo = apInfoCursor.fetchall()
+            apInfoCursor.close()
+            ssidInfoCursor = conn.cursor()
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfo = ssidInfoCursor.fetchall()
+            ssidInfoCursor.close()
+            for ssidData in ssidInfo:
+                ssid = ssidData[0]
+                vlan = ssidData[1]
+                wpa2Pass = ssidData[2]
+                bridgeGroup = ssidData[3]
+                radioSub = ssidData[4]
+                gigaSub = ssidData[5]
+            for info in apInfo:
+                apIp = info[0]
+                apSshUsername = info[1]
+                apSshPassword = info[2]
+            subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+            status = "The Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
+            conn.commit()
+    conn.close()
+    return redirect(url_for('deploySsid24GhzGroup', status=status))
 
 @Cardinal.route("/delete-ssids", methods=["GET"])
 def deleteSsids():
@@ -978,6 +1015,20 @@ def totalApGroups():
         totalApGroupsCursor.close()
         conn.close()
         return render_template('total-ap-groups.html', totalApGroups=totalApGroups)
+    else:
+        return redirect(url_for('index'))
+
+@Cardinal.route("/total-ap-group-clients", methods=["GET"])
+def totalApGroupClients():
+    if session.get("username") is not None:
+        apGroupId = session.get("apGroupId")
+        conn = cardinalSql()
+        totalApGroupClientsCursor = conn.cursor()
+        totalApGroupClientsCursor.execute("SELECT FORMAT(SUM(ap_total_clients),0) FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        totalApGroupClients = totalApGroupClientsCursor.fetchone()[0]
+        totalApGroupClientsCursor.close()
+        conn.close()
+        return render_template('total-ap-group-clients.html', totalApGroupClients=totalApGroupClients)
     else:
         return redirect(url_for('index'))
 
