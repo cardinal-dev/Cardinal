@@ -30,3 +30,4 @@ configparser
 werkzeug
 flask
 jinja2
+uwsgi

@@ -39,24 +39,26 @@ from flask import session
 from flask import url_for
 from werkzeug.security import check_password_hash
 
-# SYSTEM VARIABLES
-
-cardinalConfig = os.environ['CARDINALCONFIG']
-logging.basicConfig(filename='/var/log/cardinal/cardinal.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
-
 # FLASK APP INITIALIZATION
 
 Cardinal = Flask(__name__)
-Cardinal.secret_key = "SECRET_KEY_HERE"
+
+# SYSTEM VARIABLES
+
+cardinalConfigFile = os.environ['CARDINALCONFIG']
+cardinalConfig = ConfigParser()
+cardinalConfig.read("{}".format(cardinalConfigFile))
+cardinalLogFile = cardinalConfig.get('cardinal', 'logfile')
+logging.basicConfig(filename='{}'.format(cardinalLogFile), filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+cardinalSecretKey = cardinalConfig.get('cardinal', 'secretkey')
+Cardinal.secret_key = "{}".format(cardinalSecretKey)
 
 # MySQL AUTHENTICATION & HANDLING
 
-mysqlConfig = ConfigParser()
-mysqlConfig.read("{}".format(cardinalConfig))
-mysqlHost = mysqlConfig.get('cardinal', 'dbserver')
-mysqlUser = mysqlConfig.get('cardinal', 'username')
-mysqlPass = mysqlConfig.get('cardinal', 'password')
-mysqlDb = mysqlConfig.get('cardinal', 'dbname')
+mysqlHost = cardinalConfig.get('cardinal', 'dbserver')
+mysqlUser = cardinalConfig.get('cardinal', 'dbuser')
+mysqlPass = cardinalConfig.get('cardinal', 'dbpassword')
+mysqlDb = cardinalConfig.get('cardinal', 'dbname')
 
 def cardinalSql():
     conn = MySQLdb.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
@@ -1059,4 +1061,4 @@ def totalSsids():
         return redirect(url_for('index'))
 
 if __name__ == "__main__":
-    Cardinal.run(debug=True, host='0.0.0.0')
+    Cardinal.run(host='0.0.0.0')
