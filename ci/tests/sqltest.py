@@ -36,8 +36,8 @@ from configparser import ConfigParser
 mysqlConfig = ConfigParser()
 mysqlConfig.read("ci/cardinal.ini")
 mysqlHost = mysqlConfig.get('cardinal', 'dbserver')
-mysqlUser = mysqlConfig.get('cardinal', 'username')
-mysqlPass = mysqlConfig.get('cardinal', 'password')
+mysqlUser = mysqlConfig.get('cardinal', 'dbuser')
+mysqlPass = mysqlConfig.get('cardinal', 'dbpassword')
 mysqlDb = mysqlConfig.get('cardinal', 'dbname')
 
 def cardinalSql():
