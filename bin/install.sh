@@ -34,7 +34,6 @@
 
 # First, we need to know some things. How about we start with database (MySQL) information?
 echo "Welcome to the Cardinal Initial Configuration Guide!"
-echo "For more information, please visit http://cardinal.mcclunetechnologies.net"
 echo "MySQL Information"
 echo -e ""
 read -p "Hello, welcome to Cardinal! What is the hostname/IP address of the database for Cardinal? " varDatabaseIP
@@ -59,6 +58,9 @@ echo -e ""
 read -p "Okay, now we need the base location of your Cardinal installation. What is the absolute path of your Cardinal installation? " varCardinalBase
 echo "Thank you for installing Cardinal!"
 
+# Let's create a system user called cardinal. The cardinal user is the user which will run our processes
+sudo adduser cardinal
+
 # Let's create a configuration file based on user input (for Cardinal SQL connections)
 rm $varDbCredDir/cardinal.ini
 touch $varDbCredDir/cardinal.ini
@@ -70,14 +72,16 @@ echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinal.ini
 
 # Let's create a log file for Cardinal UI
 mkdir -p /var/log/cardinal
+chown -R cardinal:cardinal /var/log/cardinal
 touch /var/log/cardinal/cardinal.log
 
 # Generate Cardinal venv
 sudo python3 -m venv $cardinalVenv
-sudo $cardinalVenv/bin/pip install -r /opt/Cardinal/requirements.txt
+sudo $cardinalVenv/bin/pip install -r $varCardinalBase/requirements.txt
 
 # Let's create a socket directory for uWSGI
 mkdir -p /var/lib/cardinal
+chown -R cardinal:cardinal /var/lib/cardinal
 
 # Now, let's create the MySQL database for Cardinal. We also want to import the SQL structure too!
 mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""
