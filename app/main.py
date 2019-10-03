@@ -31,6 +31,7 @@ import MySQLdb
 import os
 import subprocess
 from configparser import ConfigParser
+from cryptography.fernet import Fernet
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -50,8 +51,11 @@ cardinalConfig = ConfigParser()
 cardinalConfig.read("{}".format(cardinalConfigFile))
 cardinalLogFile = cardinalConfig.get('cardinal', 'logfile')
 logging.basicConfig(filename='{}'.format(cardinalLogFile), filemode='w', format='%(name)s - %(levelname)s - %(message)s')
-cardinalSecretKey = cardinalConfig.get('cardinal', 'secretkey')
-Cardinal.secret_key = "{}".format(cardinalSecretKey)
+flaskKey = cardinalConfig.get('cardinal', 'flaskkey')
+Cardinal.secret_key = "{}".format(flaskKey)
+encryptKey = cardinalConfig.get('cardinal', 'encryptkey')
+bytesKey = bytes(encryptKey, 'utf-8')
+cipherSuite = Fernet(bytesKey)
 
 # MySQL AUTHENTICATION & HANDLING
 
@@ -132,13 +136,15 @@ def doAddAp():
         apName = request.form["ap_name"]
         apIp = request.form["ap_ip"]
         apSshUsername = request.form["ssh_username"]
-        apSshPassword = request.form["ssh_password"]
+        apSshPassword = bytes(request.form["ssh_password"], 'utf-8')
         apGroupId = request.form["group_id"]
-        apSnmp = request.form["ap_snmp"]
-        status = "Success! {} was successfully registered!".format(apName)
+        apSnmp = bytes(request.form["ap_snmp"], 'utf-8')
+        status = "{} was successfully registered!".format(apName)
+        encryptedSshPassword = cipherSuite.encrypt(apSshPassword).decode('utf-8')
+        encryptedSnmpCommunity = cipherSuite.encrypt(apSnmp).decode('utf-8')
         conn = cardinalSql()
         addApCursor = conn.cursor()
-        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, apSshPassword, apSnmp, apGroupId))
+        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
         addApCursor.close()
         conn.commit()
         conn.close()
@@ -167,7 +173,7 @@ def doDeleteAp():
         deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
         apName = deleteApNameCursor.fetchone()[0]
         deleteApNameCursor.close()
-        status = "Success! {} was successfully registered!".format(apName)
+        status = "{} was successfully registered!".format(apName)
         try:
             deleteApCursor = conn.cursor()
             deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -191,7 +197,7 @@ def addApGroup():
 def doAddApGroup():
     if request.method == 'POST':
         apGroupName = request.form["ap_group_name"]
-        status = "Success! {} was successfully registered!".format(apGroupName)
+        status = "{} was successfully registered!".format(apGroupName)
         conn = cardinalSql()
         addApGroupCursor = conn.cursor()
         addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
@@ -222,7 +228,7 @@ def doDeleteApGroup():
         deleteApGroupNameCursor = conn.cursor()
         deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
         apGroupName = deleteApGroupNameCursor.fetchone()[0]
-        status = "Success! {} was successfully deleted!".format(apGroupName)
+        status = "{} was successfully deleted!".format(apGroupName)
         deleteApGroupCursor = conn.cursor()
         deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
         conn.commit()
@@ -367,7 +373,8 @@ def doConfigApIp():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --change-ip {0} {1} {2} {3} {4}".format(apIp,apSshUsername,apSshPassword,apNewIp,apSubnetMask), shell=True)
         status = "{}'s IP was successfully updated!".format(apName)
         sqlChangeApIpCursor = conn.cursor()
@@ -396,12 +403,14 @@ def doConfigApName():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
-        subprocess.check_output("scout --change-name {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,apNewName), shell=True)
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        subprocess.check_output("/usr/bin/scout --change-name {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,apNewName), shell=True)
         status = "AP Name Changed from {0} to {1}".format(apName,apNewName)
-        sqlChangeApNameCursor = conn.cursor()
-        sqlChangeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apName,apId))
-        sqlChangeApNameCursor.close()
+        changeApNameCursor = conn.cursor()
+        changeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apNewName,apId))
+        conn.commit()
+        changeApNameCursor.close()
         conn.close()
         return redirect(url_for('configApName', status=status))
 
@@ -431,9 +440,10 @@ def doApTftpBackup():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
-        status = "TFTP Config Backup for {} Successfully Initiated!".format(apName)
+        status = "Config Backup for {} Successfully Initiated!".format(apName)
         conn.close()
         if request.form["group_backup"] == 'True':
             apGroupId = session.get('apGroupId', None)
@@ -448,9 +458,10 @@ def doApTftpBackup():
                 apGroupName = info[0]
                 apIp = info[1]
                 apSshUsername = info[2]
-                apSshPassword = info[3]
-                subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
-            status = "TFTP Config Backup for {} Successfully Initiated!".format(apGroupName)
+                encryptedSshPassword = bytes(info[3], 'utf-8')
+            apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+            subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
+            status = "Config Backup for {} Successfully Initiated!".format(apGroupName)
             conn.close()
             return redirect(url_for('manageApTftpBackupGroup', status=status))
         return redirect(url_for('manageApTftpBackup', status=status))
@@ -474,9 +485,10 @@ def doEnableApHttp():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --enable-http {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
-        status = "HTTP Server for {} Successfully Enabled".format(apName)
+        status = "HTTP Server for {} Successfully Enabled!".format(apName)
         conn.close()
         return redirect(url_for('configApHttp', status=status))
 
@@ -493,7 +505,8 @@ def doDisableApHttp():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --disable-http {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
         status = "HTTP Server for {} Successfully Disabled".format(apName)
         conn.close()
@@ -518,9 +531,10 @@ def doEnableApRadius():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --enable-radius {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
-        status = "RADIUS for {} Successfully Enabled".format(apName)
+        status = "RADIUS for {} Successfully Enabled!".format(apName)
         conn.close()
         return redirect(url_for('configApRadius', status=status))
 
@@ -537,9 +551,10 @@ def doDisableApRadius():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --disable-radius {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
-        status = "RADIUS Server for {} Successfully Disabled".format(apName)
+        status = "RADIUS Server for {} Successfully Disabled!".format(apName)
         conn.close()
         return redirect(url_for('configApRadius', status=status))
 
@@ -562,9 +577,10 @@ def doEnableApSnmp():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --enable-snmp {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
-        status = "SNMP for {} Successfully Enabled".format(apName)
+        status = "SNMP for {} Successfully Enabled!".format(apName)
         conn.close()
         return redirect(url_for('configApSnmp', status=status))
 
@@ -581,9 +597,10 @@ def doDisableApSnmp():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --disable-snmp {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
-        status = "SNMP Server for {} Successfully Disabled".format(apName)
+        status = "SNMP Server for {} Successfully Disabled!".format(apName)
         conn.close()
         return redirect(url_for('configApSnmp', status=status))
 
@@ -603,17 +620,18 @@ def doAddSsid24Ghz():
     if request.method == 'POST':
         ssidName = request.form["ssid_name"]
         vlan = request.form["vlan"]
-        wpa2Psk = request.form["wpa2_psk"]
+        wpa2Psk = bytes(request.form["wpa2_psk"], 'utf-8')
         bridgeGroup = request.form["bridge_group_id"]
         radioId = request.form["radio_sub_id"]
         gigaId = request.form["giga_sub_id"]
+        encryptedWpa2 = cipherSuite.encrypt(wpa2Psk).decode('utf-8')
         conn = cardinalSql()
         addSsid24GhzCursor = conn.cursor()
-        addSsid24GhzCursor.execute("INSERT INTO ssids_24ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(ssidName,vlan,wpa2Psk,bridgeGroup,radioId,gigaId))
+        addSsid24GhzCursor.execute("INSERT INTO ssids_24ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
         addSsid24GhzCursor.close()
         conn.commit()
         conn.close()
-        status = "Success! {} was successfully registered!".format(ssidName)
+        status = "{} was successfully registered!".format(ssidName)
         return redirect(url_for('addSsid24Ghz', status=status))
 
 @Cardinal.route("/add-ssid-5ghz", methods=["GET"])
@@ -627,17 +645,18 @@ def doAddSsid5Ghz():
     if request.method == 'POST':
         ssidName = request.form["ssid_name"]
         vlan = request.form["vlan"]
-        wpa2Psk = request.form["wpa2_psk"]
+        wpa2Psk = bytes(request.form["wpa2_psk"], 'utf-8')
         bridgeGroup = request.form["bridge_group_id"]
         radioId = request.form["radio_sub_id"]
         gigaId = request.form["giga_sub_id"]
+        encryptedWpa2 = cipherSuite.encrypt(wpa2Psk).decode('utf-8')
         conn = cardinalSql()
         addSsid5GhzCursor = conn.cursor()
-        addSsid5GhzCursor.execute("INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(ssidName,vlan,wpa2Psk,bridgeGroup,radioId,gigaId))
+        addSsid5GhzCursor.execute("INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
         addSsid5GhzCursor.close()
         conn.commit()
         conn.close()
-        status = "Success! {} was successfully registered!".format(ssidName)
+        status = "{} was successfully registered!".format(ssidName)
         return redirect(url_for('addSsid5Ghz', status=status))
 
 @Cardinal.route("/add-ssid-24ghz-radius", methods=["GET"])
@@ -655,19 +674,20 @@ def doAddSsid24GhzRadius():
         radioId = request.form["radio_sub_id"]
         gigaId = request.form["giga_sub_id"]
         radiusIp = request.form["radius_ip"]
-        sharedSecret = request.form["shared_secret"]
+        sharedSecret = bytes(request.form["shared_secret"], 'utf-8')
         authPort = request.form["auth_port"]
         acctPort = request.form["acct_port"]
         radiusTimeout = request.form["radius_timeout"]
         radiusGroup = request.form["radius_group"]
         methodList = request.form["method_list"]
+        encryptedSharedSecret = cipherSuite.encrypt(sharedSecret).decode('utf-8')
         conn = cardinalSql()
         addSsid24GhzRadiusCursor = conn.cursor()
-        addSsid24GhzRadiusCursor.execute("INSERT INTO ssids_24ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')".format(ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,sharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
+        addSsid24GhzRadiusCursor.execute("INSERT INTO ssids_24ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')".format(ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
         addSsid24GhzRadiusCursor.close()
         conn.commit()
         conn.close()
-        status = "Success! {} was successfully registered!".format(ssidName)
+        status = "{} was successfully registered!".format(ssidName)
         return redirect(url_for('addSsid24GhzRadius', status=status))
 
 @Cardinal.route("/add-ssid-5ghz-radius", methods=["GET"])
@@ -685,19 +705,20 @@ def doAddSsid5GhzRadius():
         radioId = request.form["radio_sub_id"]
         gigaId = request.form["giga_sub_id"]
         radiusIp = request.form["radius_ip"]
-        sharedSecret = request.form["shared_secret"]
+        sharedSecret = bytes(request.form["shared_secret"], 'utf-8')
         authPort = request.form["auth_port"]
         acctPort = request.form["acct_port"]
         radiusTimeout = request.form["radius_timeout"]
         radiusGroup = request.form["radius_group"]
         methodList = request.form["method_list"]
+        encryptedSharedSecret = cipherSuite.encrypt(sharedSecret).decode('utf-8')
         conn = cardinalSql()
         addSsid5GhzRadiusCursor = conn.cursor()
-        addSsid5GhzRadiusCursor.execute("INSERT INTO ssids_5ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')".format(ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,sharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
+        addSsid5GhzRadiusCursor.execute("INSERT INTO ssids_5ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')".format(ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
         addSsid5GhzRadiusCursor.close()
         conn.commit()
         conn.close()
-        status = "Success! {} was successfully registered!".format(ssidName)
+        status = "{} was successfully registered!".format(ssidName)
         return redirect(url_for('addSsid5GhzRadius', status=status))
 
 @Cardinal.route("/deploy-ssids", methods=["GET"])
@@ -772,9 +793,10 @@ def doDeploySsid24Ghz():
             apName = info[0]
             apIp = info[1]
             apSshUsername = info[2]
-            apSshPassword = info[3]
+            encryptedSshPassword = bytes(info[3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
-        status = "The Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
+        status = "Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
     finally:
         conn.commit()
         conn.close()
@@ -826,9 +848,10 @@ def doDeploySsid24GhzGroup():
             for info in apInfo:
                 apIp = info[0]
                 apSshUsername = info[1]
-                apSshPassword = info[2]
+                encryptedSshPassword = bytes(info[3], 'utf-8')
+            apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
             subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
-            status = "The Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
+            status = "Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
             conn.commit()
     conn.close()
     return redirect(url_for('deploySsid24GhzGroup', status=status))
@@ -861,7 +884,7 @@ def doDeleteSsid24Ghz():
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
-        status = "Success! {} was successfully deleted!".format(ssidName)
+        status = "{} was successfully deleted!".format(ssidName)
         try:
             deleteSsidCursor = conn.cursor()
             deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
@@ -896,7 +919,7 @@ def doDeleteSsid5Ghz():
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
-        status = "Success! {} was successfully deleted!".format(ssidName)
+        status = "{} was successfully deleted!".format(ssidName)
         deleteSsidCursor = conn.cursor()
         deleteSsidCursor.execute("DELETE FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
         deleteSsidCursor.close()
@@ -927,7 +950,7 @@ def doDeleteSsid24GhzRadius():
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
-        status = "Success! {} was successfully deleted!".format(ssidName)
+        status = "{} was successfully deleted!".format(ssidName)
         deleteSsidCursor = conn.cursor()
         deleteSsidCursor.execute("DELETE FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
         deleteSsidCursor.close()
@@ -958,7 +981,7 @@ def doDeleteSsid5GhzRadius():
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
-        status = "Success! {} was successfully deleted!".format(ssidName)
+        status = "{} was successfully deleted!".format(ssidName)
         deleteSsidCursor = conn.cursor()
         deleteSsidCursor.execute("DELETE FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
         deleteSsidCursor.close()
@@ -1061,4 +1084,4 @@ def totalSsids():
         return redirect(url_for('index'))
 
 if __name__ == "__main__":
-    Cardinal.run(host='0.0.0.0')
+    Cardinal.run(debug=True, host='0.0.0.0')
