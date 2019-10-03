@@ -36,39 +36,40 @@
 echo "Welcome to the Cardinal Initial Configuration Guide!"
 echo "MySQL Information"
 echo -e ""
-read -p "Hello, welcome to Cardinal! What is the hostname/IP address of the database for Cardinal? " varDatabaseIP
+read -p "Hello, welcome to Cardinal! What is the hostname/IP address of the database for Cardinal? " dbIP
 echo -e ""
-read -p "Ok, I got it. How about an username for the database? " varDbUsername
+read -p "Ok, I got it. How about an username for the database? " dbUsername
 echo -e ""
-read -p "Great! How about a password for the database? " varDbPassword
+read -p "Great! How about a password for the database? " dbPassword
 echo -e ""
-read -p "Okay, now we need a name for the database. What is the database name? " varDbName
+read -p "Okay, now we need a name for the database. What is the database name? " dbName
 echo -e ""
-read -p "Okay, now we need to add a Cardinal Admin. What is the desired username for Cardinal? " varCardinalUser
+read -p "Okay, now we need to add a Cardinal Admin. What is the desired username for Cardinal? " cardinalUser
 echo -e ""
-read -p "Okay, now what is the Cardinal Admin's password? " varCardinalPass
+read -p "Okay, now what is the Cardinal Admin's password? " cardinalPass
 echo -e ""
-read -p "Finally, where do you want to store your MySQL database information? REMEMBER: This location shouldn't be the web root, this should be a directory outside of the web root. Please make sure you give www-data or your web server rights to read the file. " varDbCredDir
+read -p "Finally, where do you want to store your MySQL database information?" dbCredDir
 echo -e ""
 echo "Cardinal Settings & Configuration"
-read -p "Okay, now we need a directory where Cisco IOS images reside. Where is this directory at? " varTftpDir
+read -p "Okay, now we need a directory where Cisco IOS images reside. Where is this directory at? " tftpDir
 echo -e ""
-read -p "Okay, now we need a duration (in minutes) when Cardinal will pull info from access points (e.g. clients associated, bandwidth, etc.) What is the desired duration in minutes? " varSchedulePoll
+read -p "Okay, now we need a duration (in minutes) when Cardinal will pull info from access points (e.g. clients associated, bandwidth, etc.) What is the desired duration in minutes? " schedulePoll
 echo -e ""
-read -p "Okay, now we need the base location of your Cardinal installation. What is the absolute path of your Cardinal installation? " varCardinalBase
+read -p "Okay, now we need the base location of your Cardinal installation. What is the absolute path of your Cardinal installation? " cardinalBase
 echo "Thank you for installing Cardinal!"
 
 # Let's create a system user called cardinal. The cardinal user is the user which will run our processes
 sudo adduser cardinal
 
 # Let's create a configuration file based on user input (for Cardinal SQL connections)
-rm $varDbCredDir/cardinal.ini
-touch $varDbCredDir/cardinal.ini
-echo "[cardinal]" >> $varDbCredDir/cardinal.ini
-echo 'dbserver'=""$varDatabaseIP"" >> $varDbCredDir/cardinal.ini
-echo 'dbuser'=""$varDbUsername"" >> $varDbCredDir/cardinal.ini
-echo 'dbpassword'=""$varDbPassword"" >> $varDbCredDir/cardinal.ini
-echo 'dbname'=""$varDbName"" >> $varDbCredDir/cardinal.ini
+rm $dbCredDir/cardinal.ini
+touch $dbCredDir/cardinal.ini
+echo "[cardinal]" >> $dbCredDir/cardinal.ini
+echo 'dbserver'=""$dbIP"" >> $dbCredDir/cardinal.ini
+echo 'dbuser'=""$dbUsername"" >> $dbCredDir/cardinal.ini
+echo 'dbpassword'=""$dbPassword"" >> $dbCredDir/cardinal.ini
+echo 'dbname'=""$dbName"" >> $dbCredDir/cardinal.ini
+echo 'commanddir'="<COMMAND_DIR_HERE>" >> $dbCredDir/cardinal.ini
 
 # Let's create a log file for Cardinal UI
 mkdir -p /var/log/cardinal
@@ -76,20 +77,23 @@ chown -R cardinal:cardinal /var/log/cardinal
 touch /var/log/cardinal/cardinal.log
 
 # Generate Cardinal venv
-sudo python3 -m venv $cardinalVenv
-sudo $cardinalVenv/bin/pip install -r $varCardinalBase/requirements.txt
+sudo python3 -m venv $cardinalBase/bin/cardinal
+sudo $cardinalBase/bin/cardinal/pip install -r $cardinalBase/requirements.txt
 
 # Let's create a socket directory for uWSGI
 mkdir -p /var/lib/cardinal
 chown -R cardinal:cardinal /var/lib/cardinal
 
+# Set permissions on the cardinal.ini file
+chown -R cardinal:cardinal $dbCredDir/cardinal.ini
+
 # Now, let's create the MySQL database for Cardinal. We also want to import the SQL structure too!
-mysql -u$varDbUsername -p$varDbPassword -e "CREATE DATABASE "$varDbName""
-mysql -u$varDbUsername --password=$varDbPassword $varDbName < ../sql/cardinal.sql
+mysql -u$dbUsername -p$dbPassword -e "CREATE DATABASE "$dbName""
+mysql -u$dbUsername --password=$dbPassword $dbName < ../sql/cardinal.sql
 
 # Add Cardinal configuration to MySQL
-mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO settings (settings_id,cardinal_home,cardinal_tftp,poll_schedule) VALUES ('1','$varConfigDir','$varTftpDir','$varSchedulePoll')"
+mysql -u$dbUsername -p$dbPassword $dbName -e "INSERT INTO settings (settings_id,cardinal_tftp,poll_schedule) VALUES ('1','$tftpDir','$schedulePoll')"
 
 # Now, let's create a Cardinal admin
-hashedPass=$(python3 -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("'$varCardinalPass'", "sha256"))')
-mysql -u$varDbUsername -p$varDbPassword $varDbName -e "INSERT INTO users (username,password) VALUES ('$varCardinalUser','$hashedPass')"
+hashedPass=$(python3 -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("'$cardinalPass'", "sha256"))')
+mysql -u$dbUsername -p$dbPassword $dbName -e "INSERT INTO users (username,password) VALUES ('$cardinalUser','$hashedPass')"
