@@ -57,6 +57,8 @@ encryptKey = cardinalConfig.get('cardinal', 'encryptkey')
 bytesKey = bytes(encryptKey, 'utf-8')
 cipherSuite = Fernet(bytesKey)
 
+scoutPath = cardinalConfig.get('cardinal', 'scoutpath')
+
 # MySQL AUTHENTICATION & HANDLING
 
 mysqlHost = cardinalConfig.get('cardinal', 'dbserver')
@@ -375,7 +377,7 @@ def doConfigApIp():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --change-ip {0} {1} {2} {3} {4}".format(apIp,apSshUsername,apSshPassword,apNewIp,apSubnetMask), shell=True)
+        subprocess.check_output("{0}/scout --change-ip {1} {2} {3} {4} {5}".format(scoutPath,apIp,apSshUsername,apSshPassword,apNewIp,apSubnetMask), shell=True)
         status = "{}'s IP was successfully updated!".format(apName)
         sqlChangeApIpCursor = conn.cursor()
         sqlChangeApIpCursor.execute("UPDATE access_points SET ap_ip = '{0}' WHERE ap_id = '{1}'".format(apNewIp,apId))
@@ -405,7 +407,7 @@ def doConfigApName():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("/usr/bin/scout --change-name {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,apNewName), shell=True)
+        subprocess.check_output("{0}/scout --change-name {1} {2} {3} {4}".format(scoutPath,apIp,apSshUsername,apSshPassword,apNewName), shell=True)
         status = "AP Name Changed from {0} to {1}".format(apName,apNewName)
         changeApNameCursor = conn.cursor()
         changeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apNewName,apId))
@@ -442,7 +444,7 @@ def doApTftpBackup():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
+        subprocess.check_output("{0}/scout --tftp-backup {1} {2} {3} {4}".format(scoutPath,apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
         status = "Config Backup for {} Successfully Initiated!".format(apName)
         conn.close()
         if request.form["group_backup"] == 'True':
@@ -460,7 +462,7 @@ def doApTftpBackup():
                 apSshUsername = info[2]
                 encryptedSshPassword = bytes(info[3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            subprocess.check_output("scout --tftp-backup {0} {1} {2} {3}".format(apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
+            subprocess.check_output("{0}/scout --tftp-backup {1} {2} {3} {4}".format(scoutPath,apIp,apSshUsername,apSshPassword,tftpIp), shell=True)
             status = "Config Backup for {} Successfully Initiated!".format(apGroupName)
             conn.close()
             return redirect(url_for('manageApTftpBackupGroup', status=status))
@@ -487,7 +489,7 @@ def doEnableApHttp():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --enable-http {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        subprocess.check_output("{0}/scout --enable-http {1} {2} {3}".format(scoutPath,apIp,apSshUsername,apSshPassword), shell=True)
         status = "HTTP Server for {} Successfully Enabled!".format(apName)
         conn.close()
         return redirect(url_for('configApHttp', status=status))
@@ -507,7 +509,7 @@ def doDisableApHttp():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --disable-http {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        subprocess.check_output("{0}/scout --disable-http {1} {2} {3}".format(scoutPath,apIp,apSshUsername,apSshPassword), shell=True)
         status = "HTTP Server for {} Successfully Disabled".format(apName)
         conn.close()
         return redirect(url_for('configApHttp', status=status))
@@ -533,7 +535,7 @@ def doEnableApRadius():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --enable-radius {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        subprocess.check_output("{0}/scout --enable-radius {1} {2} {3}".format(scoutPath,apIp,apSshUsername,apSshPassword), shell=True)
         status = "RADIUS for {} Successfully Enabled!".format(apName)
         conn.close()
         return redirect(url_for('configApRadius', status=status))
@@ -553,7 +555,7 @@ def doDisableApRadius():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --disable-radius {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        subprocess.check_output("{0}/scout --disable-radius {1} {2} {3}".format(scoutPath,apIp,apSshUsername,apSshPassword), shell=True)
         status = "RADIUS Server for {} Successfully Disabled!".format(apName)
         conn.close()
         return redirect(url_for('configApRadius', status=status))
@@ -579,7 +581,7 @@ def doEnableApSnmp():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --enable-snmp {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        subprocess.check_output("{0}/scout --enable-snmp {1} {2} {3}".format(scoutPath,apIp,apSshUsername,apSshPassword), shell=True)
         status = "SNMP for {} Successfully Enabled!".format(apName)
         conn.close()
         return redirect(url_for('configApSnmp', status=status))
@@ -599,7 +601,7 @@ def doDisableApSnmp():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --disable-snmp {0} {1} {2}".format(apIp,apSshUsername,apSshPassword), shell=True)
+        subprocess.check_output("{0}/scout --disable-snmp {1} {2} {3}".format(scoutPath,apIp,apSshUsername,apSshPassword), shell=True)
         status = "SNMP Server for {} Successfully Disabled!".format(apName)
         conn.close()
         return redirect(url_for('configApSnmp', status=status))
@@ -795,7 +797,7 @@ def doDeploySsid24Ghz():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+        subprocess.check_output("{0}/scout --create-ssid-24 {1} {2} {3} {4} {5} {6} {7} {8} {9}".format(scoutPath,apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
         status = "Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
     finally:
         conn.commit()
@@ -850,7 +852,7 @@ def doDeploySsid24GhzGroup():
                 apSshUsername = info[1]
                 encryptedSshPassword = bytes(info[3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+            subprocess.check_output("{0}/scout --create-ssid-24 {1} {2} {3} {4} {5} {6} {7} {8} {9}".format(scoutPath,apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
             status = "Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
             conn.commit()
     conn.close()
