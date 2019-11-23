@@ -1,4 +1,4 @@
-![alt text](http://cardinal.mcclunetechnologies.net/wp-content/uploads/2017/09/cardinal.png)
+![alt text](https://github.com/cardinal-dev/Cardinal/blob/master/webapp/cardinal/static/img/cardinal.png)
 [![Build Status](https://api.travis-ci.org/cardinal-dev/Cardinal.svg?branch=master)](https://travis-ci.org/cardinal-dev/Cardinal)
 
 <h1>Cardinal</h1>

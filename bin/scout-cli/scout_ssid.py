@@ -26,46 +26,18 @@ SOFTWARE.
 
 '''
 
-import os
+import scout_auth
+import scout_env
 import time
-import sys
-import paramiko
-import jinja2
-from configparser import ConfigParser
 
-# CARDINAL SETTINGS
-
-cardinalConfigFile = os.environ['CARDINALCONFIG']
-cardinalConfig = ConfigParser()
-cardinalConfig.read("{}".format(cardinalConfigFile))
-
-# BEGIN CARDINAL SETTING DECLARATIONS
-
-commandDir = cardinalConfig.get('cardinal', 'commanddir')
-
-# CARDINAL SYSTEM VARIABLES
-
-fileLoader = jinja2.FileSystemLoader('{}'.format(commandDir))
-env = jinja2.Environment(loader=fileLoader)
-
-# SSH INFORMATION
-
-def sshInfo():
-    ip = sys.argv[2]
-    username = sys.argv[3]
-    password = sys.argv[4]
-    scoutSsh = paramiko.SSHClient()
-    scoutSsh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    scoutSsh.connect(ip, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
-    return ip, username, password, scoutSsh
-
-# Scout Ssid Command Functions
+# SCOUT SSID COMMAND FUNCTIONS
 
 def scoutCreateSsid24():
     """Function that deploys a 2.4GHz SSID to an AP
     using user provided arguments.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     wpa2Pass = sys.argv[6]
     vlan = sys.argv[7]
@@ -76,7 +48,7 @@ def scoutCreateSsid24():
     cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-24...")
+    print("INFO: Running scout-cli --create-ssid-24...")
     print("INFO: Deploying 2.4GHz SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
@@ -87,7 +59,8 @@ def scoutCreateSsid5():
     """Function that deploys a 5GHz SSID to an AP
     using user provided arguments.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     wpa2Pass = sys.argv[6]
     vlan = sys.argv[7]
@@ -98,7 +71,7 @@ def scoutCreateSsid5():
     cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-5...")
+    print("INFO: Running scout-cli --create-ssid-5...")
     print("INFO: Deploying 5GHz SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
@@ -109,7 +82,8 @@ def scoutCreateSsid24Radius():
     """Function that deploys a 2.4GHz 802.1x SSID to an 
     AP using user provided arguments.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
     bridgeGroup = sys.argv[7]
@@ -126,7 +100,7 @@ def scoutCreateSsid24Radius():
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-radius-24...")
+    print("INFO: Running scout-cli --create-ssid-radius-24...")
     print("INFO: Deploying 2.4GHz RADIUS SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
@@ -137,7 +111,8 @@ def scoutCreateSsid5Radius():
     """Function that deploys a 5GHz 802.1x SSID to an
     AP using user provided arguments.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
     bridgeGroup = sys.argv[7]
@@ -154,7 +129,7 @@ def scoutCreateSsid5Radius():
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-radius-5...")
+    print("INFO: Running scout-cli --create-ssid-radius-5...")
     print("INFO: Deploying 5GHz RADIUS SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
@@ -165,7 +140,8 @@ def scoutDeleteSsid24():
     """Function that deletes an existing 2.4GHz SSID from
     an AP.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
     radioSub = sys.argv[7]
@@ -184,7 +160,8 @@ def scoutDeleteSsid5():
     """Function that deletes an existing 5GHz SSID from an
     AP.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
     radioSub = sys.argv[7]

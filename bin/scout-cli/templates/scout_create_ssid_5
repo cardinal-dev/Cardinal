@@ -1,0 +1,23 @@
+enable
+{{ password }}
+conf t
+dot11 ssid {{ ssid }}
+auth open
+mbssid guest-mode
+auth key-man wpa version 2
+wpa-psk ascii {{ wpa2Pass }}
+vlan {{ vlan }}
+int d1
+mbssid
+encryption vlan {{ vlan }} mode ciphers aes
+no shutdown
+dot11 ssid {{ ssid }}
+int d1
+ssid {{ ssid }}
+int d1.{{ radioSub }}
+encapsulation dot1q {{ vlan }}
+bridge-group {{ bridgeGroup }}
+int gi0.{{ gigaSub }}
+encapsulation dot1q {{ vlan }}
+bridge-group {{ bridgeGroup }}
+do wr

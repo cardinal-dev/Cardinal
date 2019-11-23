@@ -1,0 +1,6 @@
+enable
+{{ password }}
+write default
+y
+reload
+y

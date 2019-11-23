@@ -58,24 +58,7 @@ CREATE TABLE `access_points` (
   PRIMARY KEY (`ap_id`),
   UNIQUE KEY `ap_name` (`ap_name`(255)),
   UNIQUE KEY `ap_ip` (`ap_ip`(15))
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `settings`
---
-
-DROP TABLE IF EXISTS `settings`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `settings` (
-  `settings_id` int(11) NOT NULL,
-  `cardinal_home` text NOT NULL COMMENT 'Directory where Cardinal core resides',
-  `scout_dir` text NOT NULL COMMENT 'Directory where Scout resides',
-  `cardinal_tftp` text NOT NULL COMMENT 'Directory where Cardinal TFTP data is stored',
-  `poll_schedule` int(11) NOT NULL COMMENT 'Amount (in minutes) when Cardinal fetches information',
-  PRIMARY KEY (`settings_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +78,7 @@ CREATE TABLE `ssids_24ghz` (
   `ap_ssid_ethernet_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 2.4GHz radio';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 2.4GHz radio';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,7 +97,7 @@ CREATE TABLE `ssids_24ghz_deployed` (
   KEY `ssid_id` (`ssid_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_24ghz` (`ap_ssid_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,6 +127,23 @@ CREATE TABLE `ssids_24ghz_radius` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `ssids_24ghz_radius_deployed`
+--
+
+DROP TABLE IF EXISTS `ssids_24ghz_radius_deployed`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ssids_24ghz_radius_deployed` (
+  `ap_ssid_assoc_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ap_id` int(11) NOT NULL,
+  `ssid_id` int(11) NOT NULL,
+  PRIMARY KEY (`ap_ssid_assoc_id`),
+  UNIQUE KEY `ap_id` (`ap_id`,`ssid_id`),
+  KEY `ssid_id` (`ssid_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `ssids_5ghz`
 --
 
@@ -160,7 +160,24 @@ CREATE TABLE `ssids_5ghz` (
   `ap_ssid_ethernet_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 5GHz radio';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 5GHz radio';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ssids_5ghz_deployed`
+--
+
+DROP TABLE IF EXISTS `ssids_5ghz_deployed`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ssids_5ghz_deployed` (
+  `ap_ssid_assoc_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ap_id` int(11) NOT NULL,
+  `ssid_id` int(11) NOT NULL,
+  PRIMARY KEY (`ap_ssid_assoc_id`),
+  UNIQUE KEY `ap_id` (`ap_id`,`ssid_id`),
+  KEY `ssid_id` (`ssid_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +203,24 @@ CREATE TABLE `ssids_5ghz_radius` (
   `ap_ssid_radius_method_list` text,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 5GHz SSIDs';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 5GHz SSIDs';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ssids_5ghz_radius_deployed`
+--
+
+DROP TABLE IF EXISTS `ssids_5ghz_radius_deployed`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ssids_5ghz_radius_deployed` (
+  `ap_ssid_assoc_id` int(11) NOT NULL AUTO_INCREMENT,
+  `ap_id` int(11) NOT NULL,
+  `ssid_id` int(11) NOT NULL,
+  PRIMARY KEY (`ap_ssid_assoc_id`),
+  UNIQUE KEY `ap_id` (`ap_id`,`ssid_id`),
+  KEY `ssid_id` (`ssid_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,4 +248,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-02 22:16:41
+-- Dump completed on 2019-11-22 23:49:22

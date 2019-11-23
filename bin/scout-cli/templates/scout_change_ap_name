@@ -1,0 +1,5 @@
+enable
+{{ password }}
+conf t
+hostname {{ apName }}
+do wr

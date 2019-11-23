@@ -24,7 +24,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-rm /usr/bin/scout
-pyinstaller --onefile scout/scout.py
-cp dist/scout /usr/bin
-rm -r dist build scout.spec __pycache__
+rm /usr/bin/scout-cli
+pyinstaller --onefile scout-cli/scout-cli.py
+cp dist/scout-cli /usr/bin
+rm -r dist build scout-cli.spec __pycache__
