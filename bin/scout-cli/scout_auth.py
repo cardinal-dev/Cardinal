@@ -38,4 +38,4 @@ def sshInfo():
     scoutSsh = paramiko.SSHClient()
     scoutSsh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     scoutSsh.connect(ip, port=22, username=username, password=password, look_for_keys=False, allow_agent=False)
-    return scoutSsh
+    return ip, password, scoutSsh

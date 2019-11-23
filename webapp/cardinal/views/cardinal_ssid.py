@@ -129,7 +129,7 @@ def addSsid5GhzRadius():
         status = request.args.get('status')
         return render_template("add-ssid-5ghz-radius.html", status=status)
 
-@cardinal_ssid.route("/add-ssid-5ghz-radius", methods=["GET"])
+@cardinal_ssid.route("/do-add-ssid-5ghz-radius", methods=["GET"])
 def doAddSsid5GhzRadius():
     if request.method == 'POST':
         ssidName = request.form["ssid_name"]
@@ -157,7 +157,40 @@ def doAddSsid5GhzRadius():
 @cardinal_ssid.route("/deploy-ssids", methods=["GET"])
 def deleteSsids():
     if session.get("username") is not None:
-        return render_template("delete-ssids.html")
+        return render_template("deploy-ssids.html")
+
+@cardinal_ssid.route("/deploy-ssids-group", methods=["GET"])
+def deploySsidsGroup():
+    if session.get("username") is not None:
+        return render_template("deploy-ssids-group.html")
+
+@cardinal_ssid.route("/deploy-ssid-24ghz", methods=["GET"])
+def deploySsid24Ghz():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-24ghz.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
+@cardinal_ssid.route("/deploy-ssid-24ghz-group", methods=["GET"])
+def deploySsid24GhzGroup():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-24ghz-group.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
 
 @cardinal_ssid.route("/delete-ssid-24ghz", methods=["GET"])
 def deleteSsid24Ghz():
@@ -187,7 +220,7 @@ def doDeleteSsid24Ghz():
             deleteSsidCursor = conn.cursor()
             deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
             deleteSsidCursor.close()
-        except MySQLdb.Error as e:
+        except cardinalSql.MySQLdb.Error as e:
             status = e
         finally:
             conn.commit()

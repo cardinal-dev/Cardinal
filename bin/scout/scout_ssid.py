@@ -30,7 +30,7 @@ import scout_auth
 import scout_env
 import time
 
-# Scout Ssid Command Functions
+# SCOUT SSID COMMAND FUNCTIONS
 
 def scoutCreateSsid24(ip, username, password, ssid, wpa2Pass, vlan, bridgeGroup, radioSub, gigaSub):
     """Function that deploys a 2.4GHz SSID to an AP
@@ -48,7 +48,6 @@ def scoutCreateSsid24(ip, username, password, ssid, wpa2Pass, vlan, bridgeGroup,
     cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-24...")
     print("INFO: Deploying 2.4GHz SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
@@ -61,91 +60,89 @@ def scoutCreateSsid5(ip, username, password, ssid, wpa2Pass, vlan, bridgeGroup, 
     """
     ip, username, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
-    ssid = sys.argv[5]
-    wpa2Pass = sys.argv[6]
-    vlan = sys.argv[7]
-    bridgeGroup = sys.argv[8]
-    radioSub = sys.argv[9]
-    gigaSub = sys.argv[10]
+    ssid = ssid
+    wpa2Pass = wpa2Pass
+    vlan = vlan
+    bridgeGroup = bridgeGroup
+    radioSub = radioSub
+    gigaSub = gigaSub
     cmdTemplate = env.get_template("scout_create_ssid_5")
     cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-5...")
     print("INFO: Deploying 5GHz SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
         time.sleep(.10)
     scoutSsh.close()
 
-def scoutCreateSsid24Radius():
+def scoutCreateSsid24Radius(ip, username, password, ssid, vlan, bridgeGroup, radioSub, gigaSub, radiusIp, sharedSecret, authPort, acctPort, radiusTimeout, radiusGroup, methodList):
     """Function that deploys a 2.4GHz 802.1x SSID to an 
     AP using user provided arguments.
     """
-    ip, username, password, scoutSsh = scout_auth.sshInfo()
+    scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
     env = scout_env.scoutEnv()
-    ssid = sys.argv[5]
-    vlan = sys.argv[6]
-    bridgeGroup = sys.argv[7]
-    radioSub = sys.argv[8]
-    gigaSub = sys.argv[9]
-    radiusIp = sys.argv[10]
-    sharedSecret = sys.argv[11]
-    authPort = sys.argv[12]
-    acctPort = sys.argv[13]
-    radiusTimeout = sys.argv[14]
-    radiusGroup = sys.argv[15]
-    methodList = sys.argv[16]
+    ssid = ssid
+    vlan = vlan
+    bridgeGroup = bridgeGroup
+    radioSub = radioSub
+    gigaSub = gigaSub
+    radiusIp = radiusIp
+    sharedSecret = sharedSecret
+    authPort = authPort
+    acctPort = acctPort
+    radiusTimeout = radiusTimeout
+    radiusGroup = radiusGroup
+    methodList = methodList
     cmdTemplate = env.get_template("scout_create_radius_ssid_24")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-radius-24...")
     print("INFO: Deploying 2.4GHz RADIUS SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
         time.sleep(.10)
     scoutSsh.close()
 
-def scoutCreateSsid5Radius():
+def scoutCreateSsid5Radius(ip, username, password, ssid, vlan, bridgeGroup, radioSub, gigaSub, radiusIp, sharedSecret, authPort, acctPort, radiusTimeout, radiusGroup, methodList):
     """Function that deploys a 5GHz 802.1x SSID to an
     AP using user provided arguments.
     """
-    ip, username, password, scoutSsh = scout_auth.sshInfo()
+    scoutSsh = scout_auth.sshInfo(ip=ip,username=username,password=password)
     env = scout_env.scoutEnv()
-    ssid = sys.argv[5]
-    vlan = sys.argv[6]
-    bridgeGroup = sys.argv[7]
-    radioSub = sys.argv[8]
-    gigaSub = sys.argv[9]
-    radiusIp = sys.argv[10]
-    sharedSecret = sys.argv[11]
-    authPort = sys.argv[12]
-    acctPort = sys.argv[13]
-    radiusTimeout = sys.argv[14]
-    radiusGroup = sys.argv[15]
-    methodList = sys.argv[16]
+    ssid = ssid
+    vlan = vlan
+    bridgeGroup = bridgeGroup
+    radioSub = radioSub
+    gigaSub = gigaSub
+    radiusIp = radiusIp
+    sharedSecret = sharedSecret
+    authPort = authPort
+    acctPort = acctPort
+    radiusTimeout = radiusTimeout
+    radiusGroup = radiusGroup
+    methodList = methodList
     cmdTemplate = env.get_template("scout_create_radius_ssid_5")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
-    print("INFO: Running scout --create-ssid-radius-5...")
     print("INFO: Deploying 5GHz RADIUS SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
         time.sleep(.10)
     scoutSsh.close()
 
-def scoutDeleteSsid24():
+def scoutDeleteSsid24(ip, username, password, ssid, vlan, bridgeGroup, radioSub, gigaSub):
     """Function that deletes an existing 2.4GHz SSID from
     an AP.
     """
-    ip, username, password, scoutSsh = scout_auth.sshInfo()
+    scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
     env = scout_env.scoutEnv()
-    ssid = sys.argv[5]
-    vlan = sys.argv[6]
-    radioSub = sys.argv[7]
-    gigaSub = sys.argv[8]
+    ssid = ssid
+    vlan = vlan
+    bridgeGroup = bridgeGroup
+    radioSub = radioSub
+    gigaSub = gigaSub
     cmdTemplate = env.get_template("scout_delete_ssid_24")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
@@ -156,16 +153,17 @@ def scoutDeleteSsid24():
         time.sleep(.10)
     scoutSsh.close()
 
-def scoutDeleteSsid5():
+def scoutDeleteSsid5(ip, username, password, ssid, vlan, bridgeGroup, radioSub, gigaSub):
     """Function that deletes an existing 5GHz SSID from an
     AP.
     """
-    ip, username, password, scoutSsh = scout_auth.sshInfo()
+    scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
     env = scout_env.scoutEnv()
-    ssid = sys.argv[5]
-    vlan = sys.argv[6]
-    radioSub = sys.argv[7]
-    gigaSub = sys.argv[8]
+    ssid = ssid
+    vlan = vlan
+    bridgeGroup = bridgeGroup
+    radioSub = radioSub
+    gigaSub = gigaSub
     cmdTemplate = env.get_template("scout_delete_ssid_5")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()

@@ -28,6 +28,7 @@ SOFTWARE.
 
 import scout_auth
 import scout_env
+import sys
 import time
 
 # SCOUT SYS COMMAND FUNCTIONS
@@ -36,7 +37,7 @@ def scoutLed():
     """Function that opens a SSH connection to the AP
     and runs led flash 30.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, scoutSsh = scout_auth.sshInfo()
     print("INFO: Running scout-cli --led on {}...".format(ip))
     stdin, stdout, stderr = scoutSsh.exec_command("led flash 30\n")
     scoutSsh.close()
@@ -48,7 +49,7 @@ def scoutChangeIp():
     opens a new one, and runs the scout_do_wr command set to save new IP
     change.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     newIp = sys.argv[5]
     subnetMask = sys.argv[6]
@@ -57,26 +58,15 @@ def scoutChangeIp():
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     print("INFO: Running scout-cli --change-ip on {}...".format(ip))
-    print("INFO: Changing IP from {0} to {1}".format(ip,newIp))
+    print("INFO: Changing IP from {0} to {1}...".format(ip,newIp))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
         time.sleep(.10)
     scoutSsh.close()
-    scoutSsh2 = paramiko.SSHClient()
-    scoutSsh2.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    scoutSsh2.connect(newIp, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
-    cmdTemplate2 = env.get_template("scout_do_wr")
-    cmds2 = cmdTemplate2.render(password=password)
-    scoutCommands2 = cmds2.splitlines()
-    channel2 = scoutSsh2.invoke_shell()
-    for command2 in scoutCommands2:
-        channel2.send('{}\n'.format(command2))
-        time.sleep(.10)
-    scoutSsh2.close()
 
 def scoutDisableHttp():
     """Function that disables the HTTP server on AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_disable_ap_http")
     cmds = cmdTemplate.render(password=password)
@@ -90,7 +80,7 @@ def scoutDisableHttp():
 
 def scoutDisableRadius():
     """Function that disables RADIUS on AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_disable_ap_radius")
     cmds = cmdTemplate.render(password=password)
@@ -104,7 +94,7 @@ def scoutDisableRadius():
 
 def scoutDisableSnmp():
     """Function that disables SNMP on AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_disable_ap_snmp")
     cmds = cmdTemplate.render(password=password)
@@ -118,7 +108,7 @@ def scoutDisableSnmp():
 
 def scoutEnableHttp():
     """Function that enables the HTTP server on AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_enable_ap_http")
     cmds = cmdTemplate.render(password=password)
@@ -132,7 +122,7 @@ def scoutEnableHttp():
 
 def scoutEnableRadius():
     """Function that enables RADIUS on AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_enable_ap_radius")
     cmds = cmdTemplate.render(password=password)
@@ -146,7 +136,7 @@ def scoutEnableRadius():
 
 def scoutEnableSnmp():
     """Function that enables SNMP on AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     snmp = sys.argv[5]
     cmdTemplate = env.get_template("scout_enable_ap_snmp")
@@ -161,7 +151,7 @@ def scoutEnableSnmp():
 
 def scoutTftpBackup():
     """Function that performs TFTP backup of AP config."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     tftpIp = sys.argv[5]
     cmdTemplate = env.get_template("scout_do_tftp_backup")
@@ -176,7 +166,7 @@ def scoutTftpBackup():
 
 def scoutDoWr():
     """Function that performs write command on AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_do_wr")
     cmds = cmdTemplate.render(password=password)
@@ -190,7 +180,7 @@ def scoutDoWr():
 
 def scoutWriteDefault():
     """Function that wipes AP memory back to default."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_write_default")
     cmds = cmdTemplate.render(password=password)
@@ -204,7 +194,7 @@ def scoutWriteDefault():
 
 def scoutChangeName():
     """Function that changes the hostname of AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     apName = sys.argv[5]
     cmdTemplate = env.get_template("scout_change_ap_name")
@@ -219,7 +209,7 @@ def scoutChangeName():
 
 def scoutDoReboot():
     """Function that reboots AP."""
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_reboot_ap")
     cmds = cmdTemplate.render(password=password)

@@ -30,7 +30,6 @@ import re
 import scout_auth
 import scout_env
 import subprocess
-import sys
 import time
 
 # SCOUT INFO COMMAND FUNCTIONS

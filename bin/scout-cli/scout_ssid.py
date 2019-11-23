@@ -28,6 +28,7 @@ SOFTWARE.
 
 import scout_auth
 import scout_env
+import sys
 import time
 
 # SCOUT SSID COMMAND FUNCTIONS
@@ -36,7 +37,7 @@ def scoutCreateSsid24():
     """Function that deploys a 2.4GHz SSID to an AP
     using user provided arguments.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     wpa2Pass = sys.argv[6]
@@ -59,7 +60,7 @@ def scoutCreateSsid5():
     """Function that deploys a 5GHz SSID to an AP
     using user provided arguments.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     wpa2Pass = sys.argv[6]
@@ -82,7 +83,7 @@ def scoutCreateSsid24Radius():
     """Function that deploys a 2.4GHz 802.1x SSID to an 
     AP using user provided arguments.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
@@ -111,7 +112,7 @@ def scoutCreateSsid5Radius():
     """Function that deploys a 5GHz 802.1x SSID to an
     AP using user provided arguments.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
@@ -140,7 +141,7 @@ def scoutDeleteSsid24():
     """Function that deletes an existing 2.4GHz SSID from
     an AP.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]
@@ -160,7 +161,7 @@ def scoutDeleteSsid5():
     """Function that deletes an existing 5GHz SSID from an
     AP.
     """
-    scoutSsh = scout_auth.sshInfo()
+    ip, password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     ssid = sys.argv[5]
     vlan = sys.argv[6]

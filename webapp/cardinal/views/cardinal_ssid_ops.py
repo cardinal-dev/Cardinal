@@ -26,6 +26,7 @@ SOFTWARE.
 
 '''
 
+from cardinal.system.cardinal_sys import cardinalLogger
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
 from flask import Blueprint
@@ -34,23 +35,24 @@ from flask import request
 from flask import redirect
 from flask import session
 from flask import url_for
+from scout import scout_ssid
 
 cardinal_ssid_ops = Blueprint('cardinal_ssid_ops_bp', __name__)
 
 @cardinal_ssid_ops.route("/do-deploy-ssid-24ghz", methods=["POST"])
 def doDeploySsid24Ghz():
-    conn = cardinal_sys.cardinalSql()
+    conn = cardinalSql()
     ssidId = request.form["ssid_id"]
     apId = session.get('apId')
     apName = session.get('apName')
-    conn = cardinal_sys.cardinalSql()
+    conn = cardinalSql()
     try:
         checkSsidRelationship = conn.cursor()
         checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
         checkSsidRelationship.close()
-    except MySQLdb.Error as e:
+    except cardinalSql.MySQLdb.Error as e:
         status = "{0} already has the SSID deployed: {1}".format(apName,e)
-        logging.error("{0} already has the SSID deployed: {1}".format(apName,e))
+        cardinalLogger.error("{0} already has the SSID deployed: {1}".format(apName,e))
         return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24Ghz', status=status))
     else:
         apInfoCursor = conn.cursor()
@@ -73,7 +75,7 @@ def doDeploySsid24Ghz():
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+        scout_ssid.scoutCreateSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, wpa2Pass=wpa2Pass, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
         status = "Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
     finally:
         conn.commit()
@@ -82,7 +84,7 @@ def doDeploySsid24Ghz():
 
 @cardinal_ssid_ops.route("/do-deploy-ssid-24ghz-group", methods=["POST"])
 def doDeploySsid24GhzGroup():
-    conn = cardinal_sys.cardinalSql()
+    conn = cardinalSql()
     ssidId = request.form["ssid_id"]
     apGroupId = session.get('apGroupId')
     apGroupName = session.get('apGroupName')
@@ -98,14 +100,14 @@ def doDeploySsid24GhzGroup():
             checkSsidRelationship = conn.cursor()
             checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
             checkSsidRelationship.close()
-        except MySQLdb.Error as e:
+        except cardinalSql.MySQLdb.Error as e:
             getApName = conn.cursor()
             getApName.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
             apName = getApName.fetchone()[0]
             getApName.close()
             conn.close()
             status = "{0} already has the SSID deployed: {1}".format(apName,e)
-            logging.error("{0} already has the SSID deployed: {1}".format(apName,e))
+            cardinalLogger.error("{0} already has the SSID deployed: {1}".format(apName,e))
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzGroup', status=status))
         else:
             apInfoCursor = conn.cursor()
@@ -128,7 +130,7 @@ def doDeploySsid24GhzGroup():
                 apSshUsername = info[1]
                 encryptedSshPassword = bytes(info[3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            subprocess.check_output("scout --create-ssid-24 {0} {1} {2} {3} {4} {5} {6} {7} {8}".format(apIp,apSshUsername,apSshPassword,ssid,wpa2Pass,vlan,bridgeGroup,radioSub,gigaSub), shell=True)
+            scout_ssid.scoutCreateSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, wpa2Pass=wpa2Pass, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
             status = "Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
             conn.commit()
     conn.close()

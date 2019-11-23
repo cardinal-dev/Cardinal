@@ -61,17 +61,7 @@ def scoutChangeIp(ip, username, password, newIp, subnetMask):
         channel.send('{}\n'.format(command))
         time.sleep(.10)
     scoutSsh.close()
-    scoutSsh2 = paramiko.SSHClient()
-    scoutSsh2.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    scoutSsh2.connect(newIp, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
-    cmdTemplate2 = env.get_template("scout_do_wr")
-    cmds2 = cmdTemplate2.render(password=password)
-    scoutCommands2 = cmds2.splitlines()
-    channel2 = scoutSsh2.invoke_shell()
-    for command2 in scoutCommands2:
-        channel2.send('{}\n'.format(command2))
-        time.sleep(.10)
-    scoutSsh2.close()
+    scoutDoWr(ip=newIp, username=username, password=password)
 
 def scoutDisableHttp(ip, username, password):
     """Function that disables the HTTP server on AP."""

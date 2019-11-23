@@ -30,7 +30,6 @@ import re
 import scout_auth
 import scout_env
 import subprocess
-import sys
 import time
 
 # SCOUT INFO COMMAND FUNCTIONS
@@ -92,7 +91,7 @@ def scoutGetModel():
 
 def scoutGetHostname():
     """Function that retrieves AP hostname via show version."""
-    scoutSsh = scout_auth.sshInfo()
+    password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_get_hostname")
     cmds = cmdTemplate.render(password=password)
@@ -107,7 +106,7 @@ def scoutGetHostname():
 
 def scoutGetLocation():
     """Function that retrieves AP location via show snmp location."""
-    scoutSsh = scout_auth.sshInfo()
+    password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_get_location")
     cmds = cmdTemplate.render(password=password)
@@ -124,7 +123,7 @@ def scoutGetLocation():
 
 def scoutGetUsers():
     """Function that retrieves AP users via show users."""
-    scoutSsh = scout_auth.sshInfo()
+    password, scoutSsh = scout_auth.sshInfo()
     env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_get_users")
     cmds = cmdTemplate.render(password=password)

@@ -26,6 +26,7 @@ SOFTWARE.
 
 '''
 
+import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
 from flask import Blueprint
@@ -94,7 +95,7 @@ def doDeleteAp():
         deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
         apName = deleteApNameCursor.fetchone()[0]
         deleteApNameCursor.close()
-        status = "{} was successfully registered!".format(apName)
+        status = "{} was removed successfully!".format(apName)
         try:
             deleteApCursor = conn.cursor()
             deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))

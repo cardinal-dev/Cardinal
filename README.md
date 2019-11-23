@@ -1,4 +1,4 @@
-![alt text](https://github.com/cardinal-dev/Cardinal/blob/master/webapp/cardinal/static/img/cardinal.png)
+![alt text](https://raw.githubusercontent.com/cardinal-dev/Cardinal/master/webapp/cardinal/static/img/cardinalmain.png)
 [![Build Status](https://api.travis-ci.org/cardinal-dev/Cardinal.svg?branch=master)](https://travis-ci.org/cardinal-dev/Cardinal)
 
 <h1>Cardinal</h1>

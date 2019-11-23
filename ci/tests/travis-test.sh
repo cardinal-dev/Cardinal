@@ -24,7 +24,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-rm /usr/bin/scout-cli
-pyinstaller --onefile scout-cli/scout-cli.py
-cp dist/scout-cli /usr/bin
-rm -r dist build scout-cli.spec __pycache__
+pythonTests() {
+    echo "INFO: Running Cardinal Python Test Suite..."
+    flake8 bin/scout/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 bin/scout-cli/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 bin/setup.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 ci/tests/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 webapp/wsgi.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 webapp/cardinal/system/cardinal_sys.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 webapp/cardinal/views/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
+}
+
+cardinalTests() {
+    python3 ci/tests/sqltest.py
+    python3 ci/tests/query-data-qa.py
+}
+
+pythonTests
+cardinalTests

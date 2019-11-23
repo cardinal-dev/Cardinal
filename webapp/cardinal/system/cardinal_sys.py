@@ -38,7 +38,7 @@ cardinalConfigFile = os.environ['CARDINALCONFIG']
 cardinalConfig = ConfigParser()
 devourSettings = cardinalConfig.read("{}".format(cardinalConfigFile))
 cardinalLogFile = cardinalConfig.get('cardinal', 'logfile')
-logging.basicConfig(filename='{}'.format(cardinalLogFile), filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+cardinalLogger = logging.basicConfig(filename='{}'.format(cardinalLogFile), filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 flaskKey = cardinalConfig.get('cardinal', 'flaskkey')
 encryptKey = cardinalConfig.get('cardinal', 'encryptkey')
 bytesKey = bytes(encryptKey, 'utf-8')
