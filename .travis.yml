@@ -13,10 +13,7 @@ before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
-- mysql -u root --password="" cardinal -e "INSERT INTO settings (settings_id,cardinal_home,scout_dir,cardinal_tftp,poll_schedule) VALUES ('1','/opt','/scout.py','/opt','2');"
+- pip install bin/.
 script:
-- flake8 . --count --select=E9,F63,F72,F82 --show-source --statistics
-- pyflakes bin/scout/*.py app/*.py ci/tests/*.py
-- python3 ci/tests/sqltest.py
-- python3 ci/tests/query-data-qa.py
-- pyinstaller --onefile bin/scout/scout.py
+- bash ci/tests/travis-test.sh
+- pyinstaller --onefile bin/scout-cli/scout-cli.py

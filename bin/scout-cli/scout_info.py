@@ -26,48 +26,19 @@ SOFTWARE.
 
 '''
 
-import os
 import re
+import scout_auth
+import scout_env
 import subprocess
 import time
-import sys
-import paramiko
-import jinja2
-from configparser import ConfigParser
 
-# CARDINAL SETTINGS
-
-cardinalConfigFile = os.environ['CARDINALCONFIG']
-cardinalConfig = ConfigParser()
-cardinalConfig.read("{}".format(cardinalConfigFile))
-
-# BEGIN CARDINAL SETTING DECLARATIONS
-
-commandDir = cardinalConfig.get('cardinal', 'commanddir')
-
-# CARDINAL SYSTEM VARIABLES
-
-fileLoader = jinja2.FileSystemLoader('{}'.format(commandDir))
-env = jinja2.Environment(loader=fileLoader)
-
-# SSH INFORMATION
-
-def sshInfo():
-    ip = sys.argv[2]
-    username = sys.argv[3]
-    password = sys.argv[4]
-    scoutSsh = paramiko.SSHClient()
-    scoutSsh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    scoutSsh.connect(ip, port = 22, username = username, password = password, look_for_keys = False, allow_agent = False)
-    return ip, username, password, scoutSsh
-
-# Scout Info Command Functions
+# SCOUT INFO COMMAND FUNCTIONS
 
 def scoutGetArp():
     """Function that opens a SSH connection to the AP
     and runs show ip arp to gather ARP table.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("show ip arp\n")
     sshOut = stdout.read()
     getArpTable = sshOut.decode('ascii').strip("\n").lstrip()
@@ -76,7 +47,7 @@ def scoutGetArp():
 
 def scoutGetSpeed():
     """Function that reports speed of Gi0/0 in Mbps."""
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("sho int gi0\n")
     sshOut = stdout.read()
     sshBandwidth = sshOut.decode('ascii').strip("\n").split(",")
@@ -86,7 +57,7 @@ def scoutGetSpeed():
 
 def scoutGetMac():
     """Function that reports back the MAC address of AP."""
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     macAddrRegex = re.compile(r'\w\w\w\w.\w\w\w\w.\w\w\w\w')
     stdin, stdout, stderr = scoutSsh.exec_command("show int gi0\n")
     sshOut = stdout.read()
@@ -99,7 +70,7 @@ def scoutCountClients():
     """Function that reports the number of active clients on
     AP via show dot11 associations.
     """
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("show dot11 associations\n")
     sshOut = stdout.read()
     countClient = sshOut.decode('ascii').strip("\n")
@@ -109,7 +80,7 @@ def scoutCountClients():
 
 def scoutGetModel():
     """Function that reports the model ID of AP."""
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("show version\n")
     sshOut = stdout.read()
     getModelString = sshOut.decode('ascii').strip("\n")
@@ -120,7 +91,8 @@ def scoutGetModel():
 
 def scoutGetHostname():
     """Function that retrieves AP hostname via show version."""
-    ip, username, password, scoutSsh = sshInfo()
+    password, scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_get_hostname")
     cmds = cmdTemplate.render(password=password)
     scoutCommands = cmds.splitlines()
@@ -134,7 +106,8 @@ def scoutGetHostname():
 
 def scoutGetLocation():
     """Function that retrieves AP location via show snmp location."""
-    ip, username, password, scoutSsh = sshInfo()
+    password, scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_get_location")
     cmds = cmdTemplate.render(password=password)
     scoutCommands = cmds.splitlines()
@@ -150,7 +123,8 @@ def scoutGetLocation():
 
 def scoutGetUsers():
     """Function that retrieves AP users via show users."""
-    ip, username, password, scoutSsh = sshInfo()
+    password, scoutSsh = scout_auth.sshInfo()
+    env = scout_env.scoutEnv()
     cmdTemplate = env.get_template("scout_get_users")
     cmds = cmdTemplate.render(password=password)
     scoutCommands = cmds.splitlines()
@@ -167,7 +141,7 @@ def scoutGetUsers():
 
 def scoutGetSerial():
     """Function that reports the serial number of AP."""
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("show inventory\n")
     sshOut = stdout.read()
     getSerialString = sshOut.decode('ascii').strip("\n")
@@ -178,7 +152,7 @@ def scoutGetSerial():
 
 def scoutGetIosInfo():
     """Function that retrieves AP IOS info via show version."""
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("show version\n")
     sshOut = stdout.read().splitlines()
     getIosInfo = sshOut[0].decode('ascii').strip("\n")
@@ -187,11 +161,9 @@ def scoutGetIosInfo():
 
 def scoutGetUptime():
     """Function that retrieves AP uptime via show version."""
-    ip, username, password, scoutSsh = sshInfo()
+    scoutSsh = scout_auth.sshInfo()
     stdin, stdout, stderr = scoutSsh.exec_command("show version\n")
     sshOut = stdout.read().splitlines()
     getApUptime = sshOut[8].decode('ascii').strip("\n")
     scoutSsh.close()
     print(getApUptime)
-
-
