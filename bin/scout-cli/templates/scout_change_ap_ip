@@ -1,5 +1,0 @@
-enable
-{{ password }}
-conf t
-int BVI1
-ip address {{ newIp }} {{ subnetMask }}

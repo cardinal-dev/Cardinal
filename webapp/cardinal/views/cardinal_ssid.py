@@ -155,7 +155,7 @@ def doAddSsid5GhzRadius():
         return redirect(url_for('cardinal_ssid_bp.addSsid5GhzRadius', status=status))
 
 @cardinal_ssid.route("/deploy-ssids", methods=["GET"])
-def deleteSsids():
+def deploySsids():
     if session.get("username") is not None:
         return render_template("deploy-ssids.html")
 
@@ -191,6 +191,11 @@ def deploySsid24GhzGroup():
         return render_template("deploy-ssid-24ghz-group.html", status=status, ssids=ssids)
     else:
         return redirect(url_for('index'))
+
+@cardinal_ssid.route("/delete-ssids", methods=["GET"])
+def deleteSsids():
+    if session.get("username") is not None:
+        return render_template("delete-ssids.html")
 
 @cardinal_ssid.route("/delete-ssid-24ghz", methods=["GET"])
 def deleteSsid24Ghz():
