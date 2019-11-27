@@ -74,73 +74,163 @@ def scoutUsage():
 if len(sys.argv) > 1:
     scoutCommand = sys.argv[1]
 
+    def scoutArgs():
+        ip = sys.argv[2]
+        username = sys.argv[3]
+        password = sys.argv[4]
+        return ip, username, password
+
     # SCOUT INFO COMMANDS
     if scoutCommand == "--help":
         scoutUsage()
     elif scoutCommand == "--get-arp":
-        scout_info.scoutGetArp()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetArp(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-speed":
-        scout_info.scoutGetSpeed()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetSpeed(ip=ip, username=username, password=password)
     elif scoutCommand == "--count-clients":
-        scout_info.scoutCountClients()
+        ip, username, password = scoutArgs()
+        scout_info.scoutCountClients(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-mac":
-        scout_info.scoutGetMac()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetMac(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-model":
-        scout_info.scoutGetModel()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetModel(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-name":
-        scout_info.scoutGetHostname()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetHostname(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-serial":
-        scout_info.scoutGetSerial()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetSerial(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-ios-info":
-        scout_info.scoutGetIosInfo()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetIosInfo(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-location":
-        scout_info.scoutGetLocation()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetLocation(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-uptime":
-        scout_info.scoutGetUptime()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetUptime(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-users":
-        scout_info.scoutGetUsers()
+        ip, username, password = scoutArgs()
+        scout_info.scoutGetUsers(ip=ip, username=username, password=password)
 
     # SCOUT SYS COMMANDS
     if scoutCommand == "--led":
-        scout_sys.scoutLed()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutLed(ip=ip, username=username, password=password)
     elif scoutCommand == "--change-ip":
-        scout_sys.scoutChangeIp()
+        ip, username, password = scoutArgs()
+        newIp = sys.argv[5]
+        subnetMask = sys.argv[6]
+        scout_sys.scoutChangeIp(ip=ip, username=username, password=password, newIp=newIp, subnetMask=subnetMask)
     elif scoutCommand == "--disable-http":
-        scout_sys.scoutDisableHttp()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutDisableHttp(ip=ip, username=username, password=password)
     elif scoutCommand == "--disable-radius":
-        scout_sys.scoutDisableRadius()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutDisableRadius(ip=ip, username=username, password=password)
     elif scoutCommand == "--disable-snmp":
-        scout_sys.scoutDisableSnmp()
+        ip, username, password = scoutArgs()
+        snmp = sys.argv[5]
+        location = sys.argv[6]
+        scout_sys.scoutDisableSnmp(ip=ip, username=username, password=password, snmp=snmp, location=location)
     elif scoutCommand == "--enable-http":
-        scout_sys.scoutEnableHttp()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutEnableHttp(ip=ip, username=username, password=password)
     elif scoutCommand == "--enable-radius":
-        scout_sys.scoutEnableRadius()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutEnableRadius(ip=ip, username=username, password=password)
     elif scoutCommand == "--enable-snmp":
-        scout_sys.scoutEnableSnmp()
+        ip, username, password = scoutArgs()
+        snmp = sys.argv[5]
+        location = sys.argv[6]
+        scout_sys.scoutEnableSnmp(ip=ip, username=username, password=password, snmp=snmp, location=location)
     elif scoutCommand == "--tftp-backup":
-        scout_sys.scoutTftpBackup()
+        ip, username, password = scoutArgs()
+        tftpIp = sys.argv[5]
+        scout_sys.scoutTftpBackup(ip=ip, username=username, password=password, tftpIp=tftpIp)
     elif scoutCommand == "--wr":
-        scout_sys.scoutDoWr()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutDoWr(ip=ip, username=username, password=password)
     elif scoutCommand == "--erase":
-        scout_sys.scoutWriteDefault()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutWriteDefault(ip=ip, username=username, password=password)
     elif scoutCommand == "--reboot":
-        scout_sys.scoutDoReboot()
+        ip, username, password = scoutArgs()
+        scout_sys.scoutDoReboot(ip=ip, username=username, password=password)
     elif scoutCommand == "--change-name":
-        scout_sys.scoutChangeName()
+        ip, username, password = scoutArgs()
+        apName = sys.argv[5]
+        scout_sys.scoutChangeName(ip=ip, username=username, password=password, apName=apName)
 
     # SCOUT SSID COMMANDS
     if scoutCommand == "--create-ssid-24":
-        scout_ssid.scoutCreateSsid24()
+        ip, username, password = scoutArgs()
+        ssid = sys.argv[5]
+        wpa2Pass = sys.argv[6]
+        vlan = sys.argv[7]
+        bridgeGroup = sys.argv[8]
+        radioSub = sys.argv[9]
+        gigaSub = sys.argv[10]
+        scout_ssid.scoutCreateSsid24(ip=ip, username=username, password=password, ssid=ssid, wpa2Pass=wpa2Pass, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
     elif scoutCommand == "--create-ssid-5":
-        scout_ssid.scoutCreateSsid5()
+        ip, username, password = scoutArgs()
+        ssid = sys.argv[5]
+        wpa2Pass = sys.argv[6]
+        vlan = sys.argv[7]
+        bridgeGroup = sys.argv[8]
+        radioSub = sys.argv[9]
+        gigaSub = sys.argv[10]
+        scout_ssid.scoutCreateSsid5(ip=ip, username=username, password=password, ssid=ssid, wpa2Pass=wpa2Pass, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
     elif scoutCommand == "--create-ssid-radius-24":
-        scout_ssid.scoutCreateSsid24Radius()
+        ip, username, password = scoutArgs()
+        ssid = sys.argv[5]
+        vlan = sys.argv[6]
+        bridgeGroup = sys.argv[7]
+        radioSub = sys.argv[8]
+        gigaSub = sys.argv[9]
+        radiusIp = sys.argv[10]
+        sharedSecret = sys.argv[11]
+        authPort = sys.argv[12]
+        acctPort = sys.argv[13]
+        radiusTimeout = sys.argv[14]
+        radiusGroup = sys.argv[15]
+        methodList = sys.argv[16]
+        scout_ssid.scoutCreateSsid24Radius(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub, radiusIp=radiusIp, sharedSecret=sharedSecret, authPort=authPort, acctPort=acctPort, radiusTimeout=radiusTimeout, radiusGroup=radiusGroup, methodList=methodList)
     elif scoutCommand == "--create-ssid-radius-5":
-        scout_ssid.scoutCreateSsidRadius5()
+        ip, username, password = scoutArgs()
+        ssid = sys.argv[5]
+        vlan = sys.argv[6]
+        bridgeGroup = sys.argv[7]
+        radioSub = sys.argv[8]
+        gigaSub = sys.argv[9]
+        radiusIp = sys.argv[10]
+        sharedSecret = sys.argv[11]
+        authPort = sys.argv[12]
+        acctPort = sys.argv[13]
+        radiusTimeout = sys.argv[14]
+        radiusGroup = sys.argv[15]
+        methodList = sys.argv[16]
+        scout_ssid.scoutCreateSsidRadius5(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub, radiusIp=radiusIp, sharedSecret=sharedSecret, authPort=authPort, acctPort=acctPort, radiusTimeout=radiusTimeout, radiusGroup=radiusGroup, methodList=methodList)
     elif (scoutCommand == "--delete-ssid-24") or (scoutCommand == "--delete-ssid-radius-24"):
-        scout_ssid.scoutDeleteSsid24()
+        ip, username, password = scoutArgs()
+        ssid = sys.argv[5]
+        vlan = sys.argv[6]
+        bridgeGroup = sys.argv[7]
+        radioSub = sys.argv[8]
+        gigaSub = sys.argv[9]
+        scout_ssid.scoutDeleteSsid24(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
     elif (scoutCommand == "--delete-ssid-5") or (scoutCommand == "--delete-ssid-radius-5"):
-        scout_ssid.scoutDeleteSsid5()
+        ip, username, password = scoutArgs()
+        ssid = sys.argv[5]
+        vlan = sys.argv[6]
+        bridgeGroup = sys.argv[7]
+        radioSub = sys.argv[8]
+        gigaSub = sys.argv[9]
+        scout_ssid.scoutDeleteSsid5(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
 
 else:
     print("ERROR: No valid options detected. Please use --help for a list of valid options.")

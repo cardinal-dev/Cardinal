@@ -2,4 +2,5 @@ enable
 {{ password }}
 conf t
 no aaa new-model
+y
 do wr

@@ -1,5 +1,0 @@
-enable
-{{ password }}
-conf t
-aaa new-model
-do wr
