@@ -219,18 +219,16 @@ if len(sys.argv) > 1:
         ip, username, password = scoutArgs()
         ssid = sys.argv[5]
         vlan = sys.argv[6]
-        bridgeGroup = sys.argv[7]
-        radioSub = sys.argv[8]
-        gigaSub = sys.argv[9]
-        scout_ssid.scoutDeleteSsid24(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
+        radioSub = sys.argv[7]
+        gigaSub = sys.argv[8]
+        scout_ssid.scoutDeleteSsid24(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
     elif (scoutCommand == "--delete-ssid-5") or (scoutCommand == "--delete-ssid-radius-5"):
         ip, username, password = scoutArgs()
         ssid = sys.argv[5]
         vlan = sys.argv[6]
-        bridgeGroup = sys.argv[7]
-        radioSub = sys.argv[8]
-        gigaSub = sys.argv[9]
-        scout_ssid.scoutDeleteSsid5(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
+        radioSub = sys.argv[7]
+        gigaSub = sys.argv[8]
+        scout_ssid.scoutDeleteSsid5(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
 
 else:
     print("ERROR: No valid options detected. Please use --help for a list of valid options.")

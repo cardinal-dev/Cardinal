@@ -92,8 +92,8 @@ def scoutGetModel(ip, username, password):
 def scoutGetHostname(ip, username, password):
     """Function that retrieves AP hostname via show version."""
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
-    env = scout_env.scoutEnv()
-    cmdTemplate = env.get_template("scout_get_hostname")
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    cmdTemplate = jinjaEnv.get_template("scout_get_hostname")
     cmds = cmdTemplate.render(password=password)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
@@ -107,8 +107,8 @@ def scoutGetHostname(ip, username, password):
 def scoutGetLocation(ip, username, password):
     """Function that retrieves AP location via show snmp location."""
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
-    env = scout_env.scoutEnv()
-    cmdTemplate = env.get_template("scout_get_location")
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    cmdTemplate = jinjaEnv.get_template("scout_get_location")
     cmds = cmdTemplate.render(password=password)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
@@ -124,8 +124,8 @@ def scoutGetLocation(ip, username, password):
 def scoutGetUsers(ip, username, password):
     """Function that retrieves AP users via show users."""
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
-    env = scout_env.scoutEnv()
-    cmdTemplate = env.get_template("scout_get_users")
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    cmdTemplate = jinjaEnv.get_template("scout_get_users")
     cmds = cmdTemplate.render(password=password)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()

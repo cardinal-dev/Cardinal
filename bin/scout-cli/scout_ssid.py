@@ -1,1 +1,1 @@
-/opt/Cardinal/bin/scout/scout_ssid.py
+../scout/scout_ssid.py

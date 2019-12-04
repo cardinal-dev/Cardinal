@@ -37,20 +37,24 @@ def scoutCreateSsid24(ip, username, password, ssid, wpa2Pass, vlan, bridgeGroup,
     using user provided arguments.
     """
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
-    env = scout_env.scoutEnv()
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    commandDebug = scout_env.scoutEnv()
     ssid = ssid
     wpa2Pass = wpa2Pass
     vlan = vlan
     bridgeGroup = bridgeGroup
     radioSub = radioSub
     gigaSub = gigaSub
-    cmdTemplate = env.get_template("scout_create_ssid_24")
+    cmdTemplate = jinjaEnv.get_template("scout_create_ssid_24")
     cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     print("INFO: Deploying 2.4GHz SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
+        if commandDebug == "on":
+            commands = channel.recv(65535)
+            print(commands)
         time.sleep(.10)
     scoutSsh.close()
 
@@ -58,21 +62,25 @@ def scoutCreateSsid5(ip, username, password, ssid, wpa2Pass, vlan, bridgeGroup, 
     """Function that deploys a 5GHz SSID to an AP
     using user provided arguments.
     """
-    ip, username, password, scoutSsh = scout_auth.sshInfo()
-    env = scout_env.scoutEnv()
+    scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    commandDebug = scout_env.scoutEnv()
     ssid = ssid
     wpa2Pass = wpa2Pass
     vlan = vlan
     bridgeGroup = bridgeGroup
     radioSub = radioSub
     gigaSub = gigaSub
-    cmdTemplate = env.get_template("scout_create_ssid_5")
+    cmdTemplate = jinjaEnv.get_template("scout_create_ssid_5")
     cmds = cmdTemplate.render(password=password,ssid=ssid,wpa2Pass=wpa2Pass,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     print("INFO: Deploying 5GHz SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
+        if commandDebug == "on":
+            commands = channel.recv(65535)
+            print(commands)
         time.sleep(.10)
     scoutSsh.close()
 
@@ -81,7 +89,8 @@ def scoutCreateSsid24Radius(ip, username, password, ssid, vlan, bridgeGroup, rad
     AP using user provided arguments.
     """
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
-    env = scout_env.scoutEnv()
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    commandDebug = scout_env.scoutEnv()
     ssid = ssid
     vlan = vlan
     bridgeGroup = bridgeGroup
@@ -94,13 +103,16 @@ def scoutCreateSsid24Radius(ip, username, password, ssid, vlan, bridgeGroup, rad
     radiusTimeout = radiusTimeout
     radiusGroup = radiusGroup
     methodList = methodList
-    cmdTemplate = env.get_template("scout_create_radius_ssid_24")
+    cmdTemplate = jinjaEnv.get_template("scout_create_radius_ssid_24")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     print("INFO: Deploying 2.4GHz RADIUS SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
+        if commandDebug == "on":
+            commands = channel.recv(65535)
+            print(commands)
         time.sleep(.10)
     scoutSsh.close()
 
@@ -109,7 +121,8 @@ def scoutCreateSsid5Radius(ip, username, password, ssid, vlan, bridgeGroup, radi
     AP using user provided arguments.
     """
     scoutSsh = scout_auth.sshInfo(ip=ip,username=username,password=password)
-    env = scout_env.scoutEnv()
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    commandDebug = scout_env.scoutEnv()
     ssid = ssid
     vlan = vlan
     bridgeGroup = bridgeGroup
@@ -122,34 +135,40 @@ def scoutCreateSsid5Radius(ip, username, password, ssid, vlan, bridgeGroup, radi
     radiusTimeout = radiusTimeout
     radiusGroup = radiusGroup
     methodList = methodList
-    cmdTemplate = env.get_template("scout_create_radius_ssid_5")
+    cmdTemplate = jinjaEnv.get_template("scout_create_radius_ssid_5")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,bridgeGroup=bridgeGroup,radioSub=radioSub,gigaSub=gigaSub,radiusIp=radiusIp,sharedSecret=sharedSecret,authPort=authPort,acctPort=acctPort,radiusTimeout=radiusTimeout,radiusGroup=radiusGroup,methodList=methodList)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     print("INFO: Deploying 5GHz RADIUS SSID {0} to {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
+        if commandDebug == "on":
+            commands = channel.recv(65535)
+            print(commands)
         time.sleep(.10)
     scoutSsh.close()
 
-def scoutDeleteSsid24(ip, username, password, ssid, vlan, bridgeGroup, radioSub, gigaSub):
+def scoutDeleteSsid24(ip, username, password, ssid, vlan, radioSub, gigaSub):
     """Function that deletes an existing 2.4GHz SSID from
     an AP.
     """
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
-    env = scout_env.scoutEnv()
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    commandDebug = scout_env.scoutEnv()
     ssid = ssid
     vlan = vlan
-    bridgeGroup = bridgeGroup
     radioSub = radioSub
     gigaSub = gigaSub
-    cmdTemplate = env.get_template("scout_delete_ssid_24")
+    cmdTemplate = jinjaEnv.get_template("scout_delete_ssid_24")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     print("INFO: Removing 2.4GHz SSID {0} from {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
+        if commandDebug == "on":
+            commands = channel.recv(65535)
+            print(commands)
         time.sleep(.10)
     scoutSsh.close()
 
@@ -158,18 +177,22 @@ def scoutDeleteSsid5(ip, username, password, ssid, vlan, bridgeGroup, radioSub, 
     AP.
     """
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
-    env = scout_env.scoutEnv()
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    commandDebug = scout_env.scoutEnv()
     ssid = ssid
     vlan = vlan
     bridgeGroup = bridgeGroup
     radioSub = radioSub
     gigaSub = gigaSub
-    cmdTemplate = env.get_template("scout_delete_ssid_5")
+    cmdTemplate = jinjaEnv.get_template("scout_delete_ssid_5")
     cmds = cmdTemplate.render(password=password,ssid=ssid,vlan=vlan,radioSub=radioSub,gigaSub=gigaSub)
     scoutCommands = cmds.splitlines()
     channel = scoutSsh.invoke_shell()
     print("INFO: Removing 5GHz SSID {0} from {1}...".format(ssid,ip))
     for command in scoutCommands:
         channel.send('{}\n'.format(command))
+        if commandDebug == "on":
+            commands = channel.recv(65535)
+            print(commands)
         time.sleep(.10)
     scoutSsh.close()

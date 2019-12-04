@@ -1,1 +1,1 @@
-/opt/Cardinal/bin/scout/scout_env.py
+../scout/scout_env.py
