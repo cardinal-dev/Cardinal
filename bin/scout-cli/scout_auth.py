@@ -1,1 +1,1 @@
-/opt/Cardinal/bin/scout/scout_auth.py
+../scout/scout_auth.py

@@ -36,6 +36,13 @@ def scoutEnv():
     cardinalConfigFile = os.environ['CARDINALCONFIG']
     cardinalConfig = ConfigParser()
     cardinalConfig.read("{}".format(cardinalConfigFile))
+    commandDebug = cardinalConfig.get('cardinal', 'commanddebug')
+    return commandDebug
+
+def scoutJinjaEnv():
+    cardinalConfigFile = os.environ['CARDINALCONFIG']
+    cardinalConfig = ConfigParser()
+    cardinalConfig.read("{}".format(cardinalConfigFile))
     commandDir = cardinalConfig.get('cardinal', 'commanddir')
     fileLoader = jinja2.FileSystemLoader('{}'.format(commandDir))
     env = jinja2.Environment(loader=fileLoader)
