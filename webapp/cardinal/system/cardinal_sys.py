@@ -36,7 +36,7 @@ from cryptography.fernet import Fernet
 
 cardinalConfigFile = os.environ['CARDINALCONFIG']
 cardinalConfig = ConfigParser()
-devourSettings = cardinalConfig.read("{}".format(cardinalConfigFile))
+cardinalConfig.read("{}".format(cardinalConfigFile))
 cardinalLogFile = cardinalConfig.get('cardinal', 'logfile')
 cardinalLogger = logging.basicConfig(filename='{}'.format(cardinalLogFile), filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 flaskKey = cardinalConfig.get('cardinal', 'flaskkey')

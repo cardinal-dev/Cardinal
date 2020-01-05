@@ -192,6 +192,25 @@ def deploySsid24GhzGroup():
     else:
         return redirect(url_for('index'))
 
+@cardinal_ssid.route("/remove-ssids", methods=["GET"])
+def removeSsids():
+    if session.get("username") is not None:
+        return render_template("remove-ssids.html")
+
+@cardinal_ssid.route("/remove-ssid-24ghz", methods=["GET"])
+def removeSsid24Ghz():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        removeSsidCursor = conn.cursor()
+        removeSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
+        ssids = removeSsidCursor.fetchall()
+        removeSsidCursor.close()
+        conn.close()
+        return render_template("remove-ssid-24ghz.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
 @cardinal_ssid.route("/delete-ssids", methods=["GET"])
 def deleteSsids():
     if session.get("username") is not None:

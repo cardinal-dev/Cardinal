@@ -126,26 +126,7 @@ def doApTftpBackup():
         scout_sys.scoutTftpBackup(ip=apIp, username=apSshUsername, password=apSshPassword, tftpIp=tftpIp)
         status = "Config Backup for {} Successfully Initiated!".format(apName)
         conn.close()
-        if request.form["group_backup"] == 'True':
-            apGroupId = session.get('apGroupId', None)
-            apGroupName = session.get('apGroupName', None)
-            tftpIp = request.form["tftp_ip"]
-            conn = cardinalSql()
-            apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
-            apInfo = apInfoCursor.fetchall()
-            apInfoCursor.close()
-            for info in apInfo:
-                apGroupName = info[0]
-                apIp = info[1]
-                apSshUsername = info[2]
-                encryptedSshPassword = bytes(info[3], 'utf-8')
-                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_sys.scoutTftpBackup(ip=apIp, username=apSshUsername, password=apSshPassword, tftpIp=tftpIp)
-            status = "Config Backup for {} Successfully Initiated!".format(apGroupName)
-            conn.close()
-            return redirect(url_for('cardinal_ap_ops_bp.configApName', status=status))
-        return redirect(url_for('manageApTftpBackup', status=status))
+        return redirect(url_for('cardinal_ap_ops_bp.manageApTftpBackup', status=status))
 
 @cardinal_ap_ops.route("/config-ap-http", methods=["GET"])
 def configApHttp():

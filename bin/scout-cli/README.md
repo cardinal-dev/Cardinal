@@ -49,5 +49,13 @@ command argument.
 <h3>Example</h3>
 
 ~~~
+scout-cli --get-arp <CISCO_AP_IP> <USERNAME> <PASSWORD>
+~~~
+
+~~~
 scout-cli --get-arp 192.168.2.100 cisco1 mysecretpass
+Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  192.168.2.1             0   ec1a.5986.2510  ARPA   BVI1
+Internet  192.168.2.3             1   7ce9.d306.090c  ARPA   BVI1
+Internet  192.168.2.9             -   f866.f292.a65d  ARPA   BVI1
 ~~~
