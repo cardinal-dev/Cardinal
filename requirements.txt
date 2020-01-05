@@ -22,9 +22,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# IMPORTANT: scout is required and must be packaged from bin/
+
 pyinstaller
-paramiko 
-flake8 
+flake8
+paramiko
 mysqlclient
 configparser
 werkzeug

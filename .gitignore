@@ -2,5 +2,7 @@ bin/cardinal
 bin/scout/__pycache__
 bin/scout-cli/__pycache__
 webapp/__pycache__
+webapp/cardinal/__pycache__
+webapp/cardinal/system/__pycache__
 webapp/cardinal/views/__pycache__
 ci/tests/scout-tests.sh

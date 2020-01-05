@@ -332,6 +332,46 @@
                                 </div>
                         </div>
 
+                                <div class="col-sm-6 col-md-4">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
+                                                Remove SSID
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="remove_ssid" href="/remove-ssids"><img src="{{ url_for('static', filename='img/cardinal5.png') }}"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="removessid" style="display:none;" title="Remove SSID">
+                                                <iframe height="350" id="remove_ssid_frame" name="remove_ssid_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                        $(document).ready(function () {
+                                        $(".remove_ssid").click(function () {
+                                           $("#remove_ssid_frame").attr('src', $(this).attr("href"));
+                                           $("#removessid").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#remove_ssid_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                Remove SSID from Access Point
+                                        </div>
+                                </div>
+                        </div>
 
 	<link href="{{ url_for('static', filename='css/jquery-ui.css') }}" rel="stylesheet" type="text/css">
 	<script src="{{ url_for('static', filename='js/jquery.min.js') }}">

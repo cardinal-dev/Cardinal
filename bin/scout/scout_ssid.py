@@ -172,7 +172,7 @@ def scoutDeleteSsid24(ip, username, password, ssid, vlan, radioSub, gigaSub):
         time.sleep(.10)
     scoutSsh.close()
 
-def scoutDeleteSsid5(ip, username, password, ssid, vlan, bridgeGroup, radioSub, gigaSub):
+def scoutDeleteSsid5(ip, username, password, ssid, vlan, radioSub, gigaSub):
     """Function that deletes an existing 5GHz SSID from an
     AP.
     """
@@ -181,7 +181,6 @@ def scoutDeleteSsid5(ip, username, password, ssid, vlan, bridgeGroup, radioSub, 
     commandDebug = scout_env.scoutEnv()
     ssid = ssid
     vlan = vlan
-    bridgeGroup = bridgeGroup
     radioSub = radioSub
     gigaSub = gigaSub
     cmdTemplate = jinjaEnv.get_template("scout_delete_ssid_5")
