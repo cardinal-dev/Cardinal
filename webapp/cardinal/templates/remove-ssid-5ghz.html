@@ -1,0 +1,21 @@
+<html>
+<font face="Verdana">
+Choose SSID:
+<br>
+<body>
+<form id="remove_ssid" action="/do-remove-ssid-5ghz" method="POST">
+<select name="ssid_id">
+
+{% for item in ssids %}
+<option value="{{ item[0] }}">{{ item[1] }}</option>
+{% endfor %}
+
+</select>
+<input type="submit" value="Remove SSID">
+</form>
+<button onclick="window.location.href='/remove-ssids'">Back to Remove SSID Wizard</button>
+<br>
+<br>
+{{ status if status }}
+</body>
+</html>

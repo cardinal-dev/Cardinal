@@ -1,0 +1,21 @@
+<html>
+<font face="Verdana">
+Choose SSID:
+<br>
+<body>
+<form id="deploy_ssid" action="/do-deploy-ssid-24ghz-radius-group" method="POST">
+<select name="ssid_id">
+
+{% for item in ssids %}
+<option value="{{ item[0] }}">{{ item[1] }}</option>
+{% endfor %}
+
+</select>
+<input type="submit" value="Deploy SSID">
+</form>
+<button onclick="window.location.href='/deploy-ssids'">Back to Deploy SSID Wizard</button>
+<br>
+<br>
+{{ status if status }}
+</body>
+</html>

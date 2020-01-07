@@ -1,12 +1,14 @@
 <html>
-<form id="ap_tftp_group_backup" action="/do-ap-tftp-backup" method="POST">
+<form id="ap_tftp_group_backup" action="/do-ap-tftp-backup-group" method="POST">
 <font face="Verdana">
 <label>TFTP Server IP: </label>
 <input type="text" name="tftp_ip" required>
-<input type="hidden" name="group_backup" id="group_backup" value="True">
 <br>
 <input type="submit" name="Submit" required>
-</font>
 </form>
+<br>
+<br>
+{{ status if status }}
+</font>
 </html>
 
