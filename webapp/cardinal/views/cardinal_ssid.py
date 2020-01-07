@@ -178,6 +178,20 @@ def deploySsid24Ghz():
     else:
         return redirect(url_for('index'))
 
+@cardinal_ssid.route("/deploy-ssid-24ghz-radius", methods=["GET"])
+def deploySsid24GhzRadius():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz_radius")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-24ghz-radius.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
 @cardinal_ssid.route("/deploy-ssid-24ghz-group", methods=["GET"])
 def deploySsid24GhzGroup():
     if session.get("username") is not None:
@@ -189,6 +203,76 @@ def deploySsid24GhzGroup():
         deploySsidCursor.close()
         conn.close()
         return render_template("deploy-ssid-24ghz-group.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
+@cardinal_ssid.route("/deploy-ssid-24ghz-radius-group", methods=["GET"])
+def deploySsid24GhzRadiusGroup():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz_radius")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-24ghz-radius-group.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
+@cardinal_ssid.route("/deploy-ssid-5ghz", methods=["GET"])
+def deploySsid5Ghz():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-5ghz.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
+@cardinal_ssid.route("/deploy-ssid-5ghz-radius", methods=["GET"])
+def deploySsid5GhzRadius():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz_radius")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-5ghz-radius.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
+@cardinal_ssid.route("/deploy-ssid-5ghz-group", methods=["GET"])
+def deploySsid5GhzGroup():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-5ghz-group.html", status=status, ssids=ssids)
+    else:
+        return redirect(url_for('index'))
+
+@cardinal_ssid.route("/deploy-ssid-5ghz-radius-group", methods=["GET"])
+def deploySsid5GhzRadiusGroup():
+    if session.get("username") is not None:
+        conn = cardinalSql()
+        status = request.args.get('status')
+        deploySsidCursor = conn.cursor()
+        deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz_radius")
+        ssids = deploySsidCursor.fetchall()
+        deploySsidCursor.close()
+        conn.close()
+        return render_template("deploy-ssid-5ghz-radius-group.html", status=status, ssids=ssids)
     else:
         return redirect(url_for('index'))
 

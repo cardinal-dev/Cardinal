@@ -29,6 +29,7 @@ SOFTWARE.
 from cardinal.system import cardinal_sys
 from cardinal.views import cardinal_ap_group
 from cardinal.views import cardinal_ap_ops
+from cardinal.views import cardinal_ap_group_ops
 from cardinal.views import cardinal_ap
 from cardinal.views import cardinal_auth
 from cardinal.views import cardinal_network_toolkit
@@ -42,6 +43,7 @@ Cardinal.secret_key = "{}".format(cardinal_sys.flaskKey)
 
 Cardinal.register_blueprint(cardinal_ap_group.cardinal_ap_group)
 Cardinal.register_blueprint(cardinal_ap_ops.cardinal_ap_ops)
+Cardinal.register_blueprint(cardinal_ap_group_ops.cardinal_ap_group_ops)
 Cardinal.register_blueprint(cardinal_ap.cardinal_ap)
 Cardinal.register_blueprint(cardinal_auth.cardinal_auth)
 Cardinal.register_blueprint(cardinal_network_toolkit.cardinal_network_toolkit)

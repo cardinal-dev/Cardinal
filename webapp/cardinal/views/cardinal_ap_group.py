@@ -115,9 +115,3 @@ def manageApGroupDashboard():
         return render_template("manage-ap-group-dashboard.html")
     else:
         return redirect(url_for('cardinal_auth_bp.index'))
-
-@cardinal_ap_group.route("/manage-ap-tftp-group-backup", methods=["GET"])
-def manageApTftpGroupBackup():
-    if session.get("username") is not None:
-        status = request.args.get('status')
-        return render_template("manage-ap-tftp-group-backup.html", status=status)
