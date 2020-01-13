@@ -38,15 +38,13 @@ from scout import scout_sys
 
 cardinal_ap_ops = Blueprint('cardinal_ap_ops_bp', __name__)
 
-@cardinal_ap_ops.route("/config-ap-ip", methods=["GET"])
+@cardinal_ap_ops.route("/config-ap-ip", methods=["GET", "POST"])
 def configApIp():
-    if session.get("username") is not None:
-        status = request.args.get('status')
-        return render_template("config-ap-ip.html", status=status)
-
-@cardinal_ap_ops.route("/do-config-ap-ip", methods=["POST"])
-def doConfigApIp():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            status = request.args.get('status')
+            return render_template("config-ap-ip.html", status=status)
+    elif request.method == 'POST':
         apId = session.get('apId')
         apNewIp = request.form["ap_new_ip"]
         apSubnetMask = request.form["ap_subnetmask"]
@@ -68,17 +66,16 @@ def doConfigApIp():
         changeApIpCursor.close()
         conn.commit()
         conn.close()
+        session.pop("apId")
         return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=status))
 
-@cardinal_ap_ops.route("/config-ap-name", methods=["GET"])
+@cardinal_ap_ops.route("/config-ap-name", methods=["GET", "POST"])
 def configApName():
-    if session.get("username") is not None:
-        status = request.args.get('status')
-        return render_template("config-ap-name.html", status=status)
-
-@cardinal_ap_ops.route("/do-config-ap-name", methods=["POST"])
-def doConfigApName():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            status = request.args.get('status')
+            return render_template("config-ap-name.html", status=status)
+    elif request.method == 'POST':
         apId = session.get('apId')
         apNewName = request.form["ap_name"]
         conn = cardinalSql()
@@ -99,20 +96,19 @@ def doConfigApName():
         conn.commit()
         changeApNameCursor.close()
         conn.close()
+        session.pop("apId")
         return redirect(url_for('cardinal_ap_ops_bp.configApName', status=status))
 
-@cardinal_ap_ops.route("/manage-ap-tftp-backup", methods=["GET"])
-def manageApTftpBackup():
-    if session.get("username") is not None:
-        status = request.args.get('status')
-        return render_template("manage-ap-tftp-backup.html", status=status)
-
-@cardinal_ap_ops.route("/do-ap-tftp-backup", methods=["POST"])
-def doApTftpBackup():
-    if request.method == 'POST':
+@cardinal_ap_ops.route("/config-ap-tftp-backup", methods=["GET", "POST"])
+def configApTftpBackup():
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            status = request.args.get('status')
+            return render_template("config-ap-tftp-backup.html", status=status)
+    elif request.method == 'POST':
         apId = session.get('apId')
-        tftpIp = request.form["tftp_ip"]
         conn = cardinalSql()
+        tftpIp = request.form["tftp_ip"]
         apInfoCursor = conn.cursor()
         apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
         apInfo = apInfoCursor.fetchall()
@@ -126,7 +122,7 @@ def doApTftpBackup():
         scout_sys.scoutTftpBackup(ip=apIp, username=apSshUsername, password=apSshPassword, tftpIp=tftpIp)
         status = "Config Backup for {} Successfully Initiated!".format(apName)
         conn.close()
-        return redirect(url_for('cardinal_ap_ops_bp.manageApTftpBackup', status=status))
+        return redirect(url_for('cardinal_ap_ops_bp.configApTftpBackup', status=status))
 
 @cardinal_ap_ops.route("/config-ap-http", methods=["GET"])
 def configApHttp():
@@ -134,9 +130,8 @@ def configApHttp():
         status = request.args.get('status')
         return render_template("config-ap-http.html", status=status)
 
-@cardinal_ap_ops.route("/do-enable-ap-http", methods=["POST"])
-def doEnableApHttp():
-    if request.method == 'POST':
+@cardinal_ap_ops.route("/enable-ap-http", methods=["POST"])
+def enableApHttp():
         apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
@@ -154,25 +149,24 @@ def doEnableApHttp():
         conn.close()
         return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
 
-@cardinal_ap_ops.route("/do-disable-ap-http", methods=["POST"])
-def doDisableApHttp():
-    if request.method == 'POST':
-        apId = session.get('apId')
-        conn = cardinalSql()
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            encryptedSshPassword = bytes(info[3], 'utf-8')
-        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutDisableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
-        status = "HTTP Server for {} Successfully Disabled".format(apName)
-        conn.close()
-        return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
+@cardinal_ap_ops.route("/disable-ap-http", methods=["POST"])
+def disableApHttp():
+    apId = session.get('apId')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apName = info[0]
+        apIp = info[1]
+        apSshUsername = info[2]
+        encryptedSshPassword = bytes(info[3], 'utf-8')
+    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+    scout_sys.scoutDisableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "HTTP Server for {} Successfully Disabled".format(apName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
 
 @cardinal_ap_ops.route("/config-ap-radius", methods=["GET"])
 def configApRadius():
@@ -180,45 +174,43 @@ def configApRadius():
         status = request.args.get('status')
         return render_template("config-ap-radius.html", status=status)
 
-@cardinal_ap_ops.route("/do-enable-ap-radius", methods=["POST"])
-def doEnableApRadius():
-    if request.method == 'POST':
-        apId = session.get('apId')
-        conn = cardinalSql()
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            encryptedSshPassword = bytes(info[3], 'utf-8')
-        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutEnableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
-        status = "RADIUS for {} Successfully Enabled!".format(apName)
-        conn.close()
-        return redirect(url_for('cardinal_ap_ops_bp.configApRadius', status=status))
+@cardinal_ap_ops.route("/enable-ap-radius", methods=["POST"])
+def enableApRadius():
+    apId = session.get('apId')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apName = info[0]
+        apIp = info[1]
+        apSshUsername = info[2]
+        encryptedSshPassword = bytes(info[3], 'utf-8')
+    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+    scout_sys.scoutEnableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "RADIUS for {} Successfully Enabled!".format(apName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_ops_bp.configApRadius', status=status))
 
-@cardinal_ap_ops.route("/do-disable-ap-radius", methods=["POST"])
-def doDisableApRadius():
-    if request.method == 'POST':
-        apId = session.get('apId')
-        conn = cardinalSql()
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            encryptedSshPassword = bytes(info[3], 'utf-8')
-        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutDisableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
-        status = "RADIUS Server for {} Successfully Disabled!".format(apName)
-        conn.close()
-        return redirect(url_for('cardinal_ap_ops_bp.configApRadius', status=status))
+@cardinal_ap_ops.route("/disable-ap-radius", methods=["POST"])
+def disableApRadius():
+    apId = session.get('apId')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apName = info[0]
+        apIp = info[1]
+        apSshUsername = info[2]
+        encryptedSshPassword = bytes(info[3], 'utf-8')
+    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+    scout_sys.scoutDisableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "RADIUS Server for {} Successfully Disabled!".format(apName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_ops_bp.configApRadius', status=status))
 
 @cardinal_ap_ops.route("/config-ap-snmp", methods=["GET"])
 def configApSnmp():
@@ -226,9 +218,8 @@ def configApSnmp():
         status = request.args.get('status')
         return render_template("config-ap-snmp.html", status=status)
 
-@cardinal_ap_ops.route("/do-enable-ap-snmp", methods=["POST"])
-def doEnableApSnmp():
-    if request.method == 'POST':
+@cardinal_ap_ops.route("/enable-ap-snmp", methods=["POST"])
+def enableApSnmp():
         apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
@@ -246,8 +237,8 @@ def doEnableApSnmp():
         conn.close()
         return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
 
-@cardinal_ap_ops.route("/do-disable-ap-snmp", methods=["POST"])
-def doDisableApSnmp():
+@cardinal_ap_ops.route("/disable-ap-snmp", methods=["POST"])
+def disableApSnmp():
     if request.method == 'POST':
         apId = session.get('apId')
         conn = cardinalSql()

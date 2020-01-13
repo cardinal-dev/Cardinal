@@ -38,31 +38,159 @@ from scout import scout_sys
 
 cardinal_ap_group_ops = Blueprint('cardinal_ap_group_ops_bp', __name__)
 
-@cardinal_ap_group_ops.route("/manage-ap-tftp-backup-group", methods=["GET"])
-def manageApTftpBackupGroup():
-    if session.get("username") is not None:
-        status = request.args.get('status')
-        return render_template("manage-ap-tftp-backup-group.html", status=status)
-
-@cardinal_ap_group_ops.route("/do-ap-tftp-backup-group", methods=["POST"])
-def doApTftpBackupGroup():
-    if request.method == 'POST':
+@cardinal_ap_group_ops.route("/config-ap-group-tftp-backup", methods=["GET", "POST"])
+def apGroupTftpBackup():
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            status = request.args.get('status')
+            return render_template("config-ap-group-tftp-backup.html", status=status)
+    elif request.method == 'POST':
         conn = cardinalSql()
         apGroupId = session.get("apGroupId")
         apGroupName = session.get("apGroupName")
         tftpIp = request.form["tftp_ip"]
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            encryptedSshPassword = bytes(info[3], 'utf-8')
+            apIp = info[0]
+            apSshUsername = info[1]
+            encryptedSshPassword = bytes(info[2], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
             scout_sys.scoutTftpBackup(ip=apIp, username=apSshUsername, password=apSshPassword, tftpIp=tftpIp)
         status = "Config Backup for AP Group {} Successfully Initiated!".format(apGroupName)
         conn.close()
-        return redirect(url_for('cardinal_ap_group_ops_bp.manageApTftpBackupGroup', status=status))
+        return redirect(url_for('cardinal_ap_ops_bp.configApTftpBackup', status=status))
 
+@cardinal_ap_group_ops.route("/config-ap-group-http", methods=["GET"])
+def configApHttp():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("config-ap-group-http.html", status=status)
+
+@cardinal_ap_group_ops.route("/enable-ap-group-http", methods=["POST"])
+def enableApHttp():
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apIp = info[0]
+        apSshUsername = info[1]
+        encryptedSshPassword = bytes(info[2], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        scout_sys.scoutEnableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "HTTP Server for AP Group {} Successfully Enabled!".format(apGroupName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_group_ops_bp.configApHttp', status=status))
+
+@cardinal_ap_group_ops.route("/disable-ap-group-http", methods=["POST"])
+def disableApHttp():
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apIp = info[0]
+        apSshUsername = info[1]
+        encryptedSshPassword = bytes(info[2], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        scout_sys.scoutDisableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "HTTP Server for AP Group {} Successfully Disabled!".format(apGroupName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_group_ops_bp.configApHttp', status=status))
+
+@cardinal_ap_group_ops.route("/config-ap-group-radius", methods=["GET"])
+def configApRadius():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("config-ap-group-radius.html", status=status)
+
+@cardinal_ap_group_ops.route("/enable-ap-group-radius", methods=["POST"])
+def enableApRadius():
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apIp = info[0]
+        apSshUsername = info[1]
+        encryptedSshPassword = bytes(info[2], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        scout_sys.scoutEnableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "RADIUS for AP Group {} Successfully Enabled!".format(apGroupName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_group_ops_bp.configApRadius', status=status))
+
+@cardinal_ap_group_ops.route("/disable-ap-group-radius", methods=["POST"])
+def disableApRadius():
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apIp = info[0]
+        apSshUsername = info[1]
+        encryptedSshPassword = bytes(info[2], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        scout_sys.scoutDisableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "RADIUS Server for AP Group {} Successfully Disabled!".format(apGroupName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_group_ops_bp.configApRadius', status=status))
+
+@cardinal_ap_group_ops.route("/config-ap-group-snmp", methods=["GET"])
+def configApSnmp():
+    if session.get("username") is not None:
+        status = request.args.get('status')
+        return render_template("config-ap-group-snmp.html", status=status)
+
+@cardinal_ap_group_ops.route("/enable-ap-group-snmp", methods=["POST"])
+def enableApSnmp():
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apIp = info[0]
+        apSshUsername = info[1]
+        encryptedSshPassword = bytes(info[2], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        scout_sys.scoutEnableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "SNMP for AP Group {} Successfully Enabled!".format(apGroupName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_group_ops_bp.configApSnmp', status=status))
+
+@cardinal_ap_group_ops.route("/disable-ap-group-snmp", methods=["POST"])
+def disableApSnmp():
+    apGroupId = session.get('apGroupId')
+    apGroupName = session.get('apGroupName')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apIp = info[0]
+        apSshUsername = info[1]
+        encryptedSshPassword = bytes(info[2], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        scout_sys.scoutDisableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "SNMP Server for AP Group {} Successfully Disabled!".format(apGroupName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_group_ops_bp.configApSnmp', status=status))

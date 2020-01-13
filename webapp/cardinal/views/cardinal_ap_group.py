@@ -102,6 +102,7 @@ def chooseApGroupDashboard():
 @cardinal_ap_group.route("/manage-ap-group-dashboard", methods=["POST"])
 def manageApGroupDashboard():
     if request.method == 'POST':
+        apId = session.get("apId", None)
         apGroupId = request.form["ap_group_id"]
         conn = cardinalSql()
         apGroupInfoCursor = conn.cursor()

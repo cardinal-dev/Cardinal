@@ -146,13 +146,8 @@ def doDeploySsid24GhzGroup():
             checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
-            getApName = conn.cursor()
-            getApName.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
-            apName = getApName.fetchone()[0]
-            getApName.close()
-            conn.close()
-            status = "MySQL Error: {0} ran into an error: {1}".format(apName,e)
-            return redirect(url_for('cardinal_ssid_bp.deploySsid24GhzRadiusGroup', status=status))
+            status = "MySQL Error: {0}".format(e)
+            return redirect(url_for('cardinal_ssid_bp.deploySsid24GhzGroup', status=status))
         else:
             apInfoCursor = conn.cursor()
             apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
@@ -165,16 +160,17 @@ def doDeploySsid24GhzGroup():
             for ssidData in ssidInfo:
                 ssid = ssidData[0]
                 vlan = ssidData[1]
-                wpa2Pass = ssidData[2]
+                encryptedWpa2Pass = bytes(ssidData[2], 'utf-8')
+                wpa2Pass = cipherSuite.decrypt(encryptedWpa2Pass).decode('utf-8')
                 bridgeGroup = ssidData[3]
                 radioSub = ssidData[4]
                 gigaSub = ssidData[5]
             for info in apInfo:
                 apIp = info[0]
                 apSshUsername = info[1]
-                encryptedSshPassword = bytes(info[3], 'utf-8')
-            apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_ssid.scoutCreateSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, wpa2Pass=wpa2Pass, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
+                encryptedSshPassword = bytes(info[2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutCreateSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, wpa2Pass=wpa2Pass, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub)
             status = "Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
             conn.commit()
     conn.close()
