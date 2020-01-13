@@ -83,4 +83,11 @@ def login():
 @cardinal_auth.route("/logout")
 def logout():
    session.pop('username', None)
+   session.pop('apId', None)
+   session.pop('apGroupId', None)
+   session.pop('apGroupName', None)
+   session.pop('apName', None)
+   session.pop('apIp', None)
+   session.pop('apTotalClients', None)
+   session.pop('apBandwidth', None)
    return redirect(url_for('cardinal_auth_bp.index'))
