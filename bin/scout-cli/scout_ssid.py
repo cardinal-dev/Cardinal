@@ -1,1 +1,1 @@
-../scout/scout_ssid.py
+../../lib/scout/scout_ssid.py

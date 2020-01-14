@@ -1,1 +1,1 @@
-../scout/scout_sys.py
+../../lib/scout/scout_sys.py

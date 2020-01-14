@@ -13,7 +13,8 @@ before_script:
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
-- pip install bin/.
+- ls -lah
+- pip install lib/.
 script:
 - bash ci/tests/travis-test.sh
 - pyinstaller --onefile bin/scout-cli/scout-cli.py

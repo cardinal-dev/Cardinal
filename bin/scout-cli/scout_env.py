@@ -1,1 +1,1 @@
-../scout/scout_env.py
+../../lib/scout/scout_env.py
