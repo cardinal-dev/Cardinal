@@ -35,4 +35,5 @@ setup(name='scout',
       author_email='jmcclune@mcclunetechnologies.net',
       url='https://github.com/cardinal-dev/Cardinal',
       packages=['scout'],
+      include_package_data=True
      )
