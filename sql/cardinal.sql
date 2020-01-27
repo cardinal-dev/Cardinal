@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: cardinal
 -- ------------------------------------------------------
--- Server version	5.7.26-0ubuntu0.16.04.1
+-- Server version	5.7.26-0ubuntu0.16.04.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -58,7 +58,7 @@ CREATE TABLE `access_points` (
   PRIMARY KEY (`ap_id`),
   UNIQUE KEY `ap_name` (`ap_name`(255)),
   UNIQUE KEY `ap_ip` (`ap_ip`(15))
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +97,7 @@ CREATE TABLE `ssids_24ghz_deployed` (
   KEY `ssid_id` (`ssid_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_24ghz` (`ap_ssid_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +123,7 @@ CREATE TABLE `ssids_24ghz_radius` (
   `ap_ssid_radius_method_list` text,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 2.4GHz SSIDs';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 2.4GHz SSIDs';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,8 +139,10 @@ CREATE TABLE `ssids_24ghz_radius_deployed` (
   `ssid_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_assoc_id`),
   UNIQUE KEY `ap_id` (`ap_id`,`ssid_id`),
-  KEY `ssid_id` (`ssid_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `ssid_id` (`ssid_id`),
+  CONSTRAINT `ssids_24ghz_radius_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_24ghz_radius` (`ap_ssid_id`),
+  CONSTRAINT `ssids_24ghz_radius_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -160,7 +162,7 @@ CREATE TABLE `ssids_5ghz` (
   `ap_ssid_ethernet_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 5GHz radio';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 5GHz radio';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +178,9 @@ CREATE TABLE `ssids_5ghz_deployed` (
   `ssid_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_assoc_id`),
   UNIQUE KEY `ap_id` (`ap_id`,`ssid_id`),
-  KEY `ssid_id` (`ssid_id`)
+  KEY `ssid_id` (`ssid_id`),
+  CONSTRAINT `ssids_5ghz_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_5ghz` (`ap_ssid_id`),
+  CONSTRAINT `ssids_5ghz_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -203,7 +207,7 @@ CREATE TABLE `ssids_5ghz_radius` (
   `ap_ssid_radius_method_list` text,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 5GHz SSIDs';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 5GHz SSIDs';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,8 +223,10 @@ CREATE TABLE `ssids_5ghz_radius_deployed` (
   `ssid_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_assoc_id`),
   UNIQUE KEY `ap_id` (`ap_id`,`ssid_id`),
-  KEY `ssid_id` (`ssid_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `ssid_id` (`ssid_id`),
+  CONSTRAINT `ssids_5ghz_radius_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_5ghz_radius` (`ap_ssid_id`),
+  CONSTRAINT `ssids_5ghz_radius_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -248,4 +254,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-12 19:07:33
+-- Dump completed on 2020-01-26 19:29:01

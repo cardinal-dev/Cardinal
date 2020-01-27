@@ -7,15 +7,15 @@ mbssid guest-mode
 vlan {{ vlan }}
 end
 conf t
-int d0
+int Dot11Radio0
 mbssid
 encryption vlan {{ vlan }} mode ciphers aes
 no shutdown
 dot11 ssid {{ ssid }}
-int d0
+int Dot11Radio0
 ssid {{ ssid }}
 exit
-int d0.{{ radioSub }}
+int Dot11Radio0.{{ radioSub }}
 encapsulation dot1q {{ vlan }}
 bridge-group {{ bridgeGroup }}
 int gi0.{{ gigaSub }}

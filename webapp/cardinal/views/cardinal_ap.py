@@ -26,9 +26,9 @@ SOFTWARE.
 
 '''
 
-import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
+from cardinal.system.cardinal_sys import MySQLdb
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -95,17 +95,17 @@ def doDeleteAp():
         deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
         apName = deleteApNameCursor.fetchone()[0]
         deleteApNameCursor.close()
-        status = "{} was removed successfully!".format(apName)
+        status = "{} was deleted successfully!".format(apName)
         try:
             deleteApCursor = conn.cursor()
             deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
             deleteApCursor.close()
         except MySQLdb.Error as e:
-            status = e
-        finally:
+            return redirect(url_for('cardinal_ap_bp.deleteAp', status=e))
+        else:
             conn.commit()
-            conn.close()
-            return redirect(url_for('cardinal_ap_bp.deleteAp', status=status))
+        conn.close()
+        return redirect(url_for('cardinal_ap_bp.deleteAp', status=status))
 
 @cardinal_ap.route("/choose-ap-dashboard", methods=["GET"])
 def chooseApDashboard():

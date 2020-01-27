@@ -3,18 +3,17 @@
 Choose SSID:
 <br>
 <body>
-<form id="delete_ssid" action="/do-delete-ssid-24ghz-radius" method="POST">
+<form id="remove_ssid" action="/remove-ssid-24ghz-radius" method="POST">
 <select name="ssid_id">
 
-<option value=" "></option>
 {% for item in ssids %}
 <option value="{{ item[0] }}">{{ item[1] }}</option>
 {% endfor %}
 
 </select>
-<input type="submit" value="Delete SSID">
+<input type="submit" value="Remove SSID">
 </form>
-<button onclick="window.location.href='/delete-ssids'">Back to Delete SSID Wizard</button>
+<button onclick="window.location.href='/remove-ssids'">Back to Remove SSID Wizard</button>
 <br>
 <br>
 {{ status if status }}
