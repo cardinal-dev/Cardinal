@@ -26,7 +26,6 @@ SOFTWARE.
 
 '''
 
-from cardinal.system.cardinal_sys import cardinalLogger
 from cardinal.system.cardinal_sys import cardinalSql
 from flask import Blueprint
 from flask import render_template
@@ -67,17 +66,14 @@ def login():
             dbUsername = info[0]
             dbHash = info[1]
     else:
-        cardinalLogger.warning("Unauthorized access detected. Someone tried cardinalLogger into Cardinal but was unsuccessful.")
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
 
     if check_password_hash(dbHash,password):
         session['username'] = username
         return redirect(url_for('cardinal_auth_bp.dashboard'))
     elif dbUsername is None:
-        cardinalLogger.warning("Unauthorized access detected. Someone tried cardinalLogger into Cardinal but was unsuccessful.")
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
     else:
-        cardinalLogger.warning("Unauthorized access detected. Someone tried cardinalLogger into Cardinal but was unsuccessful.")
         return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
 
 @cardinal_auth.route("/logout")

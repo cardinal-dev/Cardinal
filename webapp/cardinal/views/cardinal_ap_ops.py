@@ -220,10 +220,11 @@ def configApSnmp():
 
 @cardinal_ap_ops.route("/enable-ap-snmp", methods=["POST"])
 def enableApSnmp():
+    if request.method == 'POST':
         apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = '{}'".format(apId))
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
@@ -231,8 +232,10 @@ def enableApSnmp():
             apIp = info[1]
             apSshUsername = info[2]
             encryptedSshPassword = bytes(info[3], 'utf-8')
+            encryptedSnmp = bytes(info[4], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutEnableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword)
+        apSnmp = cipherSuite.decrypt(encryptedSnmp).decode('utf-8')
+        scout_sys.scoutEnableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword, snmp=apSnmp)
         status = "SNMP for {} Successfully Enabled!".format(apName)
         conn.close()
         return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
