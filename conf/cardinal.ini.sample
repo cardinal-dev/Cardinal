@@ -4,7 +4,7 @@ dbuser=dbuser
 dbpassword=password
 dbname=cardinal
 commanddir=/home/Cardinal/bin/scout/templates
-logfile=/var/log/cardinal/cardinal.log
+fetchinterval=3
 flaskkey=d67ff999decd7439c230f519ea9fb999
 encryptkey=rFLoNiCTwoOa6o8QOXBy-9WK2-IdSTT8HKiiIzQFHVVZ=
 commanddebug=off

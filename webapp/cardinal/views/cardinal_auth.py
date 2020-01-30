@@ -86,4 +86,5 @@ def logout():
    session.pop('apIp', None)
    session.pop('apTotalClients', None)
    session.pop('apBandwidth', None)
+   session.pop('apModel', None)
    return redirect(url_for('cardinal_auth_bp.index'))

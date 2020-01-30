@@ -50,6 +50,11 @@ def apIpAddress():
     if session.get("username") is not None:
         return render_template("ap-ip-address.html")
 
+@cardinal_visuals.route("/ap-model", methods=["GET"])
+def apModel():
+    if session.get("username") is not None:
+        return render_template("ap-model.html")
+
 @cardinal_visuals.route("/total-aps", methods=["GET"])
 def totalAps():
     if session.get("username") is not None:

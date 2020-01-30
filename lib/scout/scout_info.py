@@ -43,7 +43,7 @@ def scoutGetArp(ip, username, password):
     sshOut = stdout.read()
     getArpTable = sshOut.decode('ascii').strip("\n").lstrip()
     scoutSsh.close()
-    print(getArpTable)
+    return getArpTable
 
 def scoutGetSpeed(ip, username, password):
     """Function that reports speed of Gi0/0 in Mbps."""
@@ -53,7 +53,7 @@ def scoutGetSpeed(ip, username, password):
     sshBandwidth = sshOut.decode('ascii').strip("\n").split(",")
     getBandwidth = sshBandwidth[9].strip("Mbps")
     scoutSsh.close()
-    print(getBandwidth + "Mbps")
+    return getBandwidth
 
 def scoutGetMac(ip, username, password):
     """Function that reports back the MAC address of AP."""
@@ -64,7 +64,7 @@ def scoutGetMac(ip, username, password):
     intList = sshOut.decode('ascii').strip("\n").split(",")
     getMac = macAddrRegex.search(intList[2]).group(0)
     scoutSsh.close()
-    print(getMac)
+    return getMac
 
 def scoutCountClients(ip, username, password):
     """Function that reports the number of active clients on
@@ -76,7 +76,7 @@ def scoutCountClients(ip, username, password):
     countClient = sshOut.decode('ascii').strip("\n")
     getClient = subprocess.check_output("echo {} | grep -o [0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f] | wc -l".format(countClient), shell=True)
     scoutSsh.close()
-    print(getClient.decode('ascii').strip("\n").lstrip())
+    return getClient.decode('ascii').strip("\n").lstrip()
 
 def scoutGetModel(ip, username, password):
     """Function that reports the model ID of AP."""
@@ -87,7 +87,7 @@ def scoutGetModel(ip, username, password):
     apModelRegex = re.compile(r'\w\w\w\-\w\w\w\w\w\w\w\w\-\w-\w\w')
     getApModel = apModelRegex.search(getModelString).group(0)
     scoutSsh.close()
-    print(getApModel)
+    return getApModel
 
 def scoutGetHostname(ip, username, password):
     """Function that retrieves AP hostname via show version."""
@@ -102,7 +102,7 @@ def scoutGetHostname(ip, username, password):
         time.sleep(.10)
     getHostname = channel.recv(65535).decode('ascii').strip("\n").strip(">").lstrip()
     scoutSsh.close()
-    print(getHostname)
+    return getHostname
 
 def scoutGetLocation(ip, username, password):
     """Function that retrieves AP location via show snmp location."""
@@ -118,8 +118,8 @@ def scoutGetLocation(ip, username, password):
     if channel.recv_ready():
         sshReturn = channel.recv(65535)
         location = sshReturn.decode('ascii').splitlines()
-        print(location[4])
     scoutSsh.close()
+    return location[4]
 
 def scoutGetUsers(ip, username, password):
     """Function that retrieves AP users via show users."""
@@ -134,10 +134,12 @@ def scoutGetUsers(ip, username, password):
         time.sleep(.10)
     if channel.recv_ready():
         sshReturn = channel.recv(65535)
-        users = sshReturn.splitlines()
-        for line in users[4:-1]:
-            print(line.decode('ascii').strip("\n"))
-    scoutSsh.close()
+        userLines = sshReturn.splitlines()
+        scoutSsh.close()
+        getUsers = []
+        for line in userLines[4:-1]:
+            getUsers.append(line.decode('ascii').strip("\n"))
+    return "\n".join(getUsers)
 
 def scoutGetSerial(ip, username, password):
     """Function that reports the serial number of AP."""
@@ -148,7 +150,7 @@ def scoutGetSerial(ip, username, password):
     apSerialRegex = re.compile(r'\w\w\w\w\w\w\w\w\w\w\w')
     getApSerial = apSerialRegex.search(getSerialString).group(0)
     scoutSsh.close()
-    print(getApSerial)
+    return getApSerial
 
 def scoutGetIosInfo(ip, username, password):
     """Function that retrieves AP IOS info via show version."""
@@ -157,7 +159,7 @@ def scoutGetIosInfo(ip, username, password):
     sshOut = stdout.read().splitlines()
     getIosInfo = sshOut[0].decode('ascii').strip("\n")
     scoutSsh.close()
-    print(getIosInfo)
+    return getIosInfo
 
 def scoutGetUptime(ip, username, password):
     """Function that retrieves AP uptime via show version."""
@@ -166,4 +168,4 @@ def scoutGetUptime(ip, username, password):
     sshOut = stdout.read().splitlines()
     getApUptime = sshOut[8].decode('ascii').strip("\n")
     scoutSsh.close()
-    print(getApUptime)
+    return getApUptime

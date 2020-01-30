@@ -27,6 +27,7 @@ SOFTWARE.
 '''
 
 from cardinal.system.cardinal_sys import cardinalSql
+from cardinal.system.cardinal_sys import MySQLdb
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -50,10 +51,14 @@ def doAddApGroup():
         apGroupName = request.form["ap_group_name"]
         status = "{} was successfully registered!".format(apGroupName)
         conn = cardinalSql()
-        addApGroupCursor = conn.cursor()
-        addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
-        addApGroupCursor.close()
-        conn.commit()
+        try:
+            addApGroupCursor = conn.cursor()
+            addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
+            addApGroupCursor.close()
+        except MySQLdb.Error as e:
+            return redirect(url_for('cardinal_ap_group_bp.addApGroup', status=e))
+        else:
+            conn.commit()
         conn.close()
         return render_template('add-ap-group.html', status=status)
 
