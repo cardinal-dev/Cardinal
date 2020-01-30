@@ -24,10 +24,10 @@ DROP TABLE IF EXISTS `access_point_groups`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `access_point_groups` (
   `ap_group_id` int(11) NOT NULL AUTO_INCREMENT,
-  `ap_group_name` text NOT NULL,
+  `ap_group_name` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`ap_group_id`),
   UNIQUE KEY `access_point_groups` (`ap_group_name`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,26 +39,25 @@ DROP TABLE IF EXISTS `access_points`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `access_points` (
   `ap_id` int(11) NOT NULL AUTO_INCREMENT,
-  `ap_group_id` varchar(11) DEFAULT NULL,
-  `ap_name` text NOT NULL,
-  `ap_ip` text NOT NULL,
-  `ap_ssh_username` text NOT NULL,
-  `ap_ssh_password` text NOT NULL,
-  `ap_snmp` text NOT NULL,
-  `ap_total_clients` varchar(255) DEFAULT '0',
-  `ap_bandwidth` varchar(255) DEFAULT NULL,
-  `ap_mac_addr` varchar(255) DEFAULT NULL,
-  `ap_model` varchar(255) DEFAULT NULL,
-  `ap_serial` varchar(255) DEFAULT NULL,
-  `ap_location` varchar(255) DEFAULT NULL,
-  `ap_ios_info` varchar(255) DEFAULT NULL,
-  `ap_ping_ms` varchar(255) DEFAULT NULL,
-  `ap_uptime` varchar(255) DEFAULT NULL,
+  `ap_group_id` varchar(11) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_name` text CHARACTER SET utf8,
+  `ap_ip` text CHARACTER SET utf8 NOT NULL,
+  `ap_ssh_username` text CHARACTER SET utf8 NOT NULL,
+  `ap_ssh_password` text CHARACTER SET utf8 NOT NULL,
+  `ap_snmp` text CHARACTER SET utf8 NOT NULL,
+  `ap_total_clients` varchar(255) CHARACTER SET utf8 DEFAULT '0',
+  `ap_bandwidth` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_mac_addr` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_model` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_serial` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_location` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_ios_info` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_uptime` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `ap_all_id` int(11) DEFAULT '2',
   PRIMARY KEY (`ap_id`),
-  UNIQUE KEY `ap_name` (`ap_name`(255)),
-  UNIQUE KEY `ap_ip` (`ap_ip`(15))
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
+  UNIQUE KEY `ap_ip` (`ap_ip`(15)),
+  UNIQUE KEY `ap_name` (`ap_name`(255))
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +77,7 @@ CREATE TABLE `ssids_24ghz` (
   `ap_ssid_ethernet_id` int(11) NOT NULL,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 2.4GHz radio';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COMMENT='For Cardinal SSIDs on 2.4GHz radio';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +96,7 @@ CREATE TABLE `ssids_24ghz_deployed` (
   KEY `ssid_id` (`ssid_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_24ghz` (`ap_ssid_id`),
   CONSTRAINT `ssids_24ghz_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,7 +141,7 @@ CREATE TABLE `ssids_24ghz_radius_deployed` (
   KEY `ssid_id` (`ssid_id`),
   CONSTRAINT `ssids_24ghz_radius_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_24ghz_radius` (`ap_ssid_id`),
   CONSTRAINT `ssids_24ghz_radius_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,7 +206,7 @@ CREATE TABLE `ssids_5ghz_radius` (
   `ap_ssid_radius_method_list` text,
   PRIMARY KEY (`ap_ssid_id`),
   UNIQUE KEY `ap_ssid_name` (`ap_ssid_name`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 5GHz SSIDs';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='For Cardinal RADIUS 5GHz SSIDs';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -226,7 +225,7 @@ CREATE TABLE `ssids_5ghz_radius_deployed` (
   KEY `ssid_id` (`ssid_id`),
   CONSTRAINT `ssids_5ghz_radius_deployed_ibfk_1` FOREIGN KEY (`ssid_id`) REFERENCES `ssids_5ghz_radius` (`ap_ssid_id`),
   CONSTRAINT `ssids_5ghz_radius_deployed_ibfk_2` FOREIGN KEY (`ap_id`) REFERENCES `access_points` (`ap_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -254,4 +253,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-26 19:29:01
+-- Dump completed on 2020-01-29 22:03:19

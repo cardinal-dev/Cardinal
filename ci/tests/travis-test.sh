@@ -31,7 +31,7 @@ pythonTests() {
     flake8 bin/setup.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 ci/tests/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 webapp/wsgi.py --count --select=E9,F63,F72,F82 --show-source --statistics
-    flake8 webapp/cardinal/system/cardinal_sys.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 webapp/cardinal/system/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 webapp/cardinal/views/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
 }
 

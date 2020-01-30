@@ -65,10 +65,14 @@ def doAddAp():
         encryptedSshPassword = cipherSuite.encrypt(apSshPassword).decode('utf-8')
         encryptedSnmpCommunity = cipherSuite.encrypt(apSnmp).decode('utf-8')
         conn = cardinalSql()
-        addApCursor = conn.cursor()
-        addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
-        addApCursor.close()
-        conn.commit()
+        try:
+            addApCursor = conn.cursor()
+            addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
+            addApCursor.close()
+        except MySQLdb.Error as e:
+            return redirect(url_for('cardinal_ap_bp.addAp', status=e))
+        else:
+            conn.commit()
         conn.close()
         return redirect(url_for('cardinal_ap_bp.addAp', status=status))
 
@@ -126,7 +130,7 @@ def manageApDashboard():
         apId = request.form["ap_id"]
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth,ap_model FROM access_points WHERE ap_id = '{}'".format(apId))
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         conn.close()
@@ -135,11 +139,13 @@ def manageApDashboard():
             apIp = info[1]
             apTotalClients = info[2]
             apBandwidth = info[3]
+            apModel = info[4]
         session['apId'] = apId
         session['apName'] = apName
         session['apIp'] = apIp
         session['apTotalClients'] = apTotalClients
         session['apBandwidth'] = apBandwidth
+        session['apModel'] = apModel
         return render_template("manage-ap-dashboard.html")
     else:
         return redirect(url_for('cardinal_auth_bp.index'))

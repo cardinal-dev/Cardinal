@@ -85,37 +85,47 @@ if len(sys.argv) > 1:
         scoutUsage()
     elif scoutCommand == "--get-arp":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetArp(ip=ip, username=username, password=password)
+        getArp = scout_info.scoutGetArp(ip=ip, username=username, password=password)
+        print(getArp)
     elif scoutCommand == "--get-speed":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetSpeed(ip=ip, username=username, password=password)
+        getSpeed = scout_info.scoutGetSpeed(ip=ip, username=username, password=password)
+        print(getSpeed + 'Mbps')
     elif scoutCommand == "--count-clients":
         ip, username, password = scoutArgs()
         scout_info.scoutCountClients(ip=ip, username=username, password=password)
     elif scoutCommand == "--get-mac":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetMac(ip=ip, username=username, password=password)
+        getMacAddr = scout_info.scoutGetMac(ip=ip, username=username, password=password)
+        print(getMacAddr)
     elif scoutCommand == "--get-model":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetModel(ip=ip, username=username, password=password)
+        getApModel = scout_info.scoutGetModel(ip=ip, username=username, password=password)
+        print(getApModel)
     elif scoutCommand == "--get-name":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetHostname(ip=ip, username=username, password=password)
+        getApName = scout_info.scoutGetHostname(ip=ip, username=username, password=password)
+        print(getApName)
     elif scoutCommand == "--get-serial":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetSerial(ip=ip, username=username, password=password)
+        getApSerial = scout_info.scoutGetSerial(ip=ip, username=username, password=password)
+        print(getApSerial)
     elif scoutCommand == "--get-ios-info":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetIosInfo(ip=ip, username=username, password=password)
+        getApIosInfo = scout_info.scoutGetIosInfo(ip=ip, username=username, password=password)
+        print(getApIosInfo)
     elif scoutCommand == "--get-location":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetLocation(ip=ip, username=username, password=password)
+        getApLocation = scout_info.scoutGetLocation(ip=ip, username=username, password=password)
+        print(getApLocation)
     elif scoutCommand == "--get-uptime":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetUptime(ip=ip, username=username, password=password)
+        getApUptime = scout_info.scoutGetUptime(ip=ip, username=username, password=password)
+        print(getApUptime)
     elif scoutCommand == "--get-users":
         ip, username, password = scoutArgs()
-        scout_info.scoutGetUsers(ip=ip, username=username, password=password)
+        getApUsers = scout_info.scoutGetUsers(ip=ip, username=username, password=password)
+        print(getApUsers)
 
     # SCOUT SYS COMMANDS
     if scoutCommand == "--led":

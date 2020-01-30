@@ -242,7 +242,7 @@ def doDeleteSsid5Ghz():
             deleteSsidCursor = conn.cursor()
             deleteSsidCursor.execute("DELETE FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
             deleteSsidCursor.close()
-        except cardinalSql.MySQLdb.Error as e:
+        except MySQLdb.Error as e:
             status = e
         finally:
             conn.commit()
@@ -277,7 +277,7 @@ def doDeleteSsid24GhzRadius():
             deleteSsidCursor = conn.cursor()
             deleteSsidCursor.execute("DELETE FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
             deleteSsidCursor.close()
-        except cardinalSql.MySQLdb.Error as e:
+        except MySQLdb.Error as e:
             status = e
         finally:
             conn.commit()
@@ -312,7 +312,7 @@ def doDeleteSsid5GhzRadius():
             deleteSsidCursor = conn.cursor()
             deleteSsidCursor.execute("DELETE FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
             deleteSsidCursor.close()
-        except cardinalSql.MySQLdb.Error as e:
+        except MySQLdb.Error as e:
             status = e
         finally:
             conn.commit()

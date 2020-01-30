@@ -6,3 +6,4 @@ webapp/cardinal/__pycache__
 webapp/cardinal/system/__pycache__
 webapp/cardinal/views/__pycache__
 ci/tests/scout-tests.sh
+lib/scout/__pycache__

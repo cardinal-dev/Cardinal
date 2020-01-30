@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# IMPORTANT: scout is required and must be packaged from bin/
+# IMPORTANT: scout is required and must be packaged from lib/
 
 pyinstaller
 flake8
@@ -33,3 +33,4 @@ werkzeug
 flask
 jinja2
 uwsgi
+schedule
