@@ -163,7 +163,7 @@ def enableApSnmp():
     apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -171,7 +171,9 @@ def enableApSnmp():
         apSshUsername = info[1]
         encryptedSshPassword = bytes(info[2], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutEnableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword)
+        encryptedSnmp = bytes(info[3], 'utf-8')
+        apSnmp = cipherSuite.decrypt(encryptedSnmp).decode('utf-8')
+        scout_sys.scoutEnableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword, snmp=apSnmp)
     status = "SNMP for AP Group {} Successfully Enabled!".format(apGroupName)
     conn.close()
     return redirect(url_for('cardinal_ap_group_ops_bp.configApSnmp', status=status))
