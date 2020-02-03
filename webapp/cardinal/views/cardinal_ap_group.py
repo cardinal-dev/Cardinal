@@ -85,9 +85,14 @@ def doDeleteApGroup():
         deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
         apGroupName = deleteApGroupNameCursor.fetchone()[0]
         status = "{} was successfully deleted!".format(apGroupName)
-        deleteApGroupCursor = conn.cursor()
-        deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
-        conn.commit()
+        try:
+            deleteApGroupCursor = conn.cursor()
+            deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+            deleteApGroupCursor.close()
+        except MySQLdb.Error as e:
+            return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=e))
+        else:
+            conn.commit()
         conn.close()
         return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
 
