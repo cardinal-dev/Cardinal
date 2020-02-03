@@ -27,7 +27,7 @@ CREATE TABLE `access_point_groups` (
   `ap_group_name` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`ap_group_id`),
   UNIQUE KEY `access_point_groups` (`ap_group_name`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Access Point Groups';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ DROP TABLE IF EXISTS `access_points`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `access_points` (
   `ap_id` int(11) NOT NULL AUTO_INCREMENT,
-  `ap_group_id` varchar(11) CHARACTER SET utf8 DEFAULT NULL,
+  `ap_group_id` int(11) DEFAULT NULL,
   `ap_name` text CHARACTER SET utf8,
   `ap_ip` text CHARACTER SET utf8 NOT NULL,
   `ap_ssh_username` text CHARACTER SET utf8 NOT NULL,
@@ -56,8 +56,10 @@ CREATE TABLE `access_points` (
   `ap_all_id` int(11) DEFAULT '2',
   PRIMARY KEY (`ap_id`),
   UNIQUE KEY `ap_ip` (`ap_ip`(15)),
-  UNIQUE KEY `ap_name` (`ap_name`(255))
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
+  UNIQUE KEY `ap_name` (`ap_name`(255)),
+  KEY `ap_group_id` (`ap_group_id`),
+  CONSTRAINT `access_point_group_relation` FOREIGN KEY (`ap_group_id`) REFERENCES `access_point_groups` (`ap_group_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -253,4 +255,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-29 22:03:19
+-- Dump completed on 2020-02-03 17:07:20

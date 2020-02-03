@@ -44,6 +44,7 @@ fetcherInterval = cardinalConfig.get('cardinal', 'fetchinterval')
 
 def fetcher():
     """Uses the scout_info library to fetch access point information and populate the DB."""
+    print("INFO: Running command calls via scout_info...")
     startTime = time.time()
     conn = cardinalSql()
     apIdCursor = conn.cursor()
