@@ -6,7 +6,7 @@ Choose SSID:
 <form id="delete_ssid" action="/do-delete-ssid-24ghz-radius" method="POST">
 <select name="ssid_id">
 
-<option value=" "></option>
+<option value=""></option>
 {% for item in ssids %}
 <option value="{{ item[0] }}">{{ item[1] }}</option>
 {% endfor %}

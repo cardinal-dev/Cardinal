@@ -80,6 +80,9 @@ def deleteApGroup():
 def doDeleteApGroup():
     if request.method == 'POST':
         apGroupId = request.form["ap_group_id"]
+        if len(apGroupId) <= 0:
+            status = "Please select a valid access point group."
+            return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
         conn = cardinalSql()
         deleteApGroupNameCursor = conn.cursor()
         deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
