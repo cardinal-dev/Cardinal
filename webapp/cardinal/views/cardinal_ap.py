@@ -60,15 +60,22 @@ def doAddAp():
         apSshUsername = request.form["ssh_username"]
         apSshPassword = bytes(request.form["ssh_password"], 'utf-8')
         apGroupId = request.form["group_id"]
+        if len(apGroupId) <= 0:
+            apGroupId = None
         apSnmp = bytes(request.form["ap_snmp"], 'utf-8')
         status = "{} was successfully registered!".format(apName)
         encryptedSshPassword = cipherSuite.encrypt(apSshPassword).decode('utf-8')
         encryptedSnmpCommunity = cipherSuite.encrypt(apSnmp).decode('utf-8')
         conn = cardinalSql()
         try:
-            addApCursor = conn.cursor()
-            addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
-            addApCursor.close()
+            if apGroupId is None:
+                addApCursor = conn.cursor()
+                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', NULL)".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity))
+                addApCursor.close()
+            else:
+                addApCursor = conn.cursor()
+                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
+                addApCursor.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ap_bp.addAp', status=e))
         else:
@@ -94,6 +101,9 @@ def deleteAp():
 def doDeleteAp():
     if request.method == 'POST':
         apId = request.form["ap_id"]
+        if len(apId) <= 0:
+            status = "Please select a valid access point."
+            return redirect(url_for('cardinal_ap_bp.deleteAp', status=status))
         conn = cardinalSql()
         deleteApNameCursor = conn.cursor()
         deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))

@@ -59,7 +59,7 @@ CREATE TABLE `access_points` (
   UNIQUE KEY `ap_name` (`ap_name`(255)),
   KEY `ap_group_id` (`ap_group_id`),
   CONSTRAINT `access_point_group_relation` FOREIGN KEY (`ap_group_id`) REFERENCES `access_point_groups` (`ap_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=latin1 COMMENT='For Cardinal Individual Access Points';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -255,4 +255,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-03 17:07:20
+-- Dump completed on 2020-02-06 16:48:39

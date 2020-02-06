@@ -6,7 +6,7 @@ Choose AP Group:
 <form id="delete_ap_group" action="/do-delete-ap-group" method="POST">
 <select name="ap_group_id">
 
-<option value=" "></option>
+<option value=""></option>
 {% for item in apGroups %}
 <option value="{{ item[0] }}">{{ item[1] }}</option>
 {% endfor %}

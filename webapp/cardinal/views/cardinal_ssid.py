@@ -198,6 +198,9 @@ def deleteSsid24Ghz():
 def doDeleteSsid24Ghz():
     if request.method == 'POST':
         ssidId = request.form["ssid_id"]
+        if len(ssidId) <= 0:
+            status = "Please select a valid 2.4GHz SSID."
+            return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
@@ -232,6 +235,9 @@ def deleteSsid5Ghz():
 def doDeleteSsid5Ghz():
     if request.method == 'POST':
         ssidId = request.form["ssid_id"]
+        if len(ssidId) <= 0:
+            status = "Please select a valid 5GHz SSID."
+            return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
@@ -267,6 +273,9 @@ def deleteSsid24GhzRadius():
 def doDeleteSsid24GhzRadius():
     if request.method == 'POST':
         ssidId = request.form["ssid_id"]
+        if len(ssidId) <= 0:
+            status = "Please select a valid 2.4GHz RADIUS SSID."
+            return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
@@ -302,6 +311,9 @@ def deleteSsid5GhzRadius():
 def doDeleteSsid5GhzRadius():
     if request.method == 'POST':
         ssidId = request.form["ssid_id"]
+        if len(ssidId) <= 0:
+            status = "Please select a valid 5GHz RADIUS SSID."
+            return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
         deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
