@@ -26,29 +26,20 @@ SOFTWARE.
 
 '''
 
-import os
-import schedule
 import scout_info
 import time
 from configparser import ConfigParser
-from cardinal_sys import cardinalSql
-from cardinal_sys import cipherSuite
-from cardinal_sys import MySQLdb
+from cardinal.system.cardinal_sys import cardinalSql
+from cardinal.system.cardinal_sys import cipherSuite
+from cardinal.system.cardinal_sys import MySQLdb
 
-# FETCHER CONFIG
-
-cardinalConfigFile = os.environ['CARDINALCONFIG']
-cardinalConfig = ConfigParser()
-cardinalConfig.read("{}".format(cardinalConfigFile))
-fetcherInterval = cardinalConfig.get('cardinal', 'fetchinterval')
-
-def fetcher():
+def fetcher(apId):
     """Uses the scout_info library to fetch access point information and populate the DB."""
     print("INFO: Running command calls via scout_info...")
     startTime = time.time()
     conn = cardinalSql()
     apIdCursor = conn.cursor()
-    apIdCursor.execute("SELECT ap_id FROM access_points WHERE ap_all_id = '2'")
+    apIdCursor.execute("SELECT ap_id FROM access_points WHERE ap_id = '{}'".format(apId))
     apIdsSql = apIdCursor.fetchall()
     apIdCursor.close()
     apIds = []
@@ -85,13 +76,8 @@ def fetcher():
             conn.commit()
         except MySQLdb.Error as e:
             print("ERROR: {}".format(e))
-    completionTime = "INFO: cardinal_fetch completed in:", time.time() - startTime
-    conn.close()
-    return completionTime
-
-# RUN fetch() ON INTERVAL
-
-schedule.every(int('{}'.format(fetcherInterval))).minutes.do(fetcher)
-
-while True:
-    schedule.run_pending()
+        endTime = time.time()
+        completionTime = endTime - startTime
+        status = "INFO: cardinal_fetch completed in: {}".format(completionTime)
+        conn.close()
+        return status

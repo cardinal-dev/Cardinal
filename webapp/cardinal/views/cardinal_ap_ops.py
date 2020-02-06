@@ -28,6 +28,7 @@ SOFTWARE.
 
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
+from cardinal.system.cardinal_fetch import fetcher
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -61,12 +62,15 @@ def configApIp():
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         scout_sys.scoutChangeIp(ip=apIp, username=apSshUsername, password=apSshPassword, newIp=apNewIp, subnetMask=apSubnetMask)
         status = "{}'s IP was successfully updated!".format(apName)
-        changeApIpCursor = conn.cursor()
-        changeApIpCursor.execute("UPDATE access_points SET ap_ip = '{0}' WHERE ap_id = '{1}'".format(apNewIp,apId))
-        changeApIpCursor.close()
-        conn.commit()
+        try:
+            changeApIpCursor = conn.cursor()
+            changeApIpCursor.execute("UPDATE access_points SET ap_ip = '{0}' WHERE ap_id = '{1}'".format(apNewIp,apId))
+            changeApIpCursor.close()
+        except MySQLdb.Error as e:
+            return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=e))
+        else:
+            conn.commit()
         conn.close()
-        session.pop("apId")
         return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=status))
 
 @cardinal_ap_ops.route("/config-ap-name", methods=["GET", "POST"])
@@ -91,12 +95,15 @@ def configApName():
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         scout_sys.scoutChangeName(ip=apIp, username=apSshUsername, password=apSshPassword, apName=apNewName)
         status = "AP Name Changed from {0} to {1}".format(apName,apNewName)
-        changeApNameCursor = conn.cursor()
-        changeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apNewName,apId))
-        conn.commit()
-        changeApNameCursor.close()
+        try:
+            changeApNameCursor = conn.cursor()
+            changeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apNewName,apId))
+            changeApNameCursor.close()
+        except MySQLdb.Error as e:
+            return redirect(url_for('cardinal_ap_ops_bp.configApName', status=e))
+        else:
+            conn.commit()
         conn.close()
-        session.pop("apId")
         return redirect(url_for('cardinal_ap_ops_bp.configApName', status=status))
 
 @cardinal_ap_ops.route("/config-ap-tftp-backup", methods=["GET", "POST"])
@@ -124,6 +131,17 @@ def configApTftpBackup():
         conn.close()
         return redirect(url_for('cardinal_ap_ops_bp.configApTftpBackup', status=status))
 
+@cardinal_ap_ops.route("/fetch-ap-info", methods=["GET", "POST"])
+def fetchApInfo():
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            status = request.args.get('status')
+            return render_template("fetch-ap-info.html", status=status)
+    elif request.method == 'POST':
+        apId = session.get('apId')
+        status = fetcher(apId)
+        return redirect(url_for('cardinal_ap_ops_bp.fetchApInfo', status=status))
+
 @cardinal_ap_ops.route("/config-ap-http", methods=["GET"])
 def configApHttp():
     if session.get("username") is not None:
@@ -132,22 +150,22 @@ def configApHttp():
 
 @cardinal_ap_ops.route("/enable-ap-http", methods=["POST"])
 def enableApHttp():
-        apId = session.get('apId')
-        conn = cardinalSql()
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            encryptedSshPassword = bytes(info[3], 'utf-8')
-        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutEnableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
-        status = "HTTP Server for {} Successfully Enabled!".format(apName)
-        conn.close()
-        return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
+    apId = session.get('apId')
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    for info in apInfo:
+        apName = info[0]
+        apIp = info[1]
+        apSshUsername = info[2]
+        encryptedSshPassword = bytes(info[3], 'utf-8')
+    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+    scout_sys.scoutEnableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
+    status = "HTTP Server for {} Successfully Enabled!".format(apName)
+    conn.close()
+    return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
 
 @cardinal_ap_ops.route("/disable-ap-http", methods=["POST"])
 def disableApHttp():
