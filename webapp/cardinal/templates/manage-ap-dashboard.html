@@ -131,6 +131,47 @@
                         <div class="col-sm-6 col-md-4">
                                 <div class="chart-wrapper">
                                         <div class="chart-title">
+                                                Fetch AP Information
+                                        </div>
+
+
+                                        <div class="chart-stage">
+                                                <center>
+                                                        <a class="fetch_ap_info" href="/fetch-ap-info"><img src="{{ url_for('static', filename='img/cardinal12.png') }}"></a>
+                                                </center>
+                                        </div>
+
+
+                                        <div id="fetchapinfo" style="display:none;" title="Fetch AP Info">
+                                                <iframe height="350" id="fetch_ap_info_frame" name="fetch_ap_info_frame" width="350"></iframe>
+                                        </div>
+                                        <script>
+                                                $(document).ready(function () {
+                                                $(".fetch_ap_info").click(function () {
+                                                $("#fetch_ap_info_frame").attr('src', $(this).attr("href"));
+                                                $("#fetchapinfo").dialog({
+                                               width: 400,
+                                               height: 450,
+                                               modal: true,
+                                               close: function () {
+                                                   $("#fetch_ap_info_frame").attr('src', "about:blank");
+                                               }
+                                           });
+                                           return false;
+                                        });
+                                        });
+
+                                        </script>
+
+                                        <div class="chart-notes">
+                                                Fetch System Information from Access Point
+                                        </div>
+                                </div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-4">
+                                <div class="chart-wrapper">
+                                        <div class="chart-title">
                                                 TFTP Backup
                                         </div>
 
