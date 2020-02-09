@@ -28,6 +28,7 @@ SOFTWARE.
 
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
+from cardinal.system.cardinal_sys import MySQLdb
 from cardinal.system.cardinal_fetch import fetcher
 from flask import Blueprint
 from flask import render_template
