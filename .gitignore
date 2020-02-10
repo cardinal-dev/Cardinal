@@ -8,3 +8,4 @@ webapp/cardinal/views/__pycache__
 ci/tests/scout-tests.sh
 lib/scout/__pycache__
 docs/_site
+docs/pages/_site
