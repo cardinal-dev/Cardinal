@@ -16,7 +16,6 @@
 title: Cardinal
 description: Open Source Cisco Access Point Controller
 baseurl: "/" # the subpath of your site, e.g. /blog
-url: "http://192.168.2.3:4000" # the base hostname & protocol for your site, e.g. http://example.com
 permalink: "/pages/"
 
 # Build settings
