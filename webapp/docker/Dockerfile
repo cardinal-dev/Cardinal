@@ -23,7 +23,6 @@ COPY wsgi.ini /opt/Cardinal/webapp
 ENV LANG en_US.UTF-8  
 ENV LANGUAGE en_US:en  
 ENV LC_ALL en_US.UTF-8
-ENV PYTHONPATH=/opt/Cardinal/bin/cardinal/lib/python3.6/site-packages/scout
 ENV CARDINALCONFIG=/home/cardinal.ini
 
 # Finish it!

@@ -204,12 +204,12 @@ systemctl start cardinal
 
 You should be able to navigate to the Cardinal UI at `http://<CARDINAL_SERVER>`. The login screen should look like this:
 
-![cardinalui](http://192.168.2.3:4000/assets/cardinalui.png)
+![cardinalui](assets/cardinalui.png)
 
 Please try logging in with the username/password specified when running `install.sh` or whatever entries you manually provided to MySQL.
  
 You should see the following screen if you're logged in:
 
-![cardinalui2](http://192.168.2.3:4000/assets/cardinalui2.png)
+![cardinalui2](assets/cardinalui2.png)
 
 Now you can start using Cardinal to manage your Cisco APs!
