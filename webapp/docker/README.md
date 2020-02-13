@@ -38,32 +38,29 @@ docker run -d -p 1000:80 --privileged --name cardinal -v /sys/fs/cgroup:/sys/fs/
 ~~~
 
 The preceding command will create a Docker container named `cardinal` and will map an outside host port to the 
-container's inside port. For example, the Cardinal UI is served on HTTP (i.e. 80/tcp) by default. You can specify a port that the host has available 
+container's inside port. For example, the Cardinal UI is served on HTTP (i.e. `80/tcp`) by default. You can specify a port that the host has available 
 to allow external access to Cardinal.
 
 6.) Once you have the container running, please run `install.sh` in order to finalize the Cardinal environment. You can do this by executing
-the following commands from either outside or inside the container.
-
-From the inside:
+the following commands from inside the container.
 
 ~~~
 docker exec -it cardinal /bin/bash
-cd bin
+cd Cardinal/bin
 chmod +x install.sh
 ./install.sh
 ~~~
 
-From the outside:
-
-~~~
-docker exec -it cardinal chmod +x /opt/Cardinal/bin/install.sh
-docker exec -w /opt/Cardinal/bin cardinal /bin/bash install.sh
-~~~
-
 7.) Running `install.sh` should trigger the install process. Please answer the prompts accordingly.
 
-8.) If `install.sh` finishes successfully with no errors (other than MySQL warnings about insecure password on CLI), your
-Cardinal instance should be available at `http://<DOCKER_HOST>:<OUTSIDE_PORT>`.
+8.) If `install.sh` finishes successfully with no errors (other than MySQL warnings about insecure password on CLI), please make sure
+you restart the Cardinal service:
+
+~~~
+docker exec -it cardinal systemctl restart cardinal
+~~~
+
+9.) After restarting the Cardinal service, the UI should now be available at `http://<DOCKER_HOST>:<OUTSIDE_PORT>`.
 
 If you have any difficulties during this process or need further clarification, please open an issue report on Cardinal's GitHub
 repository.
