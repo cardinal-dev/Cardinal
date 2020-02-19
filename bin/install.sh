@@ -25,81 +25,109 @@
 # SOFTWARE.
 
 
-# This script is designed to configure Cardinal information, such as system variables, system dependencies, etc. 
-# If anything needs improvement, please open a pull request on my GitHub! Thanks!
-
-######################################################################
-# IMPORTANT: Wipe out the OLD configuration before using this script!#
-######################################################################
+# This script is designed to configure Cardinal information, such as system variables, system dependencies, etc.
+# If anything needs improvement, please open a pull request on the cardinal-dev/Cardinal GitHub repo!
 
 # Gather information
-echo "Welcome to the Cardinal Initial Configuration Guide!"
-echo "MySQL Information"
-echo -e ""
-read -p "Hello, welcome to Cardinal! What is the hostname/IP address of the database for Cardinal? " dbIP
-echo -e ""
-read -p "Ok, I got it. How about an username for the database? " dbUsername
-echo -e ""
-read -p "Great! How about a password for the database? " dbPassword
-echo -e ""
-read -p "Okay, now we need a name for the database. What is the database name? " dbName
-echo -e ""
-read -p "Okay, now we need to add a Cardinal Admin. What is the desired username for Cardinal? " cardinalUser
-echo -e ""
-read -p "Okay, now what is the Cardinal Admin's password? " cardinalPass
-echo -e ""
-read -p "Where do you want to store your MySQL database information? " dbCredDir
-echo -e ""
-read -p "Where is the location of the scout command directory? " commandDir
-echo -e ""
-read -p "What is the desired Flask key? (i.e. Securing session data) " flaskKey
 
-# Create a system user called cardinal. The cardinal user is the user which will run our processes
-sudo useradd cardinal
+configOption="$1"
 
-# Create a log file for Cardinal UI
-rm -rf /var/log/cardinal
-mkdir -p /var/log/cardinal
-touch /var/log/cardinal/cardinal.log
-chown -R cardinal:cardinal /var/log/cardinal
+installUsage() {
+    echo "install.sh - Install Cardinal Environment"
+    echo "Usage:"
+    echo "    --guided: Setup Cardinal using the guided method."
+    echo "    --run: Setup Cardinal using predefined values on CLI."
+}
 
-# Generate Cardinal venv
-sudo python3 -m venv cardinal
-sudo cardinal/bin/pip install -U pip
-sudo cardinal/bin/pip install -r ../requirements.txt
-sudo cardinal/bin/pip install ../lib/.
+setupCardinal() {
 
-# Create a socket directory for uWSGI
-rm -rf /var/lib/cardinal
-mkdir -p /var/lib/cardinal
-chown -R cardinal:cardinal /var/lib/cardinal
+    # Find where the Cardinal base is
+    cardinalBase=$(dirname "$0")
 
-# Set permissions on the cardinal.ini file
-chown -R cardinal:cardinal $dbCredDir/cardinal.ini
+    # Create a system user called cardinal. The cardinal user is the user which will run our processes
+    sudo useradd cardinal
 
-# Create the MySQL database for Cardinal. We also want to import the SQL structure too!
-mysql -u$dbUsername -p$dbPassword -e "CREATE DATABASE "$dbName""
-mysql -u$dbUsername --password=$dbPassword $dbName < ../sql/cardinal.sql
-mysql -u$dbUsername --password=$dbPassword mysql -e "update user set plugin='mysql_native_password' where User='root'"
-mysql -u$dbUsername --password=$dbPassword mysql -e "update user set authentication_string=password('$dbPassword') where user='root'"
-systemctl restart mysql
+    # Create a log file for Cardinal UI
+    rm -rf /var/log/cardinal
+    mkdir -p /var/log/cardinal
+    touch /var/log/cardinal/cardinal.log
+    chown -R cardinal:cardinal /var/log/cardinal
 
-# Create a Cardinal admin
-hashedPass=$(/opt/Cardinal/bin/cardinal/bin/python -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("'$cardinalPass'", "sha256"))')
-mysql -u$dbUsername -p$dbPassword $dbName -e "INSERT INTO users (username,password) VALUES ('$cardinalUser','$hashedPass')"
+    # Generate Cardinal venv
+    sudo python3 -m venv $cardinalBase/cardinal
+    sudo $cardinalBase/cardinal/bin/pip install -U pip
+    sudo $cardinalBase/cardinal/bin/pip install -r $cardinalBase/../requirements.txt
+    sudo $cardinalBase/cardinal/bin/pip install $cardinalBase/../lib/.
 
-# Generate encryption key
-encryptKey=$(/opt/Cardinal/bin/cardinal/bin/python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+    # Create a socket directory for uWSGI
+    rm -rf /var/lib/cardinal
+    mkdir -p /var/lib/cardinal
+    chown -R cardinal:cardinal /var/lib/cardinal
 
-# Create a configuration file based on user input
-rm $dbCredDir/cardinal.ini
-touch $dbCredDir/cardinal.ini
-echo "[cardinal]" >> $dbCredDir/cardinal.ini
-echo 'dbserver'=""$dbIP"" >> $dbCredDir/cardinal.ini
-echo 'dbuser'=""$dbUsername"" >> $dbCredDir/cardinal.ini
-echo 'dbpassword'=""$dbPassword"" >> $dbCredDir/cardinal.ini
-echo 'dbname'=""$dbName"" >> $dbCredDir/cardinal.ini
-echo 'commanddir'=""$commandDir"" >> $dbCredDir/cardinal.ini
-echo 'flaskkey'=""$flaskKey"" >> $dbCredDir/cardinal.ini
-echo 'encryptkey'=""$encryptKey"" >> $dbCredDir/cardinal.ini
-echo 'commanddebug=off' >> $dbCredDir/cardinal.ini
+    # Set permissions on the cardinal.ini file
+    chown -R cardinal:cardinal $dbCredDir/cardinal.ini
+
+    # Create the MySQL database for Cardinal. We also want to import the SQL structure too!
+    mysql -u$dbUsername -p$dbPassword -e "CREATE DATABASE "$dbName""
+    mysql -u$dbUsername --password=$dbPassword $dbName < $cardinalBase/../sql/cardinal.sql
+    mysql -u$dbUsername --password=$dbPassword mysql -e "update user set plugin='mysql_native_password' where User='root'"
+    mysql -u$dbUsername --password=$dbPassword mysql -e "update user set authentication_string=password('$dbPassword') where user='root'"
+    systemctl restart mysql
+
+    # Create a Cardinal admin
+    hashedPass=$($cardinalBase/cardinal/bin/python -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("'$cardinalPass'", "sha256"))')
+    mysql -u$dbUsername -p$dbPassword $dbName -e "INSERT INTO users (username,password) VALUES ('$cardinalUser','$hashedPass')"
+
+    # Generate encryption key
+    encryptKey=$($cardinalBase/cardinal/bin/python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
+
+    # Create a configuration file based on user input
+    rm $dbCredDir/cardinal.ini
+    touch $dbCredDir/cardinal.ini
+    echo "[cardinal]" >> $dbCredDir/cardinal.ini
+    echo 'dbserver'=""$dbIP"" >> $dbCredDir/cardinal.ini
+    echo 'dbuser'=""$dbUsername"" >> $dbCredDir/cardinal.ini
+    echo 'dbpassword'=""$dbPassword"" >> $dbCredDir/cardinal.ini
+    echo 'dbname'=""$dbName"" >> $dbCredDir/cardinal.ini
+    echo 'commanddir'=""$commandDir"" >> $dbCredDir/cardinal.ini
+    echo 'flaskkey'=""$flaskKey"" >> $dbCredDir/cardinal.ini
+    echo 'encryptkey'=""$encryptKey"" >> $dbCredDir/cardinal.ini
+    echo 'commanddebug=off' >> $dbCredDir/cardinal.ini
+}
+
+if [ "$configOption" = "--guided" ]; then
+    echo "Welcome to the Cardinal Initial Configuration Guide!"
+    echo -e ""
+    read -p "Hello, welcome to Cardinal! What is the hostname/IP address of the database for Cardinal? " dbIP
+    echo -e ""
+    read -p "Ok, I got it. How about an username for the database? " dbUsername
+    echo -e ""
+    read -p "Great! How about a password for the database? " dbPassword
+    echo -e ""
+    read -p "Okay, now we need a name for the database. What is the database name? " dbName
+    echo -e ""
+    read -p "Okay, now we need to add a Cardinal Admin. What is the desired username for Cardinal? " cardinalUser
+    echo -e ""
+    read -p "Okay, now what is the Cardinal Admin's password? " cardinalPass
+    echo -e ""
+    read -p "Where do you want to store your MySQL database information? " dbCredDir
+    echo -e ""
+    read -p "Where is the location of the scout command directory? " commandDir
+    echo -e ""
+    read -p "What is the desired Flask key? (i.e. Securing session data) " flaskKey
+    setupCardinal
+elif [ "$configOption" = "--run" ]; then
+    dbIP="$2"
+    dbUsername="$3"
+    dbPassword="$4"
+    dbName="$5"
+    cardinalUser="$6"
+    cardinalPass="$7"
+    dbCredDir="$8"
+    commandDir="$9"
+    flaskKey="${10}"
+    setupCardinal
+else
+    installUsage
+    echo "ERROR: Please specify a valid option for install.sh"
+fi
