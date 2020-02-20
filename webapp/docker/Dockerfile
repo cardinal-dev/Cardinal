@@ -25,5 +25,8 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 ENV CARDINALCONFIG=/home/cardinal.ini
 
+# Run install.sh
+RUN chmod +x /opt/Cardinal/bin/install.sh
+
 # Finish it!
 CMD ["/lib/systemd/systemd"]
