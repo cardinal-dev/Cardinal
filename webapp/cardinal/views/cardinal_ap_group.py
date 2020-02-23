@@ -26,8 +26,8 @@ SOFTWARE.
 
 '''
 
+import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
-from cardinal.system.cardinal_sys import MySQLdb
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -83,49 +83,51 @@ def doDeleteApGroup():
         if len(apGroupId) <= 0:
             status = "Please select a valid access point group."
             return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
-        conn = cardinalSql()
-        deleteApGroupNameCursor = conn.cursor()
-        deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
-        apGroupName = deleteApGroupNameCursor.fetchone()[0]
-        status = "{} was successfully deleted!".format(apGroupName)
-        try:
-            deleteApGroupCursor = conn.cursor()
-            deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
-            deleteApGroupCursor.close()
-        except MySQLdb.Error as e:
-            return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=e))
         else:
-            conn.commit()
-        conn.close()
-        return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
+            conn = cardinalSql()
+            deleteApGroupNameCursor = conn.cursor()
+            deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+            apGroupName = deleteApGroupNameCursor.fetchone()[0]
+            status = "{} was successfully deleted!".format(apGroupName)
+            try:
+                deleteApGroupCursor = conn.cursor()
+                deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+                deleteApGroupCursor.close()
+            except MySQLdb.Error as e:
+                return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=e))
+            else:
+                conn.commit()
+                conn.close()
+            return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
 
 @cardinal_ap_group.route("/choose-ap-group-dashboard", methods=["GET"])
 def chooseApGroupDashboard():
     if session.get("username") is not None:
         conn = cardinalSql()
+        status = request.args.get('status')
         apGroupCursor = conn.cursor()
         apGroupCursor.execute("SELECT ap_group_id,ap_group_name FROM access_point_groups")
         apGroups = apGroupCursor.fetchall()
         apGroupCursor.close()
         conn.close()
-        return render_template("choose-ap-group-dashboard.html", apGroups=apGroups)
+        return render_template("choose-ap-group-dashboard.html", apGroups=apGroups, status=status)
     else:
         return redirect(url_for('cardinal_auth_bp.index'))
 
 @cardinal_ap_group.route("/manage-ap-group-dashboard", methods=["POST"])
 def manageApGroupDashboard():
     if request.method == 'POST':
-        apId = session.get("apId", None)
         apGroupId = request.form["ap_group_id"]
-        conn = cardinalSql()
-        apGroupInfoCursor = conn.cursor()
-        apGroupInfoCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
-        apGroupInfo = apGroupInfoCursor.fetchall()
-        apGroupInfoCursor.close()
-        for info in apGroupInfo:
-            apGroupName = info[0]
-        session['apGroupId'] = apGroupId
-        session['apGroupName'] = apGroupName
-        return render_template("manage-ap-group-dashboard.html")
-    else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        if len(apGroupId) <= 0:
+            status = "Please select a valid access point group."
+            return redirect(url_for('cardinal_ap_group_bp.chooseApGroupDashboard', status=status))
+        else:
+            conn = cardinalSql()
+            apGroupNameCursor = conn.cursor()
+            apGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+            apGroupName = apGroupNameCursor.fetchone()[0]
+            apGroupNameCursor.close()
+            session['apGroupId'] = apGroupId
+            session['apGroupName'] = apGroupName
+            conn.close()
+            return render_template("manage-ap-group-dashboard.html")

@@ -33,4 +33,3 @@ werkzeug
 flask
 jinja2
 uwsgi
-schedule

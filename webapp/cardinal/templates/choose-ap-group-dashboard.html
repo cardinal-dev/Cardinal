@@ -4,10 +4,10 @@
 <body>
 <font face="Verdana">
 Choose AP Group:
-</font>
 <form id="manage_ap_group" action="/manage-ap-group-dashboard" method="POST">
 <select name="ap_group_id">
 
+<option value=""></option>
 {% for item in apGroups %}
 <option value="{{ item[0] }}">{{ item[1] }}</option>
 {% endfor %}
@@ -18,5 +18,8 @@ Choose AP Group:
 <input type="Submit" label="Submit">
 </body>
 </form>
+<br>
+{{ status if status }}
+</font>
 </html>
 
