@@ -26,9 +26,9 @@ SOFTWARE.
 
 '''
 
+import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
-from cardinal.system.cardinal_sys import MySQLdb
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -125,37 +125,40 @@ def doDeleteAp():
 def chooseApDashboard():
     if session.get("username") is not None:
         conn = cardinalSql()
+        status = request.args.get('status')
         apCursor = conn.cursor()
         apCursor.execute("SELECT ap_id,ap_name FROM access_points")
         aps = apCursor.fetchall()
         apCursor.close()
         conn.close()
-        return render_template("choose-ap-dashboard.html", aps=aps)
+        return render_template("choose-ap-dashboard.html", aps=aps, status=status)
     else:
         return redirect(url_for('cardinal_auth_bp.index'))
 
 @cardinal_ap.route("/manage-ap-dashboard", methods=["POST"])
 def manageApDashboard():
     if request.method == 'POST':
-        apId = request.form["ap_id"]
-        conn = cardinalSql()
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth,ap_model FROM access_points WHERE ap_id = '{}'".format(apId))
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        conn.close()
-        for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apTotalClients = info[2]
-            apBandwidth = info[3]
-            apModel = info[4]
-        session['apId'] = apId
-        session['apName'] = apName
-        session['apIp'] = apIp
-        session['apTotalClients'] = apTotalClients
-        session['apBandwidth'] = apBandwidth
-        session['apModel'] = apModel
+        apId = request.form['ap_id']
+        if len(apId) <= 0:
+            status = "Please select a valid access point."
+            return redirect(url_for('cardinal_ap_bp.chooseApDashboard', status=status))
+        else:
+            conn = cardinalSql()
+            apInfoCursor = conn.cursor()
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth,ap_model FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfo = apInfoCursor.fetchall()
+            apInfoCursor.close()
+            conn.close()
+            for info in apInfo:
+                apName = info[0]
+                apIp = info[1]
+                apTotalClients = info[2]
+                apBandwidth = info[3]
+                apModel = info[4]
+            session['apId'] = apId
+            session['apName'] = apName
+            session['apIp'] = apIp
+            session['apTotalClients'] = apTotalClients
+            session['apBandwidth'] = apBandwidth
+            session['apModel'] = apModel
         return render_template("manage-ap-dashboard.html")
-    else:
-        return redirect(url_for('cardinal_auth_bp.index'))

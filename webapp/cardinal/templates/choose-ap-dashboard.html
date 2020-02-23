@@ -4,10 +4,10 @@
 <body>
 <font face="Verdana">
 Choose AP:
-</font>
 <form id="manage_aps" action="/manage-ap-dashboard" method="POST">
 <select name="ap_id">
 
+<option value=""></option>
 {% for item in aps %}
 <option value="{{ item[0] }}">{{ item[1] }}</option>
 {% endfor %}
@@ -17,6 +17,10 @@ Choose AP:
 <br>
 <input type="Submit" label="Submit">
 </body>
+<br>
+<br>
+{{ status if status }}
 </form>
+</font>
 </html>
 
