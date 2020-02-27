@@ -93,7 +93,8 @@ if len(sys.argv) > 1:
         print(getSpeed + 'Mbps')
     elif scoutCommand == "--count-clients":
         ip, username, password = scoutArgs()
-        scout_info.scoutCountClients(ip=ip, username=username, password=password)
+        countClients = scout_info.scoutCountClients(ip=ip, username=username, password=password)
+        print(countClients)
     elif scoutCommand == "--get-mac":
         ip, username, password = scoutArgs()
         getMacAddr = scout_info.scoutGetMac(ip=ip, username=username, password=password)

@@ -45,5 +45,5 @@ def scoutJinjaEnv():
     cardinalConfig.read("{}".format(cardinalConfigFile))
     commandDir = cardinalConfig.get('cardinal', 'commanddir')
     fileLoader = jinja2.FileSystemLoader('{}'.format(commandDir))
-    env = jinja2.Environment(loader=fileLoader)
+    env = jinja2.Environment(loader=fileLoader, autoescape=True)
     return env
