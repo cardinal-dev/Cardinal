@@ -29,7 +29,6 @@ SOFTWARE.
 import re
 import scout_auth
 import scout_env
-import subprocess
 import time
 
 # SCOUT INFO COMMAND FUNCTIONS
@@ -73,10 +72,12 @@ def scoutCountClients(ip, username, password):
     scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
     stdin, stdout, stderr = scoutSsh.exec_command("show dot11 associations\n")
     sshOut = stdout.read()
-    countClient = sshOut.decode('ascii').strip("\n")
-    getClient = subprocess.check_output("echo {} | grep -o [0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f].[0-9,a-f][0-9,a-f][0-9,a-f][0-9,a-f] | wc -l".format(countClient), shell=True)
     scoutSsh.close()
-    return getClient.decode('ascii').strip("\n").lstrip()
+    countClient = sshOut.decode('ascii').strip("\n")
+    macAddrRegex = re.compile(r'\w\w\w\w\.\w\w\w\w\.\w\w\w\w')
+    searchMacAddr = macAddrRegex.findall(countClient)
+    totalClients = len(searchMacAddr)
+    return totalClients
 
 def scoutGetModel(ip, username, password):
     """Function that reports the model ID of AP."""

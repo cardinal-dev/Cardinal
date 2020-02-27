@@ -26,12 +26,12 @@ SOFTWARE.
 
 '''
 
+import MySQLdb
 import scout_info
 import time
 from configparser import ConfigParser
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
-from cardinal.system.cardinal_sys import MySQLdb
 
 def fetcher(apId):
     """Uses the scout_info library to fetch access point information and populate the DB."""
@@ -64,6 +64,7 @@ def fetcher(apId):
             apLocation = scout_info.scoutGetLocation(ip=apIp, username=apSshUsername, password=apSshPassword)
             apIosInfo = scout_info.scoutGetIosInfo(ip=apIp, username=apSshUsername, password=apSshPassword)
             apUptime = scout_info.scoutGetUptime(ip=apIp, username=apSshUsername, password=apSshPassword)
+            apClientCount = scout_info.scoutCountClients(ip=apIp, username=apSshUsername, password=apSshPassword)
             inputSqlCursor = conn.cursor()
             inputSqlCursor.execute("UPDATE access_points SET ap_bandwidth = '{0}' WHERE ap_id = '{1}'".format(apBandwidth,apId))
             inputSqlCursor.execute("UPDATE access_points SET ap_mac_addr = '{0}' WHERE ap_id = '{1}'".format(apMacAddr,apId))
@@ -72,6 +73,7 @@ def fetcher(apId):
             inputSqlCursor.execute("UPDATE access_points SET ap_location = '{0}' WHERE ap_id = '{1}'".format(apLocation,apId))
             inputSqlCursor.execute("UPDATE access_points SET ap_ios_info = '{0}' WHERE ap_id = '{1}'".format(apIosInfo,apId))
             inputSqlCursor.execute("UPDATE access_points SET ap_uptime = '{0}' WHERE ap_id = '{1}'".format(apUptime,apId))
+            inputSqlCursor.execute("UPDATE access_points SET ap_total_clients = '{0}' WHERE ap_id = '{1}'".format(apClientCount,apId))
             inputSqlCursor.close()
             conn.commit()
         except MySQLdb.Error as e:

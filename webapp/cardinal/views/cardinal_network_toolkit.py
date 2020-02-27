@@ -55,26 +55,34 @@ def networkToolsOutput():
 def doPing():
     if request.method == 'POST':
         ip = request.form["network_ip"]
-        commandOutput = subprocess.check_output("ping -c 4 {}".format(ip), shell=True)
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput))
+        pingArgs = ["ping", "-c", "4", "{}".format(ip)]
+        pingCmd = subprocess.Popen(pingArgs, stdout=subprocess.PIPE)
+        commandOutput = pingCmd.stdout.read()
+        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
 
 @cardinal_network_toolkit.route("/do-tracert", methods=["POST"])
 def doTracert():
     if request.method == 'POST':
         ip = request.form["network_ip"]
-        commandOutput = subprocess.check_output("traceroute {}".format(ip), shell=True)
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput))
+        tracertArgs = ["traceroute", "{}".format(ip)]
+        tracertCmd = subprocess.Popen(tracertArgs, stdout=subprocess.PIPE)
+        commandOutput = tracertCmd.stdout.read()
+        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
 
 @cardinal_network_toolkit.route("/do-dig", methods=["POST"])
 def doDig():
     if request.method == 'POST':
         ip = request.form["network_ip"]
-        commandOutput = subprocess.check_output("dig {}".format(ip), shell=True)
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput))
+        digArgs = ["dig", "{}".format(ip)]
+        digCmd = subprocess.Popen(digArgs, stdout=subprocess.PIPE)
+        commandOutput = digCmd.stdout.read()
+        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
 
 @cardinal_network_toolkit.route("/do-curl", methods=["POST"])
 def doCurl():
     if request.method == 'POST':
         ip = request.form["network_ip"]
-        commandOutput = subprocess.check_output("curl -I {}".format(ip), shell=True)
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput))
+        curlArgs = ["curl", "-I", "{}".format(ip)]
+        curlCmd = subprocess.Popen(curlArgs, stdout=subprocess.PIPE)
+        commandOutput = curlCmd.stdout.read()
+        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
