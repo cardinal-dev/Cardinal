@@ -57,7 +57,7 @@ def login():
     password = request.form['password']
     conn = cardinalSql()
     loginCursor = conn.cursor()
-    loginSql = loginCursor.execute("SELECT username,password FROM users WHERE username = '{}'".format(username))
+    loginSql = loginCursor.execute("SELECT username,password FROM users WHERE username = %s", [username])
     userInfo = loginCursor.fetchall()
     loginCursor.close()
     conn.close()

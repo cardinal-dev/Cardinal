@@ -50,7 +50,7 @@ def apGroupTftpBackup():
         apGroupName = session.get("apGroupName")
         tftpIp = request.form["tftp_ip"]
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
@@ -75,7 +75,7 @@ def enableApHttp():
     apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = %s", [apGroupId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -94,7 +94,7 @@ def disableApHttp():
     apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = %s", [apGroupId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -119,7 +119,7 @@ def enableApRadius():
     apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = %s", [apGroupId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -138,7 +138,7 @@ def disableApRadius():
     apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = %s", [apGroupId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -163,7 +163,7 @@ def enableApSnmp():
     apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_group_id = %s", [apGroupId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -184,7 +184,7 @@ def disableApSnmp():
     apGroupName = session.get('apGroupName')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = %s", [apGroupId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:

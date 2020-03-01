@@ -33,6 +33,7 @@ pythonTests() {
     flake8 webapp/wsgi.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 webapp/cardinal/system/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 webapp/cardinal/views/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    bandit -s B603,B404 -r bin/scout-cli/* ci/* lib/* webapp/*
 }
 
 cardinalTests() {
