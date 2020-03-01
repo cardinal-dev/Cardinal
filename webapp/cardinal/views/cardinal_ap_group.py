@@ -53,7 +53,7 @@ def doAddApGroup():
         conn = cardinalSql()
         try:
             addApGroupCursor = conn.cursor()
-            addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES ('{}')".format(apGroupName))
+            addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES (%s)", [apGroupName])
             addApGroupCursor.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ap_group_bp.addApGroup', status=e))
@@ -86,12 +86,12 @@ def doDeleteApGroup():
         else:
             conn = cardinalSql()
             deleteApGroupNameCursor = conn.cursor()
-            deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+            deleteApGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = %s", [apGroupId])
             apGroupName = deleteApGroupNameCursor.fetchone()[0]
             status = "{} was successfully deleted!".format(apGroupName)
             try:
                 deleteApGroupCursor = conn.cursor()
-                deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+                deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = %s", [apGroupId])
                 deleteApGroupCursor.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=e))
@@ -124,7 +124,7 @@ def manageApGroupDashboard():
         else:
             conn = cardinalSql()
             apGroupNameCursor = conn.cursor()
-            apGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = '{}'".format(apGroupId))
+            apGroupNameCursor.execute("SELECT ap_group_name FROM access_point_groups WHERE ap_group_id = %s", [apGroupId])
             apGroupName = apGroupNameCursor.fetchone()[0]
             apGroupNameCursor.close()
             session['apGroupId'] = apGroupId

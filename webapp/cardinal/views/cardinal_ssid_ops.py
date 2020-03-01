@@ -60,17 +60,17 @@ def deploySsid24Ghz():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+            checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24Ghz', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             ssidInfoCursor.close()
             for ssidData in ssidInfo:
@@ -115,17 +115,17 @@ def deploySsid24GhzRadius():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("INSERT INTO ssids_24ghz_radius_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+            checkSsidRelationship.execute("INSERT INTO ssids_24ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzRadius', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             ssidInfoCursor.close()
             for ssidData in ssidInfo:
@@ -175,7 +175,7 @@ def deploySsid24GhzGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -184,17 +184,17 @@ def deploySsid24GhzGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+                checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 ssidInfoCursor.close()
                 for ssidData in ssidInfo:
@@ -236,7 +236,7 @@ def deploySsid24GhzRadiusGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -245,17 +245,17 @@ def deploySsid24GhzRadiusGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("INSERT INTO ssids_24ghz_radius_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+                checkSsidRelationship.execute("INSERT INTO ssids_24ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzRadiusGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 for ssidData in ssidInfo:
                     ssid = ssidData[0]
@@ -303,17 +303,17 @@ def deploySsid5Ghz():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("INSERT INTO ssids_5ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+            checkSsidRelationship.execute("INSERT INTO ssids_5ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5Ghz', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             for ssidData in ssidInfo:
                 ssid = ssidData[0]
@@ -357,17 +357,17 @@ def deploySsid5GhzRadius():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("INSERT INTO ssids_5ghz_radius_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+            checkSsidRelationship.execute("INSERT INTO ssids_5ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5GhzRadius', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             ssidInfoCursor.close()
             for ssidData in ssidInfo:
@@ -417,7 +417,7 @@ def deploySsid5GhzGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -426,17 +426,17 @@ def deploySsid5GhzGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("INSERT INTO ssids_5ghz_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+                checkSsidRelationship.execute("INSERT INTO ssids_5ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5GhzGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 ssidInfoCursor.close()
                 for ssidData in ssidInfo:
@@ -478,7 +478,7 @@ def deploySsid5GhzRadiusGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -487,17 +487,17 @@ def deploySsid5GhzRadiusGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("INSERT INTO ssids_5ghz_radius_deployed (ap_id,ssid_id) VALUES ('{}', '{}')".format(apId,ssidId))
+                checkSsidRelationship.execute("INSERT INTO ssids_5ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5GhzRadiusGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 for ssidData in ssidInfo:
                     ssid = ssidData[0]
@@ -545,17 +545,17 @@ def removeSsid24Ghz():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("DELETE FROM ssids_24ghz_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+            checkSsidRelationship.execute("DELETE FROM ssids_24ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24Ghz', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             for ssidData in ssidInfo:
                 ssid = ssidData[0]
@@ -596,17 +596,17 @@ def removeSsid24GhzRadius():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("DELETE FROM ssids_24ghz_radius_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+            checkSsidRelationship.execute("DELETE FROM ssids_24ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzRadius', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             for ssidData in ssidInfo:
                 ssid = ssidData[0]
@@ -646,7 +646,7 @@ def removeSsid24GhzGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -655,17 +655,17 @@ def removeSsid24GhzGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 ssidInfoCursor.close()
                 for ssidData in ssidInfo:
@@ -705,7 +705,7 @@ def removeSsid24GhzRadiusGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -714,17 +714,17 @@ def removeSsid24GhzRadiusGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_radius_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzRadiusGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 for ssidData in ssidInfo:
                     ssid = ssidData[0]
@@ -764,17 +764,17 @@ def removeSsid5Ghz():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("DELETE FROM ssids_5ghz_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+            checkSsidRelationship.execute("DELETE FROM ssids_5ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5Ghz', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             for ssidData in ssidInfo:
                 ssid = ssidData[0]
@@ -815,17 +815,17 @@ def removeSsid5GhzRadius():
         apName = session.get('apName')
         try:
             checkSsidRelationship = conn.cursor()
-            checkSsidRelationship.execute("DELETE FROM ssids_5ghz_radius_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+            checkSsidRelationship.execute("DELETE FROM ssids_5ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
             checkSsidRelationship.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzRadius', status=e))
         else:
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             ssidInfoCursor = conn.cursor()
-            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+            ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
             ssidInfo = ssidInfoCursor.fetchall()
             for ssidData in ssidInfo:
                 ssid = ssidData[0]
@@ -865,7 +865,7 @@ def removeSsid5GhzGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -874,17 +874,17 @@ def removeSsid5GhzGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 for ssidData in ssidInfo:
                     ssid = ssidData[0]
@@ -923,7 +923,7 @@ def removeSsid5GhzRadiusGroup():
         apGroupId = session.get('apGroupId')
         apGroupName = session.get('apGroupName')
         apGroupCheck = conn.cursor()
-        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
         apIdsSql = apGroupCheck.fetchall()
         apGroupCheck.close()
         apIds = []
@@ -932,17 +932,17 @@ def removeSsid5GhzRadiusGroup():
         for apId in apIds:
             try:
                 checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_radius_deployed WHERE ap_id = {0} AND ssid_id = {1}".format(apId,ssidId))
+                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
                 checkSsidRelationship.close()
             except MySQLdb.Error as e:
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzRadiusGroup', status=e))
             else:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
                 ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
                 ssidInfo = ssidInfoCursor.fetchall()
                 for ssidData in ssidInfo:
                     ssid = ssidData[0]

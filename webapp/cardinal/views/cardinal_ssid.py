@@ -61,7 +61,7 @@ def doAddSsid24Ghz():
         encryptedWpa2 = cipherSuite.encrypt(wpa2Psk).decode('utf-8')
         conn = cardinalSql()
         addSsid24GhzCursor = conn.cursor()
-        addSsid24GhzCursor.execute("INSERT INTO ssids_24ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
+        addSsid24GhzCursor.execute("INSERT INTO ssids_24ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES (%s, %s, %s, %s, %s, %s)", (ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
         addSsid24GhzCursor.close()
         conn.commit()
         conn.close()
@@ -86,7 +86,7 @@ def doAddSsid5Ghz():
         encryptedWpa2 = cipherSuite.encrypt(wpa2Psk).decode('utf-8')
         conn = cardinalSql()
         addSsid5GhzCursor = conn.cursor()
-        addSsid5GhzCursor.execute("INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
+        addSsid5GhzCursor.execute("INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES (%s, %s, %s, %s, %s, %s)", (ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
         addSsid5GhzCursor.close()
         conn.commit()
         conn.close()
@@ -117,7 +117,7 @@ def doAddSsid24GhzRadius():
         encryptedSharedSecret = cipherSuite.encrypt(sharedSecret).decode('utf-8')
         conn = cardinalSql()
         addSsid24GhzRadiusCursor = conn.cursor()
-        addSsid24GhzRadiusCursor.execute("INSERT INTO ssids_24ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')".format(ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
+        addSsid24GhzRadiusCursor.execute("INSERT INTO ssids_24ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
         addSsid24GhzRadiusCursor.close()
         conn.commit()
         conn.close()
@@ -148,7 +148,7 @@ def doAddSsid5GhzRadius():
         encryptedSharedSecret = cipherSuite.encrypt(sharedSecret).decode('utf-8')
         conn = cardinalSql()
         addSsid5GhzRadiusCursor = conn.cursor()
-        addSsid5GhzRadiusCursor.execute("INSERT INTO ssids_5ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')".format(ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
+        addSsid5GhzRadiusCursor.execute("INSERT INTO ssids_5ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
         addSsid5GhzRadiusCursor.close()
         conn.commit()
         conn.close()
@@ -203,13 +203,13 @@ def doDeleteSsid24Ghz():
             return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
-        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
         status = "{} was successfully deleted!".format(ssidName)
         try:
             deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
             deleteSsidCursor.close()
             conn.commit()
         except MySQLdb.Error as e:
@@ -240,13 +240,13 @@ def doDeleteSsid5Ghz():
             return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
-        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
         status = "{} was successfully deleted!".format(ssidName)
         try:
             deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("DELETE FROM ssids_5ghz WHERE ap_ssid_id = '{}'".format(ssidId))
+            deleteSsidCursor.execute("DELETE FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
             deleteSsidCursor.close()
         except MySQLdb.Error as e:
             status = e
@@ -278,13 +278,13 @@ def doDeleteSsid24GhzRadius():
             return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
-        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
         status = "{} was successfully deleted!".format(ssidName)
         try:
             deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("DELETE FROM ssids_24ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+            deleteSsidCursor.execute("DELETE FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
             deleteSsidCursor.close()
         except MySQLdb.Error as e:
             status = e
@@ -316,13 +316,13 @@ def doDeleteSsid5GhzRadius():
             return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
         conn = cardinalSql()
         deleteSsidNameCursor = conn.cursor()
-        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+        deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
         ssidName = deleteSsidNameCursor.fetchone()[0]
         deleteSsidNameCursor.close()
         status = "{} was successfully deleted!".format(ssidName)
         try:
             deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("DELETE FROM ssids_5ghz_radius WHERE ap_ssid_id = '{}'".format(ssidId))
+            deleteSsidCursor.execute("DELETE FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
             deleteSsidCursor.close()
         except MySQLdb.Error as e:
             status = e

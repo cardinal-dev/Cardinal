@@ -70,11 +70,11 @@ def doAddAp():
         try:
             if apGroupId is None:
                 addApCursor = conn.cursor()
-                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', NULL)".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity))
+                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES (%s, %s, %s, %s, %s, NULL)", (apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity))
                 addApCursor.close()
             else:
                 addApCursor = conn.cursor()
-                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')".format(apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
+                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES (%s, %s, %s, %s, %s, %s)", (apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
                 addApCursor.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ap_bp.addAp', status=e))
@@ -106,13 +106,13 @@ def doDeleteAp():
             return redirect(url_for('cardinal_ap_bp.deleteAp', status=status))
         conn = cardinalSql()
         deleteApNameCursor = conn.cursor()
-        deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = '{}'".format(apId))
+        deleteApNameCursor.execute("SELECT ap_name FROM access_points WHERE ap_id = %s", [apId])
         apName = deleteApNameCursor.fetchone()[0]
         deleteApNameCursor.close()
         status = "{} was deleted successfully!".format(apName)
         try:
             deleteApCursor = conn.cursor()
-            deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = '{}'".format(apId))
+            deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = %s", [apId])
             deleteApCursor.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ap_bp.deleteAp', status=e))
@@ -145,7 +145,7 @@ def manageApDashboard():
         else:
             conn = cardinalSql()
             apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth,ap_model FROM access_points WHERE ap_id = '{}'".format(apId))
+            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_total_clients,ap_bandwidth,ap_model FROM access_points WHERE ap_id = %s", [apId])
             apInfo = apInfoCursor.fetchall()
             apInfoCursor.close()
             conn.close()

@@ -100,7 +100,7 @@ def totalApGroupClients():
         apGroupId = session.get("apGroupId")
         conn = cardinalSql()
         totalApGroupClientsCursor = conn.cursor()
-        totalApGroupClientsCursor.execute("SELECT FORMAT(SUM(ap_total_clients),0) FROM access_points WHERE ap_group_id = '{}'".format(apGroupId))
+        totalApGroupClientsCursor.execute("SELECT FORMAT(SUM(ap_total_clients),0) FROM access_points WHERE ap_group_id = %s", [apGroupId])
         totalApGroupClients = totalApGroupClientsCursor.fetchone()[0]
         totalApGroupClientsCursor.close()
         conn.close()

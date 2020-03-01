@@ -33,3 +33,4 @@ werkzeug
 flask
 jinja2
 uwsgi
+bandit

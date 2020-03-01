@@ -52,7 +52,7 @@ def configApIp():
         apSubnetMask = request.form["ap_subnetmask"]
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
@@ -65,7 +65,7 @@ def configApIp():
         status = "{}'s IP was successfully updated!".format(apName)
         try:
             changeApIpCursor = conn.cursor()
-            changeApIpCursor.execute("UPDATE access_points SET ap_ip = '{0}' WHERE ap_id = '{1}'".format(apNewIp,apId))
+            changeApIpCursor.execute("UPDATE access_points SET ap_ip = %s WHERE ap_id = %s", (apNewIp,apId))
             changeApIpCursor.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=e))
@@ -85,7 +85,7 @@ def configApName():
         apNewName = request.form["ap_name"]
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
@@ -98,7 +98,7 @@ def configApName():
         status = "AP Name Changed from {0} to {1}".format(apName,apNewName)
         try:
             changeApNameCursor = conn.cursor()
-            changeApNameCursor.execute("UPDATE access_points SET ap_name = '{0}' WHERE ap_id = '{1}'".format(apNewName,apId))
+            changeApNameCursor.execute("UPDATE access_points SET ap_name = %s WHERE ap_id = %s", (apNewName,apId))
             changeApNameCursor.close()
         except MySQLdb.Error as e:
             return redirect(url_for('cardinal_ap_ops_bp.configApName', status=e))
@@ -118,7 +118,7 @@ def configApTftpBackup():
         conn = cardinalSql()
         tftpIp = request.form["tftp_ip"]
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
@@ -154,7 +154,7 @@ def enableApHttp():
     apId = session.get('apId')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -173,7 +173,7 @@ def disableApHttp():
     apId = session.get('apId')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -198,7 +198,7 @@ def enableApRadius():
     apId = session.get('apId')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -217,7 +217,7 @@ def disableApRadius():
     apId = session.get('apId')
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
     for info in apInfo:
@@ -243,7 +243,7 @@ def enableApSnmp():
         apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = %s", [apId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
@@ -265,7 +265,7 @@ def disableApSnmp():
         apId = session.get('apId')
         conn = cardinalSql()
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = '{}'".format(apId))
+        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
