@@ -43,10 +43,8 @@ def scoutUsage():
     print("   scout-cli --create-ssid-5: create a 5GHz SSID")
     print("   scout-cli --create-ssid-radius-24: create a 2.4GHz RADIUS SSID")
     print("   scout-cli --create-ssid-radius-5: create a 5GHz RADIUS SSID")
-    print("   scout-cli --delete-ssid-24: delete a 2.4GHz SSID")
-    print("   scout-cli --delete-ssid-5: delete a 5GHz SSID")
-    print("   scout-cli --delete-ssid-radius-24: delete a 2.4GHz RADIUS SSID")
-    print("   scout-cli --delete-ssid-radius-5: delete a 5GHz RADIUS SSID") 
+    print("   scout-cli --delete-ssid-24: delete a 2.4GHz SSID/RADIUS SSID")
+    print("   scout-cli --delete-ssid-5: delete a 5GHz SSID/RADIUS SSID")
     print("   scout-cli --disable-http: disable access point HTTP server")
     print("   scout-cli --disable-radius: disable access point RADIUS function") 
     print("   scout-cli --disable-snmp: disable access point SNMP function")
@@ -68,6 +66,8 @@ def scoutUsage():
     print("   scout-cli --get-uptime: fetch access point uptime info")
     print("   scout-cli --reboot: reboot access point")
     print("   scout-cli --change-name: change access point hostname")
+    print("   scout-cli --run-fetcher: run scoutFetcher() from scout-cli")
+    print("   scout-cli --ping: ping an AP via SSH")
 
 # SCOUT LOGIC
 
@@ -127,6 +127,14 @@ if len(sys.argv) > 1:
         ip, username, password = scoutArgs()
         getApUsers = scout_info.scoutGetUsers(ip=ip, username=username, password=password)
         print(getApUsers)
+    elif scoutCommand == "--run-fetcher":
+        ip, username, password = scoutArgs()
+        apInfo = scout_info.scoutFetcher(ip=ip, username=username, password=password)
+        print(apInfo)
+    elif scoutCommand == "--ping":
+        ip, username, password = scoutArgs()
+        apPing = scout_info.scoutPing(ip=ip, username=username, password=password)
+        print(apPing)
 
     # SCOUT SYS COMMANDS
     if scoutCommand == "--led":
@@ -226,14 +234,14 @@ if len(sys.argv) > 1:
         radiusGroup = sys.argv[15]
         methodList = sys.argv[16]
         scout_ssid.scoutCreateSsidRadius5(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub, radiusIp=radiusIp, sharedSecret=sharedSecret, authPort=authPort, acctPort=acctPort, radiusTimeout=radiusTimeout, radiusGroup=radiusGroup, methodList=methodList)
-    elif (scoutCommand == "--delete-ssid-24") or (scoutCommand == "--delete-ssid-radius-24"):
+    elif scoutCommand == "--delete-ssid-24":
         ip, username, password = scoutArgs()
         ssid = sys.argv[5]
         vlan = sys.argv[6]
         radioSub = sys.argv[7]
         gigaSub = sys.argv[8]
         scout_ssid.scoutDeleteSsid24(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-    elif (scoutCommand == "--delete-ssid-5") or (scoutCommand == "--delete-ssid-radius-5"):
+    elif scoutCommand == "--delete-ssid-5":
         ip, username, password = scoutArgs()
         ssid = sys.argv[5]
         vlan = sys.argv[6]
