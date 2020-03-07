@@ -37,8 +37,8 @@ pythonTests() {
 }
 
 cardinalTests() {
-    python3 ci/tests/sqltest.py
-    python3 ci/tests/query-data-qa.py
+    python3 ci/tests/testsql.py
+    python3 ci/tests/testregex.py
 }
 
 pythonTests

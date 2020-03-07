@@ -29,7 +29,7 @@ SOFTWARE.
 import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
-from cardinal.system.cardinal_fetch import fetcher
+from cardinal.system.cardinal_fetch import callScoutFetcher
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -140,7 +140,7 @@ def fetchApInfo():
             return render_template("fetch-ap-info.html", status=status)
     elif request.method == 'POST':
         apId = session.get('apId')
-        status = fetcher(apId)
+        status = callScoutFetcher(apId)
         return redirect(url_for('cardinal_ap_ops_bp.fetchApInfo', status=status))
 
 @cardinal_ap_ops.route("/config-ap-http", methods=["GET"])

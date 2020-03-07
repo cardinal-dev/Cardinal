@@ -170,3 +170,63 @@ def scoutGetUptime(ip, username, password):
     getApUptime = sshOut[8].decode('ascii').strip("\n")
     scoutSsh.close()
     return getApUptime
+
+def scoutFetcher(ip, username, password):
+    """Function that fetches AP information over single SSH channel"""
+    scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    cmdTemplate = jinjaEnv.get_template("scout_fetcher")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    sshData = []
+    apInfo = []
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(.75)
+        if channel.recv_ready():
+            sshReturn = channel.recv(65535)
+            dataLines = sshReturn.decode('ascii')
+            sshData.append(dataLines)
+    scoutSsh.close()
+    macAddrRegex = re.compile(r'\w\w\w\w.\w\w\w\w.\w\w\w\w')
+    apModelRegex = re.compile(r'\w\w\w\-\w\w\w\w\w\w\w\w\-\w-\w\w')
+    apSerialRegex = re.compile(r'\w\w\w\w\w\w\w\w\w\w\w')
+    # Append info to apInfo[]
+    apMacAddr = macAddrRegex.search(sshData[4].split(',')[1]).group(0)
+    apInfo.append(apMacAddr)
+    apBandwidth = sshData[3].split(",")[1]
+    apInfo.append(apBandwidth)
+    apIosInfo = sshData[5].replace("\r", '').split("\n")[1]
+    apInfo.append(apIosInfo)
+    apUptime = sshData[6].replace("\r", '').split("\n")[1]
+    apInfo.append(apUptime)
+    apSerial = apSerialRegex.search(sshData[7].split("\n")[2]).group(0)
+    apInfo.append(apSerial)
+    apModel = apModelRegex.search(sshData[7].split("\n")[2]).group(0)
+    apInfo.append(apModel)
+    calcClientCount = sshData[8].split('\n')[4:]
+    apClientCount = len(macAddrRegex.findall(str(calcClientCount)))
+    apInfo.append(apClientCount)
+    apLocation = sshData[9].replace("\r", '').split("\n")[1]
+    apInfo.append(apLocation)
+    return apInfo
+
+def scoutPing(ip, username, password):
+    scoutSsh = scout_auth.sshInfo(ip=ip, username=username, password=password)
+    jinjaEnv = scout_env.scoutJinjaEnv()
+    cmdTemplate = jinjaEnv.get_template("scout_ssh_ping")
+    cmds = cmdTemplate.render(password=password)
+    scoutCommands = cmds.splitlines()
+    channel = scoutSsh.invoke_shell()
+    sshData = []
+    for command in scoutCommands:
+        channel.send('{}\n'.format(command))
+        time.sleep(.75)
+        if channel.recv_ready():
+            sshReturn = channel.recv(65535)
+            dataLines = sshReturn.decode('ascii')
+            sshData.append(dataLines)
+    scoutSsh.close()
+    apPing = sshData[0].split("\n")[2:3]
+    return apPing
