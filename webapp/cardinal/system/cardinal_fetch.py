@@ -88,7 +88,6 @@ def callScoutFetcher(apId):
 def scoutFetcherForAll():
     """Uses scoutFetcher() to fetch access point information and populate the DB (for all APs)"""
     print("INFO: Gathering AP information via scoutFetcher()...")
-    startTime = time.time()
     conn = cardinalSql()
     apIdCursor = conn.cursor()
     apIdCursor.execute("SELECT ap_id FROM access_points WHERE ap_all_id = 2")
@@ -96,16 +95,18 @@ def scoutFetcherForAll():
     apIdCursor.close()
     for apId in apIdsSql:
         apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
+        apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_name FROM access_points WHERE ap_id = %s", [apId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
         for info in apInfo:
             apIp = info[0]
             apSshUsername = info[1]
             encryptedSshPassword = bytes(info[2], 'utf-8')
+            apName = info[3]
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         # Use a try..except to fetch access point information
         try:
+            startTime = time.time()
             apInfo = scout_info.scoutFetcher(ip=apIp, username=apSshUsername, password=apSshPassword)
             apMacAddr = apInfo[0]
             apBandwidth = apInfo[1].strip("Mbps")
@@ -128,7 +129,8 @@ def scoutFetcherForAll():
             conn.commit()
             endTime = time.time()
             completionTime = endTime - startTime
-            status = "INFO: Gathered access point information in: {}".format(completionTime)
+            status = "INFO: Gathered device information for {0} in: {1}".format(apName,completionTime)
+            print(status)
         except MySQLdb.Error as e:
             print("ERROR: {}".format(e))
     conn.close()

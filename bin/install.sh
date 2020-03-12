@@ -47,10 +47,11 @@ setupCardinal() {
     # Create a system user called cardinal. The cardinal user is the user which will run our processes
     sudo useradd cardinal
 
-    # Create a log file for Cardinal UI
+    # Create log files for Cardinal UI
     rm -rf /var/log/cardinal
     mkdir -p /var/log/cardinal
     touch /var/log/cardinal/cardinal.log
+    touch /var/log/cardinal/fetcher.log
     chown -R cardinal:cardinal /var/log/cardinal
 
     # Generate Cardinal venv
