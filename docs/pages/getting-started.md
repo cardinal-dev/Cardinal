@@ -14,7 +14,7 @@ Being that Cardinal is a WSGI application, the web interface requires a WSGI-com
 
 Before we begin with the installation, please make sure you have a stable Linux environment ready to go. Cardinal development is performed on Ubuntu, however, that doesn't mean you couldn't use RHEL/CentOS or another distro. As long as you're able to install Cardinal's three pillars, you should be good to go.
 
-For this walkthrough, I'm going to install Cardinal in an Ubuntu 18.04 Docker container. Again, even though this is being performed on Ubuntu, you can adapt the instructions to the RHEL/CentOS equivalents.
+For this walkthrough, I'm going to install Cardinal in an Ubuntu 18.04 environment. Again, even though this is being performed on Ubuntu, you can adapt the instructions to the RHEL/CentOS equivalents. If you want to test Cardinal in a quickstart environment, please checkout the Docker project [here](https://github.com/cardinal-dev/Cardinal/tree/master/webapp/docker).
 
 # System Requirements
 
@@ -36,14 +36,12 @@ Once you have Nginx, MySQL, and Python3 installed, now we can proceed to install
 
 # Installation
 
-Cardinal does have an install script within `bin/` called `install.sh`. Using `install.sh` will allow you to interactively input values used for the Cardinal `.ini` config. The `.ini` config file is very important for both Cardinal and scout. If you're not using `install.sh`, please make sure you fill the `.ini` file correctly and set the `CARDINALCONFIG` environment variable to point to the `.ini` file's location.
+Cardinal has an install script within `bin/` called `install.sh`. Using `install.sh` will allow you to interactively input values used for the Cardinal `.ini` config. The `.ini` config file is very important for both Cardinal and scout. If you're not using `install.sh`, please make sure you fill the `.ini` file correctly and set the `CARDINALCONFIG` environment variable to point to the `.ini` file's location.
 
 In order to better understand the Cardinal installation process, let's break down `install.sh`. The first step `install.sh` performs is gathering basic information about the environment:
 
 ~~~
-# Gather information
 echo "Welcome to the Cardinal Initial Configuration Guide!"
-echo "MySQL Information"
 echo -e ""
 read -p "Hello, welcome to Cardinal! What is the hostname/IP address of the database for Cardinal? " dbIP
 echo -e ""
@@ -75,13 +73,15 @@ After we gather the needed information, we then create a system user called `car
 sudo useradd cardinal
 ~~~
 
-After creating the `cardinal` user, we then create a log file for the Cardinal UI. All of Cardinal's client transactions (e.g. Nginx/uWSGI) and scout runs will report to this file:
+After creating the `cardinal` user, we then create some log files for the Cardinal UI. All of Cardinal's client transactions (e.g. Nginx/uWSGI) and scout runs will report to `cardinal.log`.
+`scoutFetcher()` transactions will be reported to `fetcher.log`:
 
 ~~~
 # Create a log file for Cardinal UI
 rm -rf /var/log/cardinal
 mkdir -p /var/log/cardinal
 touch /var/log/cardinal/cardinal.log
+touch /var/log/cardinal/fetcher.log
 chown -R cardinal:cardinal /var/log/cardinal
 ~~~
 
@@ -89,8 +89,10 @@ After creating the Cardinal UI log file, we then create a Python3 venv for cardi
 
 ~~~
 # Generate Cardinal venv
-sudo python3 -m venv cardinal
-sudo cardinal/bin/pip install -r ../requirements.txt
+sudo python3 -m venv $cardinalBase/cardinal
+sudo $cardinalBase/cardinal/bin/pip install -U pip
+sudo $cardinalBase/cardinal/bin/pip install -r $cardinalBase/../requirements.txt
+sudo $cardinalBase/cardinal/bin/pip install $cardinalBase/../lib/.
 ~~~
 
 After creating Cardinal's Python3 venv, we then create a socket directory for uWSGI to read/write to:
@@ -115,6 +117,9 @@ In order for Cardinal to function, we need a MySQL database for Cardinal to read
 # Create the MySQL database for Cardinal. We also want to import the SQL structure too!
 mysql -u$dbUsername -p$dbPassword -e "CREATE DATABASE "$dbName""
 mysql -u$dbUsername --password=$dbPassword $dbName < ../sql/cardinal.sql
+mysql -u$dbUsername --password=$dbPassword mysql -e "update user set plugin='mysql_native_password' where User='root'"
+mysql -u$dbUsername --password=$dbPassword mysql -e "update user set authentication_string=password('$dbPassword') where user='root'"
+systemctl restart mysql
 
 # Create a Cardinal admin
 hashedPass=$(cardinal/bin/python -c 'from werkzeug.security import generate_password_hash; print(generate_password_hash("'$cardinalPass'", "sha256"))')
@@ -145,7 +150,52 @@ If `install.sh` didn't error out and you have a `.ini` file in the appropriate l
 
 # Nginx Configuration
 
-Before Cardinal can launch, we need to Nginx how to read the uWSGI socket. In Cardinal's `conf/` directory, there's a sample Nginx configuration that we can use.
+Before Cardinal can launch, we need to tell Nginx how to read the uWSGI socket. In Cardinal's `conf/` directory, there's a sample Nginx configuration that we can use.
+
+~~~
+user  www-data;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    server {
+    listen 80;
+    server_name <SERVER_NAME_HERE>;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:///var/lib/cardinal/cardinal.sock;
+    }
+}}
+~~~
 
 # `systemd` Configuration
 
@@ -169,6 +219,7 @@ WantedBy=multi-user.target
 ~~~
 
 Please make sure you fill in the preceding values correctly. Once you have completed the `systemd` configuration, please run `systemctl daemon-reload` to initialize the service.
+
 # Additional Configuration
 
 In order for Cardinal to function with uWSGI, please make sure that `CARDINALCONFIG` is added to the `webapp/wsgi.ini` file:
@@ -213,3 +264,24 @@ You should see the following screen if you're logged in:
 ![cardinalui2](assets/cardinalui2.png)
 
 Now you can start using Cardinal to manage your Cisco APs!
+
+# Using `scoutFetcher()`
+
+Currently, you can fetch information about your access point via the `Fetch AP Information` tile in Cardinal. If you want to run a fetch
+on all of your access points, please utilize `crontab` and set the interval appropriately:
+
+~~~
+* * * * * PYTHONPATH=/home/Cardinal/bin/cardinal/lib/python3.5/site-packages/scout /home/cardinal/fetcher.sh >> /var/log/cardinal/fetcher.log
+~~~
+
+The preceding `crontab` entry will run `fetcher.sh` every minute to collect AP information. `fetcher.sh` is an example script that contains the
+needed information to call `scoutFetcherForAll()`:
+
+~~~
+#!/bin/bash
+
+cd /home/Cardinal/webapp
+/home/Cardinal/bin/cardinal/bin/python -c "import cardinal; cardinal.system.cardinal_fetch.scoutFetcherForAll()"
+~~~
+
+At the present time, the operations surrounding `scoutFetcherForAll()` are being improved upon. The preceding script/crontab entry is a workaround for the time being.
