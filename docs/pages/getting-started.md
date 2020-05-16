@@ -271,17 +271,9 @@ Currently, you can fetch information about your access point via the `Fetch AP I
 on all of your access points, please utilize `crontab` and set the interval appropriately:
 
 ~~~
-* * * * * PYTHONPATH=/home/Cardinal/bin/cardinal/lib/python3.5/site-packages/scout /home/cardinal/fetcher.sh >> /var/log/cardinal/fetcher.log
+cd /opt/Cardinal/webapp && PYTHONPATH=/opt/Cardinal/bin/cardinal/lib/python3.5/site-packages/scout /opt/Cardinal/bin/cardinal/bin/python -c "import cardinal; cardinal.system.cardinal_fetch.gatherAllApInfo()"  >> /var/log/cardinal/fetcher.log
 ~~~
 
-The preceding `crontab` entry will run `fetcher.sh` every minute to collect AP information. `fetcher.sh` is an example script that contains the
-needed information to call `scoutFetcherForAll()`:
+The preceding `crontab` example will call the `scoutFetcherForAll()` function every minute to collect AP information.
 
-~~~
-#!/bin/bash
-
-cd /home/Cardinal/webapp
-/home/Cardinal/bin/cardinal/bin/python -c "import cardinal; cardinal.system.cardinal_fetch.scoutFetcherForAll()"
-~~~
-
-At the present time, the operations surrounding `scoutFetcherForAll()` are being improved upon. The preceding script/crontab entry is a workaround for the time being.
+At the present time, the operations surrounding `scoutFetcherForAll()` are being improved upon. Using a crontab entry is a workaround for the time being.

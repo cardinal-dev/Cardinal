@@ -125,47 +125,6 @@
                                 </div>
                         </div>
 
-				<div class="col-sm-6 col-md-4">
-                                <div class="chart-wrapper">
-                                        <div class="chart-title">
-                                                Configure RADIUS
-                                        </div>
-
-
-                                        <div class="chart-stage">
-                                                <center>
-                                                        <a class="configure_radius" href="/config-ap-group-radius"><img src="{{ url_for('static', filename='img/cardinal8.png') }}"></a>
-                                                </center>
-                                        </div>
-
-
-                                        <div id="configureradius" style="display:none;" title="Configure RADIUS">
-                                                <iframe height="350" id="configure_radius_frame" name="configure_radius_frame" width="350"></iframe>
-                                        </div>
-                                        <script>
-                                        $(document).ready(function () {
-                                        $(".configure_radius").click(function () {
-                                           $("#configure_radius_frame").attr('src', $(this).attr("href"));
-                                           $("#configureradius").dialog({
-                                               width: 400,
-                                               height: 450,
-                                               modal: true,
-                                               close: function () {
-                                                   $("#configure_radius_frame").attr('src', "about:blank");
-                                               }
-                                           });
-                                           return false;
-                                        });
-                                        });
-
-                                        </script>
-
-                                        <div class="chart-notes">
-                                                Configure RADIUS Services on Access Point
-                                        </div>
-                                </div>
-                        </div>
-
                         <div class="col-sm-6 col-md-4">
                                 <div class="chart-wrapper">
                                         <div class="chart-title">

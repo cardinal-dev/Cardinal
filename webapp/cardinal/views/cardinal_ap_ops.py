@@ -29,7 +29,7 @@ SOFTWARE.
 import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
-from cardinal.system.cardinal_fetch import callScoutFetcher
+from cardinal.system.cardinal_fetch import gatherApInfo
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -140,7 +140,7 @@ def fetchApInfo():
             return render_template("fetch-ap-info.html", status=status)
     elif request.method == 'POST':
         apId = session.get('apId')
-        status = callScoutFetcher(apId)
+        status = gatherApInfo(apId)
         return redirect(url_for('cardinal_ap_ops_bp.fetchApInfo', status=status))
 
 @cardinal_ap_ops.route("/config-ap-http", methods=["GET"])
@@ -186,50 +186,6 @@ def disableApHttp():
     status = "HTTP Server for {} Successfully Disabled".format(apName)
     conn.close()
     return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
-
-@cardinal_ap_ops.route("/config-ap-radius", methods=["GET"])
-def configApRadius():
-    if session.get("username") is not None:
-        status = request.args.get('status')
-        return render_template("config-ap-radius.html", status=status)
-
-@cardinal_ap_ops.route("/enable-ap-radius", methods=["POST"])
-def enableApRadius():
-    apId = session.get('apId')
-    conn = cardinalSql()
-    apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-    apInfo = apInfoCursor.fetchall()
-    apInfoCursor.close()
-    for info in apInfo:
-        apName = info[0]
-        apIp = info[1]
-        apSshUsername = info[2]
-        encryptedSshPassword = bytes(info[3], 'utf-8')
-    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-    scout_sys.scoutEnableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
-    status = "RADIUS for {} Successfully Enabled!".format(apName)
-    conn.close()
-    return redirect(url_for('cardinal_ap_ops_bp.configApRadius', status=status))
-
-@cardinal_ap_ops.route("/disable-ap-radius", methods=["POST"])
-def disableApRadius():
-    apId = session.get('apId')
-    conn = cardinalSql()
-    apInfoCursor = conn.cursor()
-    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-    apInfo = apInfoCursor.fetchall()
-    apInfoCursor.close()
-    for info in apInfo:
-        apName = info[0]
-        apIp = info[1]
-        apSshUsername = info[2]
-        encryptedSshPassword = bytes(info[3], 'utf-8')
-    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-    scout_sys.scoutDisableRadius(ip=apIp, username=apSshUsername, password=apSshPassword)
-    status = "RADIUS Server for {} Successfully Disabled!".format(apName)
-    conn.close()
-    return redirect(url_for('cardinal_ap_ops_bp.configApRadius', status=status))
 
 @cardinal_ap_ops.route("/config-ap-snmp", methods=["GET"])
 def configApSnmp():

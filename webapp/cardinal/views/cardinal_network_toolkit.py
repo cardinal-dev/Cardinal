@@ -82,7 +82,7 @@ def doDig():
 def doCurl():
     if request.method == 'POST':
         ip = request.form["network_ip"]
-        curlArgs = ["curl", "-I", "{}".format(ip)]
+        curlArgs = ["curl", "-Is", "{}".format(ip)]
         curlCmd = subprocess.Popen(curlArgs, stdout=subprocess.PIPE)
         commandOutput = curlCmd.stdout.read()
         return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
