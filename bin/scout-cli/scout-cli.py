@@ -170,7 +170,7 @@ if len(sys.argv) > 1:
     elif scoutCommand == "--tftp-backup":
         ip, username, password = scoutArgs()
         tftpIp = sys.argv[5]
-        scout_sys.scoutTftpBackup(ip=ip, username=username, password=password, tftpIp=tftpIp)
+        tftpBackup = scout_sys.scoutTftpBackup(ip=ip, username=username, password=password, tftpIp=tftpIp)
     elif scoutCommand == "--wr":
         ip, username, password = scoutArgs()
         scout_sys.scoutDoWr(ip=ip, username=username, password=password)

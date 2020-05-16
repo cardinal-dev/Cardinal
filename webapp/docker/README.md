@@ -11,9 +11,10 @@ to fit your needs (i.e. locale, environment variables, etc.).
 The default `Dockerfile` will install Cardinal using the `en_US` locale and sets
 `CARDINALCONFIG` to `/home/cardinal.ini`. Please make sure you know where the `.ini`
 file will be stored before building, so the environment variable is properly configured.
-If you just want to try Cardinal in a development environment, just keep the defaults
+If you want to try Cardinal in a development environment, just keep the defaults
 and then run `install.sh` from either outside or inside the container. If you're going to
-use `install.sh`, please make sure you run it from the origin directory (i.e. `bin/`).
+use `install.sh`, please make sure you run it from the origin directory (i.e. `bin/`). `build-container.sh`
+is a very simplified method of starting up a Cardinal container, if you want a quick demo environment.
 
 To use the default config, please follow these steps:
 
@@ -24,7 +25,7 @@ reference this [link](https://docs.docker.com/install/).
 and navigate to the `webapp/docker` directory.
 
 3.) As stated above, please make sure the associated files are properly configured (depending on 
-your environment). If you're using the default test config, you can just skip this step.
+your environment). If you're using the default test config, you can skip this step.
 
 4.) Run `docker build -t cardinal .` from the `webapp/docker` directory in order
 to build the `cardinal` image.
@@ -37,8 +38,8 @@ docker run -d -p <OUTSIDE_PORT>:<INSIDE_PORT> --privileged --name cardinal -v /s
 docker run -d -p 1000:80 --privileged --name cardinal -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal
 ~~~
 
-The preceding command will create a Docker container named `cardinal` and will map an outside host port to the 
-container's inside port. For example, the Cardinal UI is served on HTTP (i.e. `80/tcp`) by default. You can specify a port that the host has available 
+The preceding command will create a Docker container named `cardinal` and will map an external host port to one of the 
+container's internal ports. For example, the Cardinal UI is served on HTTP (i.e. `80/tcp`) by default. You can specify a port that the host has available 
 to allow external access to Cardinal.
 
 6.) Once you have the container running, please run `install.sh` in order to finalize the Cardinal environment. You can do this by executing
@@ -60,7 +61,7 @@ you restart the Cardinal service:
 docker exec -it cardinal systemctl restart cardinal
 ~~~
 
-9.) After restarting the Cardinal service, the UI should now be available at `http://<DOCKER_HOST>:<OUTSIDE_PORT>`.
+9.) After restarting the Cardinal service, the UI should now be available at `http://<DOCKER_HOST>:<EXTERNAL_PORT>`.
 
 If you have any difficulties during this process or need further clarification, please open an issue report on Cardinal's GitHub
 repository.

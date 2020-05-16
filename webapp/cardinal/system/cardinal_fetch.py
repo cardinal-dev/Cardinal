@@ -33,7 +33,7 @@ from configparser import ConfigParser
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
 
-def callScoutFetcher(apId):
+def gatherApInfo(apId):
     """Uses scoutFetcher() to fetch access point information and populate the DB."""
     print("INFO: Gathering AP information via scoutFetcher()...")
     startTime = time.time()
@@ -67,14 +67,9 @@ def callScoutFetcher(apId):
             apClientCount = apInfo[6]
             apLocation = apInfo[7]
             inputSqlCursor = conn.cursor()
-            inputSqlCursor.execute("UPDATE access_points SET ap_bandwidth = %s WHERE ap_id = %s", (apBandwidth,apId))
-            inputSqlCursor.execute("UPDATE access_points SET ap_mac_addr = %s WHERE ap_id = %s", (apMacAddr,apId))
-            inputSqlCursor.execute("UPDATE access_points SET ap_model = %s WHERE ap_id = %s", (apModel,apId))
-            inputSqlCursor.execute("UPDATE access_points SET ap_serial = %s  WHERE ap_id = %s", (apSerial,apId))
-            inputSqlCursor.execute("UPDATE access_points SET ap_location = %s WHERE ap_id = %s", (apLocation,apId))
-            inputSqlCursor.execute("UPDATE access_points SET ap_ios_info = %s WHERE ap_id = %s", (apIosInfo,apId))
-            inputSqlCursor.execute("UPDATE access_points SET ap_uptime = %s WHERE ap_id = %s", (apUptime,apId))
-            inputSqlCursor.execute("UPDATE access_points SET ap_total_clients = %s WHERE ap_id = %s", (apClientCount,apId))
+            inputSqlCursor.execute("UPDATE access_points SET ap_bandwidth = %s, ap_mac_addr = %s, ap_model = %s, ap_serial = %s, ap_location = %s,"
+            "ap_ios_info = %s, ap_uptime = %s, ap_total_clients = %s WHERE ap_id = %s", (apBandwidth,apMacAddr,apModel,apSerial,
+            apLocation,apIosInfo,apUptime,apClientCount,apId))
             inputSqlCursor.close()
             conn.commit()
         except MySQLdb.Error as e:
@@ -85,7 +80,7 @@ def callScoutFetcher(apId):
         conn.close()
         return status
 
-def scoutFetcherForAll():
+def gatherAllApInfo():
     """Uses scoutFetcher() to fetch access point information and populate the DB (for all APs)"""
     print("INFO: Gathering AP information via scoutFetcher()...")
     conn = cardinalSql()

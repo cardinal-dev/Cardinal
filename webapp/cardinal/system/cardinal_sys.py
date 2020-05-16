@@ -28,15 +28,17 @@ SOFTWARE.
 
 import logging
 import MySQLdb
+import multiprocessing
 import os
 from configparser import ConfigParser
 from cryptography.fernet import Fernet
 
-# SYSTEM VARIABLES
-
 cardinalConfigFile = os.environ['CARDINALCONFIG']
 cardinalConfig = ConfigParser()
 cardinalConfig.read("{}".format(cardinalConfigFile))
+
+# SYSTEM VARIABLES
+
 flaskKey = cardinalConfig.get('cardinal', 'flaskkey')
 encryptKey = cardinalConfig.get('cardinal', 'encryptkey')
 bytesKey = bytes(encryptKey, 'utf-8')
@@ -52,3 +54,36 @@ mysqlDb = cardinalConfig.get('cardinal', 'dbname')
 def cardinalSql():
     conn = MySQLdb.connect(host = mysqlHost, user = mysqlUser, passwd = mysqlPass, db = mysqlDb)
     return conn
+
+# GROUP OPERATIONS
+
+def printCompletionTime(endTime):
+    completionTime = "INFO: Group Operation Completed In: {}".format(endTime)
+    return completionTime
+
+def apGroupIterator(apGroupId, **kwargs):
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_group_id = %s", [apGroupId])
+    apInfoSql = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    conn.close()
+    apList = []
+    for info in apInfoSql:
+        apInfo = []
+        apIp = apInfo.append(info[0])
+        apSshUsername = apInfo.append(info[1])
+        encryptedSshPassword = bytes(info[2], 'utf-8')
+        apSshPassword = apInfo.append(cipherSuite.decrypt(encryptedSshPassword).decode('utf-8'))
+        for args in kwargs.values():
+            apInfo.append(args)
+        apList.append(apInfo)
+    return apList
+
+# GROUP PROCESSING
+
+def processor(operation, apInfo):
+    workers = cardinalConfig.get('cardinal', 'workers')
+    with multiprocessing.Pool(processes=int(workers)) as tasker:
+        taskResults = tasker.starmap(operation, apInfo)
+    return taskResults
