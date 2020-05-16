@@ -23,6 +23,7 @@
 # SOFTWARE.
 
 # IMPORTANT: scout is required and must be packaged from lib/
+# IMPORTANT: multiprocessing is now required as of Cardinal v3.0. Python3 should have this pre-installed.
 
 pyinstaller
 flake8
