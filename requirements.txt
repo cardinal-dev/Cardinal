@@ -34,3 +34,4 @@ flask
 jinja2
 uwsgi
 bandit
+multiprocessing

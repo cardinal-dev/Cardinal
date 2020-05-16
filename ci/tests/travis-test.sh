@@ -26,9 +26,9 @@
 
 pythonTests() {
     echo "INFO: Running Cardinal Python Test Suite..."
-    flake8 bin/scout/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 lib/scout/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 bin/scout-cli/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
-    flake8 bin/setup.py --count --select=E9,F63,F72,F82 --show-source --statistics
+    flake8 lib/setup.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 ci/tests/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 webapp/wsgi.py --count --select=E9,F63,F72,F82 --show-source --statistics
     flake8 webapp/cardinal/system/*.py --count --select=E9,F63,F72,F82 --show-source --statistics
