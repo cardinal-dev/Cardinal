@@ -38,7 +38,7 @@ from flask import request
 from flask import redirect
 from flask import session
 from flask import url_for
-from scout import scout_sys
+from scout_cli import sys as scout_sys
 
 cardinal_ap_group_ops = Blueprint('cardinal_ap_group_ops_bp', __name__)
 

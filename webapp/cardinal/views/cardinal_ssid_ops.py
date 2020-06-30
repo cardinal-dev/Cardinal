@@ -35,7 +35,7 @@ from flask import request
 from flask import redirect
 from flask import session
 from flask import url_for
-from scout import scout_ssid
+from scout_cli import ssid as scout_ssid
 
 cardinal_ssid_ops = Blueprint('cardinal_ssid_ops_bp', __name__)
 
