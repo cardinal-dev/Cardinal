@@ -27,9 +27,12 @@ SOFTWARE.
 '''
 
 import sys
-import scout_sys
-import scout_info
-import scout_ssid
+from scout_cli import sys as scout_sys
+from scout_cli import info as scout_info
+from scout_cli import ssid as scout_ssid
+# import scout_sys
+# import scout_info
+# import scout_ssid
 
 # SCOUT USAGE
 

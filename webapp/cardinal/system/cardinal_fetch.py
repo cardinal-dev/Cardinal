@@ -27,7 +27,7 @@ SOFTWARE.
 '''
 
 import MySQLdb
-import scout_info
+from scout_cli import info as scout_info
 import time
 from configparser import ConfigParser
 from cardinal.system.cardinal_sys import cardinalSql

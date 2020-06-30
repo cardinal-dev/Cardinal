@@ -25,13 +25,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 '''
+__package__ = "scout_cli"
+__name__ = "scout_cli.env"
 
-import paramiko
+import os
+import jinja2
+from configparser import ConfigParser
 
-# SSH INFORMATION
+# SCOUT SETTINGS
 
-def sshInfo(ip, username, password):
-    scoutSsh = paramiko.SSHClient()
-    scoutSsh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    scoutSsh.connect(ip, port=22, username=username, password=password, look_for_keys=False, allow_agent=False)
-    return scoutSsh
+def scoutEnv():
+    cardinalConfigFile = os.environ['CARDINALCONFIG']
+    cardinalConfig = ConfigParser()
+    cardinalConfig.read("{}".format(cardinalConfigFile))
+    commandDebug = cardinalConfig.get('cardinal', 'commanddebug')
+    return commandDebug
+
+def scoutJinjaEnv():
+    cardinalConfigFile = os.environ['CARDINALCONFIG']
+    cardinalConfig = ConfigParser()
+    cardinalConfig.read("{}".format(cardinalConfigFile))
+    commandDir = cardinalConfig.get('cardinal', 'commanddir')
+    fileLoader = jinja2.FileSystemLoader('{}'.format(commandDir))
+    env = jinja2.Environment(loader=fileLoader, autoescape=True)
+    return env

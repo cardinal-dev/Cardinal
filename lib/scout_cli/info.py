@@ -26,9 +26,12 @@ SOFTWARE.
 
 '''
 
+__package__ = "scout_cli"
+__name__ = "scout_cli.info"
+
 import re
-import scout_auth
-import scout_env
+from . import auth as scout_auth
+from . import env as scout_env
 import time
 
 # SCOUT INFO COMMAND FUNCTIONS

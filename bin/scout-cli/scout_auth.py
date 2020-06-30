@@ -1,1 +1,0 @@
-../../lib/scout/scout_auth.py

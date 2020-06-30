@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+__package__ = "scout_cli"
+__name__ = "scout_cli"
 
 ''' Cardinal - An Open Source Cisco Wireless Access Point Controller
 
@@ -25,25 +26,3 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 '''
-
-import os
-import jinja2
-from configparser import ConfigParser
-
-# SCOUT SETTINGS
-
-def scoutEnv():
-    cardinalConfigFile = os.environ['CARDINALCONFIG']
-    cardinalConfig = ConfigParser()
-    cardinalConfig.read("{}".format(cardinalConfigFile))
-    commandDebug = cardinalConfig.get('cardinal', 'commanddebug')
-    return commandDebug
-
-def scoutJinjaEnv():
-    cardinalConfigFile = os.environ['CARDINALCONFIG']
-    cardinalConfig = ConfigParser()
-    cardinalConfig.read("{}".format(cardinalConfigFile))
-    commandDir = cardinalConfig.get('cardinal', 'commanddir')
-    fileLoader = jinja2.FileSystemLoader('{}'.format(commandDir))
-    env = jinja2.Environment(loader=fileLoader, autoescape=True)
-    return env
