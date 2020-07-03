@@ -28,12 +28,12 @@ SOFTWARE.
 
 from distutils.core import setup
 
-setup(name='scout',
+setup(name='scout_cli',
       version='1.0',
       description='Library for Managing Autonomous Cisco Access Points',
       author='James McClune',
       author_email='jmcclune@mcclunetechnologies.net',
       url='https://github.com/cardinal-dev/Cardinal',
-      packages=['scout'],
+      packages=['scout_cli'],
       include_package_data=True
      )
