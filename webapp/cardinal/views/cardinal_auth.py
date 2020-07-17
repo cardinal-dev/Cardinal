@@ -66,7 +66,7 @@ def login():
             dbUsername = info[0]
             dbHash = info[1]
     else:
-        return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
+        return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.', 401
 
     if check_password_hash(dbHash,password):
         session['username'] = username

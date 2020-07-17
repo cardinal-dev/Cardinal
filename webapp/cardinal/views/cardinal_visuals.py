@@ -39,21 +39,29 @@ cardinal_visuals = Blueprint('cardinal_visuals_bp', __name__)
 def totalApClients():
     if session.get("username") is not None:
         return render_template("total-ap-clients.html")
+    elif session.get("username") is None:
+        return redirect(url_for('cardinal_auth_bp.index'))
 
 @cardinal_visuals.route("/total-ap-bandwidth", methods=["GET"])
 def totalApBandwidth():
     if session.get("username") is not None:
         return render_template("total-ap-bandwidth.html")
+    elif session.get("username") is None:
+        return redirect(url_for('cardinal_auth_bp.index'))
 
 @cardinal_visuals.route("/ap-ip-address", methods=["GET"])
 def apIpAddress():
     if session.get("username") is not None:
         return render_template("ap-ip-address.html")
+    elif session.get("username") is None:
+        return redirect(url_for('cardinal_auth_bp.index'))
 
 @cardinal_visuals.route("/ap-model", methods=["GET"])
 def apModel():
     if session.get("username") is not None:
         return render_template("ap-model.html")
+    elif session.get("username") is None:
+        return redirect(url_for('cardinal_auth_bp.index'))
 
 @cardinal_visuals.route("/total-aps", methods=["GET"])
 def totalAps():
