@@ -54,35 +54,39 @@ def networkToolsOutput():
 @cardinal_network_toolkit.route("/do-ping", methods=["POST"])
 def doPing():
     if request.method == 'POST':
-        ip = request.form["network_ip"]
-        pingArgs = ["ping", "-c", "4", "{}".format(ip)]
-        pingCmd = subprocess.Popen(pingArgs, stdout=subprocess.PIPE)
-        commandOutput = pingCmd.stdout.read()
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        if session.get("username") is not None:
+            ip = request.form["network_ip"]
+            pingArgs = ["ping", "-c", "4", "{}".format(ip)]
+            pingCmd = subprocess.Popen(pingArgs, stdout=subprocess.PIPE)
+            commandOutput = pingCmd.stdout.read()
+            return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
 
 @cardinal_network_toolkit.route("/do-tracert", methods=["POST"])
 def doTracert():
     if request.method == 'POST':
-        ip = request.form["network_ip"]
-        tracertArgs = ["traceroute", "{}".format(ip)]
-        tracertCmd = subprocess.Popen(tracertArgs, stdout=subprocess.PIPE)
-        commandOutput = tracertCmd.stdout.read()
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        if session.get("username") is not None:
+            ip = request.form["network_ip"]
+            tracertArgs = ["traceroute", "{}".format(ip)]
+            tracertCmd = subprocess.Popen(tracertArgs, stdout=subprocess.PIPE)
+            commandOutput = tracertCmd.stdout.read()
+            return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
 
 @cardinal_network_toolkit.route("/do-dig", methods=["POST"])
 def doDig():
     if request.method == 'POST':
-        ip = request.form["network_ip"]
-        digArgs = ["dig", "{}".format(ip)]
-        digCmd = subprocess.Popen(digArgs, stdout=subprocess.PIPE)
-        commandOutput = digCmd.stdout.read()
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        if session.get("username") is not None:
+            ip = request.form["network_ip"]
+            digArgs = ["dig", "{}".format(ip)]
+            digCmd = subprocess.Popen(digArgs, stdout=subprocess.PIPE)
+            commandOutput = digCmd.stdout.read()
+            return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
 
 @cardinal_network_toolkit.route("/do-curl", methods=["POST"])
 def doCurl():
     if request.method == 'POST':
-        ip = request.form["network_ip"]
-        curlArgs = ["curl", "-Is", "{}".format(ip)]
-        curlCmd = subprocess.Popen(curlArgs, stdout=subprocess.PIPE)
-        commandOutput = curlCmd.stdout.read()
-        return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        if session.get("username") is not None:
+            ip = request.form["network_ip"]
+            curlArgs = ["curl", "-Is", "{}".format(ip)]
+            curlCmd = subprocess.Popen(curlArgs, stdout=subprocess.PIPE)
+            commandOutput = curlCmd.stdout.read()
+            return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))

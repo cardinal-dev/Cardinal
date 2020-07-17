@@ -1,6 +1,6 @@
 # Cardinal (Ubuntu 18.04)
 
-FROM jrei/systemd-ubuntu
+FROM jrei/systemd-ubuntu:18.04
 MAINTAINER James McClune <jmcclune@mcclunetechnologies.net>
 WORKDIR /opt
 
