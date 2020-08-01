@@ -27,6 +27,7 @@ SOFTWARE.
 '''
 
 from cardinal.system.cardinal_sys import cardinalSql
+from cardinal.system.cardinal_sys import msgAuthFailed
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -49,7 +50,7 @@ def dashboard():
     if session.get("username") is not None:
         return render_template("dashboard.html")
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_auth.route("/login", methods=['POST'])
 def login():
@@ -66,15 +67,15 @@ def login():
             dbUsername = info[0]
             dbHash = info[1]
     else:
-        return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.', 401
+        return msgAuthFailed, 401
 
     if check_password_hash(dbHash,password):
         session['username'] = username
         return redirect(url_for('cardinal_auth_bp.dashboard'))
     elif dbUsername is None:
-        return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
+        return msgAuthFailed, 401
     else:
-        return 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
+        return msgAuthFailed, 401
 
 @cardinal_auth.route("/logout")
 def logout():

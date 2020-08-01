@@ -27,6 +27,7 @@ SOFTWARE.
 '''
 
 from cardinal.system.cardinal_sys import cardinalSql
+from cardinal.system.cardinal_sys import msgAuthFailed
 from flask import Blueprint
 from flask import render_template
 from flask import redirect
@@ -39,29 +40,29 @@ cardinal_visuals = Blueprint('cardinal_visuals_bp', __name__)
 def totalApClients():
     if session.get("username") is not None:
         return render_template("total-ap-clients.html")
-    elif session.get("username") is None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/total-ap-bandwidth", methods=["GET"])
 def totalApBandwidth():
     if session.get("username") is not None:
         return render_template("total-ap-bandwidth.html")
-    elif session.get("username") is None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/ap-ip-address", methods=["GET"])
 def apIpAddress():
     if session.get("username") is not None:
         return render_template("ap-ip-address.html")
-    elif session.get("username") is None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/ap-model", methods=["GET"])
 def apModel():
     if session.get("username") is not None:
         return render_template("ap-model.html")
-    elif session.get("username") is None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/total-aps", methods=["GET"])
 def totalAps():
@@ -74,7 +75,7 @@ def totalAps():
         conn.close()
         return render_template('total-aps.html', totalAps=totalAps)
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/total-clients", methods=["GET"])
 def totalClients():
@@ -87,7 +88,7 @@ def totalClients():
         conn.close()
         return render_template('total-clients.html', totalClients=totalClients)
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/total-ap-groups", methods=["GET"])
 def totalApGroups():
@@ -100,7 +101,7 @@ def totalApGroups():
         conn.close()
         return render_template('total-ap-groups.html', totalApGroups=totalApGroups)
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/total-ap-group-clients", methods=["GET"])
 def totalApGroupClients():
@@ -114,7 +115,7 @@ def totalApGroupClients():
         conn.close()
         return render_template('total-ap-group-clients.html', totalApGroupClients=totalApGroupClients)
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_visuals.route("/total-ssids", methods=["GET"])
 def totalSsids():
@@ -140,4 +141,4 @@ def totalSsids():
         conn.close()
         return render_template('total-ssids.html', totalSsids=totalSsids)
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
