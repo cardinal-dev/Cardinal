@@ -56,6 +56,17 @@ def cardinalSql():
     conn = MySQLdb.connect(host=mysqlHost, user=mysqlUser, passwd=mysqlPass, db=mysqlDb)
     return conn
 
+# CONNECTION INFORMATION
+
+def getApInfo(apId):
+    """Based on apId provided, grab connection information from MySQL as a tuple."""
+    conn = cardinalSql()
+    apInfoCursor = conn.cursor()
+    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = %s", [apId])
+    apInfo = apInfoCursor.fetchall()
+    apInfoCursor.close()
+    return apInfo
+
 # GROUP OPERATIONS
 
 def printCompletionTime(endTime):
@@ -64,7 +75,7 @@ def printCompletionTime(endTime):
     return completionTime
 
 def apGroupIterator(apGroupId, snmp="False", **kwargs):
-    """apGroupIterator() is used to create a list of lists, which is then passed
+    """Used to create a list of lists, which is then passed
     into functions such as processor()."""
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
@@ -104,27 +115,41 @@ def processor(operation, apInfo):
 
 # SSID DEPLOYMENT
 
-def ssidCheck(apId, ssidId, ssidType=None, action=None):
-    """Accepts four positional arguments: apId and ssidId.
-    ssidCheck() is used to determine whether or not an access point
+def ssidCheck(apId, ssidId, ssidType=None, action=None, commit=None):
+    """Accepts five positional arguments: apId, ssidId, ssidType, action,
+    and commit. ssidCheck() is used to determine whether or not an access point
     has a specific SSID associated. True means that ssidCheck is successful
     and the AP does not have the SSID deployed. False means ssidCheck
     was not successful and the AP already has the SSID deployed. ssidType
     supports four arguments: ssid_24ghz, ssid_24ghz_radius, ssid_5ghz,
-    ssid_5ghz_radius. action support two arguments: commit and test. commit will
+    ssid_5ghz_radius. action supports two arguments: commit and test. commit will
     actually commit the new deployment to the database, while test just sees if
     the result would pass, without committing (i.e. dry-run)."""
     conn = cardinalSql()
     try:
         checkSsidRelationship = conn.cursor()
-        if ssidType == "ssid_24ghz":
-            checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
-        elif ssidType == "ssid_24ghz_radius":
-            checkSsidRelationship.execute("INSERT INTO ssids_24ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
-        elif ssidType == "ssid_5ghz":
-            checkSsidRelationship.execute("INSERT INTO ssids_5ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
-        elif ssidType == "ssid_5ghz_radius":
-            checkSsidRelationship.execute("INSERT INTO ssids_5ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
+        if action == "add":
+            if ssidType == "ssid_24ghz":
+                checkSsidRelationship.execute("INSERT INTO ssids_24ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
+            elif ssidType == "ssid_24ghz_radius":
+                checkSsidRelationship.execute("INSERT INTO ssids_24ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
+            elif ssidType == "ssid_5ghz":
+                checkSsidRelationship.execute("INSERT INTO ssids_5ghz_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
+            elif ssidType == "ssid_5ghz_radius":
+                checkSsidRelationship.execute("INSERT INTO ssids_5ghz_radius_deployed (ap_id,ssid_id) VALUES (%s, %s)", (apId,ssidId))
+            else:
+                return None
+        elif action == "remove":
+            if ssidType == "ssid_24ghz":
+                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
+            elif ssidType == "ssid_24ghz_radius":
+                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
+            elif ssidType == "ssid_5ghz":
+                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
+            elif ssidType == "ssid_5ghz_radius":
+                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
+            else:
+                return None
         else:
             return None
         checkSsidRelationship.close()
@@ -132,16 +157,15 @@ def ssidCheck(apId, ssidId, ssidType=None, action=None):
         conn.close()
         return False
     else:
-        if action == "test":
+        if commit == "True":
+            conn.commit()
             conn.close()
             return True
-        elif action == "commit":
-            conn.commit()
+        elif commit == "False":
             conn.close()
             return True
         else:
             return None
-
 
 def ssidGatherApIds(apGroupId):
     """Pulls apIds from MySQL depending on group membership."""
@@ -175,7 +199,7 @@ def getSsidInfo(ssidId, ssidType=None):
         elif ssidType == "ssid_5ghz_radius":
             ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
         else:
-            return "Invalid ssidType"
+            return None
         ssidInfo = ssidInfoCursor.fetchall()
         ssidInfoCursor.close()
     except MySQLdb.Error as e:
@@ -195,10 +219,6 @@ def msgResourceAdded(resource):
     msg = "{} was registered successfully!".format(resource)
     return msg
 
-def msgSpecifyValidApGroup():
-    msg = "Please select a valid access point group."
-    return msg
-
-def msgSpecifyValidAp():
-    msg = "Please select a valid access point."
-    return msg
+msgAuthFailed = 'Authentication failed. Please check your credentials and try again by clicking <a href="/">here</a>.'
+msgSpecifyValidApGroup = "Please select a valid access point group."
+msgSpecifyValidAp = "Please select a valid access point."

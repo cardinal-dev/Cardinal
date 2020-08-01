@@ -28,9 +28,10 @@ SOFTWARE.
 
 import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
+from cardinal.system.cardinal_sys import msgAuthFailed
 from cardinal.system.cardinal_sys import msgResourceAdded
-from cardinal.system.cardinal_sys import msgSpecifyValidApGroup
 from cardinal.system.cardinal_sys import msgResourceDeleted
+from cardinal.system.cardinal_sys import msgSpecifyValidApGroup
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -47,7 +48,7 @@ def addApGroup():
             status = request.args.get('status')
             return render_template("add-ap-group.html", status=status)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get('username') is not None:
             apGroupName = request.form["ap_group_name"]
@@ -58,13 +59,14 @@ def addApGroup():
                 addApGroupCursor.execute("INSERT INTO access_point_groups (ap_group_name) VALUES (%s)", [apGroupName])
                 addApGroupCursor.close()
             except MySQLdb.Error as e:
+                conn.close()
                 return redirect(url_for('cardinal_ap_group_bp.addApGroup', status=e))
             else:
                 conn.commit()
-            conn.close()
-            return render_template('add-ap-group.html', status=status)
+                conn.close()
+                return render_template('add-ap-group.html', status=status)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
 
 @cardinal_ap_group.route("/delete-ap-group", methods=["GET", "POST"])
 def deleteApGroup():
@@ -79,12 +81,12 @@ def deleteApGroup():
             conn.close()
             return render_template("delete-ap-group.html", status=status, apGroups=apGroups)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apGroupId = request.form["ap_group_id"]
             if len(apGroupId) <= 0:
-                status = msgSpecifyValidApGroup()
+                status = msgSpecifyValidApGroup
                 return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
             else:
                 conn = cardinalSql()
@@ -97,11 +99,14 @@ def deleteApGroup():
                     deleteApGroupCursor.execute("DELETE FROM access_point_groups WHERE ap_group_id = %s", [apGroupId])
                     deleteApGroupCursor.close()
                 except MySQLdb.Error as e:
+                    conn.close()
                     return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=e))
                 else:
                     conn.commit()
                     conn.close()
-            return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
+                    return redirect(url_for('cardinal_ap_group_bp.deleteApGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ap_group.route("/manage-ap-group-dashboard", methods=["GET", "POST"])
 def chooseApGroupDashboard():
@@ -121,7 +126,7 @@ def chooseApGroupDashboard():
         if session.get("username") is not None:
             apGroupId = request.form["ap_group_id"]
             if len(apGroupId) <= 0:
-                status = msgSpecifyValidApGroup()
+                status = msgSpecifyValidApGroup
                 return redirect(url_for('cardinal_ap_group_bp.chooseApGroupDashboard', status=status))
             else:
                 conn = cardinalSql()
@@ -133,5 +138,5 @@ def chooseApGroupDashboard():
                 session['apGroupName'] = apGroupName
                 conn.close()
                 return render_template("manage-ap-group-dashboard.html")
-        elif session.get("username") is None:
-            return redirect(url_for('cardinal_auth_bp.index'))
+        else:
+            return msgAuthFailed, 401

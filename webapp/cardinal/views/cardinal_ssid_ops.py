@@ -29,13 +29,14 @@ SOFTWARE.
 import MySQLdb
 import time
 from cardinal.system.cardinal_sys import apGroupIterator
-from cardinal.system.cardinal_sys import printCompletionTime
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
 from cardinal.system.cardinal_sys import getSsidInfo
+from cardinal.system.cardinal_sys import msgAuthFailed
+from cardinal.system.cardinal_sys import printCompletionTime
+from cardinal.system.cardinal_sys import processor
 from cardinal.system.cardinal_sys import ssidCheck
 from cardinal.system.cardinal_sys import ssidGatherApIds
-from cardinal.system.cardinal_sys import processor
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -59,7 +60,7 @@ def deploySsid24Ghz():
             conn.close()
             return render_template("deploy-ssid-24ghz.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
@@ -69,19 +70,16 @@ def deploySsid24Ghz():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz")
             encryptedWpa2Pass = bytes(ssidInfo[0][2], 'utf-8')
             wpa2Pass = cipherSuite.decrypt(encryptedWpa2Pass).decode('utf-8')
-            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="test")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="add", commit="False")
             if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
                 apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                for info in apInfo:
-                    apIp = info[0]
-                    apSshUsername = info[1]
-                    encryptedSshPassword = bytes(info[2], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
-                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="commit")
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutCreateSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="add", commit="True")
                 status = "Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24Ghz', status=status))
@@ -89,6 +87,8 @@ def deploySsid24Ghz():
                 conn.close()
                 status = "2.4GHz SSID {0} is already deployed on {1}".format(ssidInfo[0][0], apName)
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/deploy-ssid-24ghz-radius", methods=["GET", "POST"])
 def deploySsid24GhzRadius():
@@ -103,7 +103,7 @@ def deploySsid24GhzRadius():
             conn.close()
             return render_template("deploy-ssid-24ghz-radius.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
@@ -113,19 +113,16 @@ def deploySsid24GhzRadius():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz_radius")
             encryptedSharedSecret = bytes(ssidInfo[0][6], 'utf-8')
             sharedSecret = cipherSuite.decrypt(encryptedSharedSecret).decode('utf-8')
-            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="test")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="add", commit="False")
             if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
                 apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                for info in apInfo:
-                    apIp = info[0]
-                    apSshUsername = info[1]
-                    encryptedSshPassword = bytes(info[2], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid24Radius(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
-                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="commit")
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutCreateSsid24Radius(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="add", commit="True")
                 status = "Deployment of 2.4GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzRadius', status=status))
@@ -133,6 +130,8 @@ def deploySsid24GhzRadius():
                 conn.close()
                 status = "2.4GHz RADIUS SSID {0} is already deployed on {1}".format(ssidInfo[0][0], apName)
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/deploy-ssid-24ghz-group", methods=["GET", "POST"])
 def deploySsid24GhzGroup():
@@ -147,7 +146,7 @@ def deploySsid24GhzGroup():
             conn.close()
             return render_template("deploy-ssid-24ghz-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -163,6 +162,8 @@ def deploySsid24GhzGroup():
             status = "Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/deploy-ssid-24ghz-radius-group", methods=["GET", "POST"])
 def deploySsid24GhzRadiusGroup():
@@ -177,7 +178,7 @@ def deploySsid24GhzRadiusGroup():
             conn.close()
             return render_template("deploy-ssid-24ghz-radius-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -193,6 +194,8 @@ def deploySsid24GhzRadiusGroup():
             status = "Deployment of 2.4GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid24GhzRadiusGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/deploy-ssid-5ghz", methods=["GET", "POST"])
 def deploySsid5Ghz():
@@ -207,7 +210,7 @@ def deploySsid5Ghz():
             conn.close()
             return render_template("deploy-ssid-5ghz.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
@@ -217,19 +220,16 @@ def deploySsid5Ghz():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz")
             encryptedWpa2Pass = bytes(ssidInfo[0][2], 'utf-8')
             wpa2Pass = cipherSuite.decrypt(encryptedWpa2Pass).decode('utf-8')
-            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="test")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="add", commit="False")
             if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
                 apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                for info in apInfo:
-                    apIp = info[0]
-                    apSshUsername = info[1]
-                    encryptedSshPassword = bytes(info[2], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid5(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
-                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="commit")
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutCreateSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="add", commit="True")
                 status = "Deployment of 5GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5Ghz', status=status))
@@ -237,6 +237,8 @@ def deploySsid5Ghz():
                 conn.close()
                 status = "5GHz SSID {0} is already deployed on {1}".format(ssidInfo[0][0], apName)
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/deploy-ssid-5ghz-radius", methods=["GET", "POST"])
 def deploySsid5GhzRadius():
@@ -251,7 +253,7 @@ def deploySsid5GhzRadius():
             conn.close()
             return render_template("deploy-ssid-5ghz-radius.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
@@ -261,19 +263,16 @@ def deploySsid5GhzRadius():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz_radius")
             encryptedSharedSecret = bytes(ssidInfo[0][6], 'utf-8')
             sharedSecret = cipherSuite.decrypt(encryptedSharedSecret).decode('utf-8')
-            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="test")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="add", commit="False")
             if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
                 apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                for info in apInfo:
-                    apIp = info[0]
-                    apSshUsername = info[1]
-                    encryptedSshPassword = bytes(info[2], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid5Radius(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
-                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="commit")
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutCreateSsid5Radius(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="add", commit="True")
                 status = "Deployment of 5GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5GhzRadius', status=status))
@@ -281,6 +280,8 @@ def deploySsid5GhzRadius():
                 conn.close()
                 status = "5GHz RADIUS SSID {0} is already deployed on {1}".format(ssidInfo[0][0], apName)
                 return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/deploy-ssid-5ghz-group", methods=["GET", "POST"])
 def deploySsid5GhzGroup():
@@ -295,7 +296,7 @@ def deploySsid5GhzGroup():
             conn.close()
             return render_template("deploy-ssid-5ghz-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -311,6 +312,8 @@ def deploySsid5GhzGroup():
             status = "Deployment of 5GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5GhzGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/deploy-ssid-5ghz-radius-group", methods=["GET", "POST"])
 def deploySsid5GhzRadiusGroup():
@@ -325,7 +328,7 @@ def deploySsid5GhzRadiusGroup():
             conn.close()
             return render_template("deploy-ssid-5ghz-radius-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -341,6 +344,8 @@ def deploySsid5GhzRadiusGroup():
             status = "Deployment of 5GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.deploySsid5GhzRadiusGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-24ghz", methods=["GET", "POST"])
 def removeSsid24Ghz():
@@ -355,43 +360,29 @@ def removeSsid24Ghz():
             conn.close()
             return render_template("remove-ssid-24ghz.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apId = session.get('apId')
             apName = session.get('apName')
-            try:
-                checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                checkSsidRelationship.close()
-            except MySQLdb.Error as e:
-                return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24Ghz', status=e))
-            else:
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="remove", commit="False")
+            if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
-                ssidInfo = ssidInfoCursor.fetchall()
-                for ssidData in ssidInfo:
-                    ssid = ssidData[0]
-                    vlan = ssidData[1]
-                    radioSub = ssidData[2]
-                    gigaSub = ssidData[3]
-                for info in apInfo:
-                    apName = info[0]
-                    apIp = info[1]
-                    apSshUsername = info[2]
-                    encryptedSshPassword = bytes(info[3], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                status = "Removal of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
-                conn.commit()
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutDeleteSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="remove", commit="True")
+                status = "Removal of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-24ghz-radius", methods=["GET", "POST"])
 def removeSsid24GhzRadius():
@@ -406,43 +397,29 @@ def removeSsid24GhzRadius():
             conn.close()
             return render_template("remove-ssid-24ghz-radius.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apId = session.get('apId')
             apName = session.get('apName')
-            try:
-                checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_24ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                checkSsidRelationship.close()
-            except MySQLdb.Error as e:
-                return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzRadius', status=e))
-            else:
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz_radius")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="remove", commit="False")
+            if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-                ssidInfo = ssidInfoCursor.fetchall()
-                for ssidData in ssidInfo:
-                    ssid = ssidData[0]
-                    vlan = ssidData[1]
-                    radioSub = ssidData[2]
-                    gigaSub = ssidData[3]
-                for info in apInfo:
-                    apName = info[0]
-                    apIp = info[1]
-                    apSshUsername = info[2]
-                    encryptedSshPassword = bytes(info[3], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                status = "Removal of 2.4GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
-                conn.commit()
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutDeleteSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="remove", commit="True")
+                status = "Removal of 2.4GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-24ghz-group", methods=["GET", "POST"])
 def removeSsid24GhzGroup():
@@ -450,59 +427,29 @@ def removeSsid24GhzGroup():
         if session.get("username") is not None:
             conn = cardinalSql()
             status = request.args.get('status')
-            removeSsidCursor = conn.cursor()
-            removeSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
-            ssids = removeSsidCursor.fetchall()
-            removeSsidCursor.close()
+            deploySsidCursor = conn.cursor()
+            deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
+            ssids = deploySsidCursor.fetchall()
+            deploySsidCursor.close()
             conn.close()
             return render_template("remove-ssid-24ghz-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
-            conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apGroupId = session.get('apGroupId')
             apGroupName = session.get('apGroupName')
-            apGroupCheck = conn.cursor()
-            apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
-            apIdsSql = apGroupCheck.fetchall()
-            apGroupCheck.close()
-            apIds = []
-            for value in apIdsSql:
-                apIds.append(value[0])
-            for apId in apIds:
-                try:
-                    checkSsidRelationship = conn.cursor()
-                    checkSsidRelationship.execute("DELETE FROM ssids_24ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                    checkSsidRelationship.close()
-                except MySQLdb.Error as e:
-                    return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzGroup', status=e))
-                else:
-                    apInfoCursor = conn.cursor()
-                    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-                    apInfo = apInfoCursor.fetchall()
-                    apInfoCursor.close()
-                    ssidInfoCursor = conn.cursor()
-                    ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
-                    ssidInfo = ssidInfoCursor.fetchall()
-                    ssidInfoCursor.close()
-                    for ssidData in ssidInfo:
-                        ssid = ssidData[0]
-                        vlan = ssidData[1]
-                        radioSub = ssidData[2]
-                        gigaSub = ssidData[3]
-                    for info in apInfo:
-                        apName = info[0]
-                        apIp = info[1]
-                        apSshUsername = info[2]
-                        encryptedSshPassword = bytes(info[3], 'utf-8')
-                        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                    scout_ssid.scoutDeleteSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                    conn.commit()
-            conn.close()
-            status = "Removal of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz")
+            apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
+            startTime = time.time()
+            task = processor(operation=scout_ssid.scoutDeleteSsid24, apInfo=apList)
+            endTime = time.time() - startTime
+            status = "Removal of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
+            completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-24ghz-radius-group", methods=["GET", "POST"])
 def removeSsid24GhzRadiusGroup():
@@ -510,58 +457,29 @@ def removeSsid24GhzRadiusGroup():
         if session.get("username") is not None:
             conn = cardinalSql()
             status = request.args.get('status')
-            removeSsidCursor = conn.cursor()
-            removeSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz_radius")
-            ssids = removeSsidCursor.fetchall()
-            removeSsidCursor.close()
+            deploySsidCursor = conn.cursor()
+            deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz_radius")
+            ssids = deploySsidCursor.fetchall()
+            deploySsidCursor.close()
             conn.close()
             return render_template("remove-ssid-24ghz-radius-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
-            conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apGroupId = session.get('apGroupId')
             apGroupName = session.get('apGroupName')
-            apGroupCheck = conn.cursor()
-            apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
-            apIdsSql = apGroupCheck.fetchall()
-            apGroupCheck.close()
-            apIds = []
-            for value in apIdsSql:
-                apIds.append(value[0])
-            for apId in apIds:
-                try:
-                    checkSsidRelationship = conn.cursor()
-                    checkSsidRelationship.execute("DELETE FROM ssids_24ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                    checkSsidRelationship.close()
-                except MySQLdb.Error as e:
-                    return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzRadiusGroup', status=e))
-                else:
-                    apInfoCursor = conn.cursor()
-                    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-                    apInfo = apInfoCursor.fetchall()
-                    apInfoCursor.close()
-                    ssidInfoCursor = conn.cursor()
-                    ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-                    ssidInfo = ssidInfoCursor.fetchall()
-                    for ssidData in ssidInfo:
-                        ssid = ssidData[0]
-                        vlan = ssidData[1]
-                        radioSub = ssidData[2]
-                        gigaSub = ssidData[3]
-                    for info in apInfo:
-                        apName = info[0]
-                        apIp = info[1]
-                        apSshUsername = info[2]
-                        encryptedSshPassword = bytes(info[3], 'utf-8')
-                        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                    scout_ssid.scoutDeleteSsid24(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                    conn.commit()
-            conn.close()
-            status = "Removal of 2.4GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz_radius")
+            apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+            startTime = time.time()
+            task = processor(operation=scout_ssid.scoutDeleteSsid24, apInfo=apList)
+            endTime = time.time() - startTime
+            status = "Deployment of 2.4GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
+            completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid24GhzRadiusGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-5ghz", methods=["GET", "POST"])
 def removeSsid5Ghz():
@@ -576,43 +494,29 @@ def removeSsid5Ghz():
             conn.close()
             return render_template("remove-ssid-5ghz.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apId = session.get('apId')
             apName = session.get('apName')
-            try:
-                checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                checkSsidRelationship.close()
-            except MySQLdb.Error as e:
-                return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5Ghz', status=e))
-            else:
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="remove", commit="False")
+            if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
-                ssidInfo = ssidInfoCursor.fetchall()
-                for ssidData in ssidInfo:
-                    ssid = ssidData[0]
-                    vlan = ssidData[1]
-                    radioSub = ssidData[2]
-                    gigaSub = ssidData[3]
-                for info in apInfo:
-                    apName = info[0]
-                    apIp = info[1]
-                    apSshUsername = info[2]
-                    encryptedSshPassword = bytes(info[3], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid5(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                status = "Removal of 5GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
-                conn.commit()
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutDeleteSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="remove", commit="True")
+                status = "Removal of 5GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-5ghz-radius", methods=["GET", "POST"])
 def removeSsid5GhzRadius():
@@ -627,43 +531,29 @@ def removeSsid5GhzRadius():
             conn.close()
             return render_template("remove-ssid-5ghz-radius.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apId = session.get('apId')
             apName = session.get('apName')
-            try:
-                checkSsidRelationship = conn.cursor()
-                checkSsidRelationship.execute("DELETE FROM ssids_5ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                checkSsidRelationship.close()
-            except MySQLdb.Error as e:
-                return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzRadius', status=e))
-            else:
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz_radius")
+            checkSsidRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="remove", commit="False")
+            if checkSsidRelationship:
                 apInfoCursor = conn.cursor()
-                apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
+                apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
                 apInfo = apInfoCursor.fetchall()
                 apInfoCursor.close()
-                ssidInfoCursor = conn.cursor()
-                ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-                ssidInfo = ssidInfoCursor.fetchall()
-                for ssidData in ssidInfo:
-                    ssid = ssidData[0]
-                    vlan = ssidData[1]
-                    radioSub = ssidData[2]
-                    gigaSub = ssidData[3]
-                for info in apInfo:
-                    apName = info[0]
-                    apIp = info[1]
-                    apSshUsername = info[2]
-                    encryptedSshPassword = bytes(info[3], 'utf-8')
-                    apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid5(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                status = "Removal of 5GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssid,apName)
-                conn.commit()
+                encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
+                apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+                scout_ssid.scoutDeleteSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="remove", commit="True")
+                status = "Removal of 5GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
                 return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-5ghz-group", methods=["GET", "POST"])
 def removeSsid5GhzGroup():
@@ -671,58 +561,29 @@ def removeSsid5GhzGroup():
         if session.get("username") is not None:
             conn = cardinalSql()
             status = request.args.get('status')
-            removeSsidCursor = conn.cursor()
-            removeSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz")
-            ssids = removeSsidCursor.fetchall()
-            removeSsidCursor.close()
+            deploySsidCursor = conn.cursor()
+            deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz")
+            ssids = deploySsidCursor.fetchall()
+            deploySsidCursor.close()
             conn.close()
             return render_template("remove-ssid-5ghz-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
-            conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apGroupId = session.get('apGroupId')
             apGroupName = session.get('apGroupName')
-            apGroupCheck = conn.cursor()
-            apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
-            apIdsSql = apGroupCheck.fetchall()
-            apGroupCheck.close()
-            apIds = []
-            for value in apIdsSql:
-                apIds.append(value[0])
-            for apId in apIds:
-                try:
-                    checkSsidRelationship = conn.cursor()
-                    checkSsidRelationship.execute("DELETE FROM ssids_5ghz_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                    checkSsidRelationship.close()
-                except MySQLdb.Error as e:
-                    return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzGroup', status=e))
-                else:
-                    apInfoCursor = conn.cursor()
-                    apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-                    apInfo = apInfoCursor.fetchall()
-                    apInfoCursor.close()
-                    ssidInfoCursor = conn.cursor()
-                    ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
-                    ssidInfo = ssidInfoCursor.fetchall()
-                    for ssidData in ssidInfo:
-                        ssid = ssidData[0]
-                        vlan = ssidData[1]
-                        radioSub = ssidData[2]
-                        gigaSub = ssidData[3]
-                    for info in apInfo:
-                        apName = info[0]
-                        apIp = info[1]
-                        apSshUsername = info[2]
-                        encryptedSshPassword = bytes(info[3], 'utf-8')
-                        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                    scout_ssid.scoutDeleteSsid5(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                    conn.commit()
-            conn.close()
-            status = "Removal of 5GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz")
+            apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
+            startTime = time.time()
+            task = processor(operation=scout_ssid.scoutDeleteSsid5, apInfo=apList)
+            endTime = time.time() - startTime
+            status = "Removal of 5GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
+            completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzGroup', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid_ops.route("/remove-ssid-5ghz-radius-group", methods=["GET", "POST"])
 def removeSsid5GhzRadiusGroup():
@@ -730,54 +591,26 @@ def removeSsid5GhzRadiusGroup():
         if session.get("username") is not None:
             conn = cardinalSql()
             status = request.args.get('status')
-            removeSsidCursor = conn.cursor()
-            removeSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz_radius")
-            ssids = removeSsidCursor.fetchall()
-            removeSsidCursor.close()
+            deploySsidCursor = conn.cursor()
+            deploySsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz_radius")
+            ssids = deploySsidCursor.fetchall()
+            deploySsidCursor.close()
             conn.close()
             return render_template("remove-ssid-5ghz-radius-group.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
-            conn = cardinalSql()
             ssidId = request.form["ssid_id"]
             apGroupId = session.get('apGroupId')
             apGroupName = session.get('apGroupName')
-            apGroupCheck = conn.cursor()
-            apGroupCheck.execute("SELECT ap_id FROM access_points WHERE ap_group_id = %s", [apGroupId])
-            apIdsSql = apGroupCheck.fetchall()
-            apGroupCheck.close()
-            apIds = []
-            for value in apIdsSql:
-                apIds.append(value[0])
-            for apId in apIds:
-                try:
-                    checkSsidRelationship = conn.cursor()
-                    checkSsidRelationship.execute("DELETE FROM ssids_5ghz_radius_deployed WHERE ap_id = %s AND ssid_id = %s", (apId,ssidId))
-                    checkSsidRelationship.close()
-                except MySQLdb.Error as e:
-                    return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzRadiusGroup', status=e))
-                else:
-                    apInfoCursor = conn.cursor()
-                    apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-                    apInfo = apInfoCursor.fetchall()
-                    apInfoCursor.close()
-                    ssidInfoCursor = conn.cursor()
-                    ssidInfoCursor.execute("SELECT ap_ssid_name, ap_ssid_vlan, ap_ssid_radio_id, ap_ssid_ethernet_id FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-                    ssidInfo = ssidInfoCursor.fetchall()
-                    for ssidData in ssidInfo:
-                        ssid = ssidData[0]
-                        vlan = ssidData[1]
-                        radioSub = ssidData[2]
-                        gigaSub = ssidData[3]
-                    for info in apInfo:
-                        apIp = info[0]
-                        apSshUsername = info[1]
-                        encryptedSshPassword = bytes(info[2], 'utf-8')
-                        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                    scout_ssid.scoutDeleteSsid5(ip=apIp, username=apSshUsername, password=apSshPassword, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
-                    conn.commit()
-            conn.close()
-            status = "Removal of 5GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssid,apGroupName)
+            ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz_radius")
+            apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+            startTime = time.time()
+            task = processor(operation=scout_ssid.scoutDeleteSsid5, apInfo=apList)
+            endTime = time.time() - startTime
+            status = "Deployment of 5GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
+            completionTime = printCompletionTime(endTime)
             return redirect(url_for('cardinal_ssid_ops_bp.removeSsid5GhzRadiusGroup', status=status))
+        else:
+            return msgAuthFailed, 401

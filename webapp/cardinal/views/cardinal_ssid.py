@@ -29,6 +29,7 @@ SOFTWARE.
 import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
+from cardinal.system.cardinal_sys import msgAuthFailed
 from cardinal.system.cardinal_sys import msgResourceAdded
 from cardinal.system.cardinal_sys import msgResourceDeleted
 from flask import Blueprint
@@ -45,7 +46,7 @@ def addSsids():
     if session.get("username") is not None:
         return render_template("add-ssids.html")
     elif session.get("username") is None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_ssid.route("/add-ssid-24ghz", methods=["GET", "POST"])
 def addSsid24Ghz():
@@ -53,6 +54,8 @@ def addSsid24Ghz():
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("add-ssid-24ghz.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidName = request.form["ssid_name"]
@@ -70,6 +73,8 @@ def addSsid24Ghz():
             conn.close()
             status = msgResourceAdded(resource=ssidName)
             return redirect(url_for('cardinal_ssid_bp.addSsid24Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid.route("/add-ssid-5ghz", methods=["GET", "POST"])
 def addSsid5Ghz():
@@ -77,6 +82,8 @@ def addSsid5Ghz():
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("add-ssid-5ghz.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidName = request.form["ssid_name"]
@@ -94,6 +101,8 @@ def addSsid5Ghz():
             conn.close()
             status = msgResourceAdded(resource=ssidName)
             return redirect(url_for('cardinal_ssid_bp.addSsid5Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid.route("/add-ssid-24ghz-radius", methods=["GET", "POST"])
 def addSsid24GhzRadius():
@@ -101,6 +110,8 @@ def addSsid24GhzRadius():
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("add-ssid-24ghz-radius.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidName = request.form["ssid_name"]
@@ -124,6 +135,8 @@ def addSsid24GhzRadius():
             conn.close()
             status = msgResourceAdded(resource=ssidName)
             return redirect(url_for('cardinal_ssid_bp.addSsid24GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid.route("/add-ssid-5ghz-radius", methods=["GET", "POST"])
 def addSsid5GhzRadius():
@@ -131,6 +144,8 @@ def addSsid5GhzRadius():
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("add-ssid-5ghz-radius.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidName = request.form["ssid_name"]
@@ -154,41 +169,43 @@ def addSsid5GhzRadius():
             conn.close()
             status = msgResourceAdded(resource=ssidName)
             return redirect(url_for('cardinal_ssid_bp.addSsid5GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid.route("/deploy-ssids", methods=["GET"])
 def deploySsids():
     if session.get("username") is not None:
         return render_template("deploy-ssids.html")
-    elif session.get("username") is not None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ssid.route("/deploy-ssids-group", methods=["GET"])
 def deploySsidsGroup():
     if session.get("username") is not None:
         return render_template("deploy-ssids-group.html")
-    elif session.get("username") is not None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ssid.route("/remove-ssids", methods=["GET"])
 def removeSsids():
     if session.get("username") is not None:
         return render_template("remove-ssids.html")
-    elif session.get("username") is not None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ssid.route("/remove-ssids-group", methods=["GET"])
 def removeSsidsGroup():
     if session.get("username") is not None:
         return render_template("remove-ssids-group.html")
-    elif session.get("username") is not None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ssid.route("/delete-ssids", methods=["GET"])
 def deleteSsids():
     if session.get("username") is not None:
         return render_template("delete-ssids.html")
-    elif session.get("username") is not None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ssid.route("/delete-ssid-24ghz", methods=["GET", "POST"])
 def deleteSsid24Ghz():
@@ -203,7 +220,7 @@ def deleteSsid24Ghz():
             conn.close()
             return render_template("delete-ssid-24ghz.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -221,11 +238,14 @@ def deleteSsid24Ghz():
                 deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
                 deleteSsidCursor.close()
             except MySQLdb.Error as e:
+                conn.close()
                 return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=e))
             else:
                 conn.commit()
                 conn.close()
-            return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=status))
+                return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid.route("/delete-ssid-5ghz", methods=["GET", "POST"])
 def deleteSsid5Ghz():
@@ -240,7 +260,7 @@ def deleteSsid5Ghz():
             conn.close()
             return render_template("delete-ssid-5ghz.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -258,11 +278,14 @@ def deleteSsid5Ghz():
                 deleteSsidCursor.execute("DELETE FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
                 deleteSsidCursor.close()
             except MySQLdb.Error as e:
-                status = e
+                conn.close()
+                return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=e))
             else:
                 conn.commit()
                 conn.close()
-            return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=status))
+                return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid.route("/delete-ssid-24ghz-radius", methods=["GET", "POST"])
 def deleteSsid24GhzRadius():
@@ -277,7 +300,7 @@ def deleteSsid24GhzRadius():
             conn.close()
             return render_template("delete-ssid-24ghz-radius.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -295,11 +318,14 @@ def deleteSsid24GhzRadius():
                 deleteSsidCursor.execute("DELETE FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
                 deleteSsidCursor.close()
             except MySQLdb.Error as e:
-                status = e
+                conn.close()
+                return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
             else:
                 conn.commit()
                 conn.close()
-            return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
+                return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ssid.route("/delete-ssid-5ghz-radius", methods=["GET", "POST"])
 def deleteSsid5GhzRadius():
@@ -314,7 +340,7 @@ def deleteSsid5GhzRadius():
             conn.close()
             return render_template("delete-ssid-5ghz-radius.html", status=status, ssids=ssids)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             ssidId = request.form["ssid_id"]
@@ -332,8 +358,11 @@ def deleteSsid5GhzRadius():
                 deleteSsidCursor.execute("DELETE FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
                 deleteSsidCursor.close()
             except MySQLdb.Error as e:
-                status = e
+                conn.close()
+                return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
             else:
                 conn.commit()
                 conn.close()
-            return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
+                return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
+        else:
+            return msgAuthFailed, 401
