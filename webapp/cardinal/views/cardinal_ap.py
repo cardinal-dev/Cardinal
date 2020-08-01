@@ -29,8 +29,10 @@ SOFTWARE.
 import MySQLdb
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
+from cardinal.system.cardinal_sys import msgAuthFailed
 from cardinal.system.cardinal_sys import msgResourceAdded
 from cardinal.system.cardinal_sys import msgResourceDeleted
+from cardinal.system.cardinal_sys import msgSpecifyValidAp
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -53,7 +55,7 @@ def addAp():
             conn.close()
             return render_template("add-ap.html", status=status, apGroups=apGroups)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'), 401)
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apName = request.form["ap_name"]
@@ -78,11 +80,14 @@ def addAp():
                     addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES (%s, %s, %s, %s, %s, %s)", (apName, apIp, apSshUsername, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
                     addApCursor.close()
             except MySQLdb.Error as e:
+                conn.close()
                 return redirect(url_for('cardinal_ap_bp.addAp', status=e))
             else:
                 conn.commit()
-            conn.close()
-            return redirect(url_for('cardinal_ap_bp.addAp', status=status))
+                conn.close()
+                return redirect(url_for('cardinal_ap_bp.addAp', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ap.route("/delete-ap", methods=["GET", "POST"])
 def deleteAp():
@@ -97,12 +102,12 @@ def deleteAp():
             conn.close()
             return render_template("delete-ap.html", aps=aps, status=status)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'), 401)
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apId = request.form["ap_id"]
             if len(apId) <= 0:
-                status = "Please select a valid access point."
+                status = msgSpecifyValidAp
                 return redirect(url_for('cardinal_ap_bp.deleteAp', status=status))
             conn = cardinalSql()
             deleteApNameCursor = conn.cursor()
@@ -115,11 +120,14 @@ def deleteAp():
                 deleteApCursor.execute("DELETE FROM access_points WHERE ap_id = %s", [apId])
                 deleteApCursor.close()
             except MySQLdb.Error as e:
+                conn.close()
                 return redirect(url_for('cardinal_ap_bp.deleteAp', status=e))
             else:
                 conn.commit()
-            conn.close()
-            return redirect(url_for('cardinal_ap_bp.deleteAp', status=status))
+                conn.close()
+                return redirect(url_for('cardinal_ap_bp.deleteAp', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ap.route("/manage-ap-dashboard", methods=["GET", "POST"])
 def manageApDashboard():
@@ -134,12 +142,12 @@ def manageApDashboard():
             conn.close()
             return render_template("choose-ap-dashboard.html", aps=aps, status=status)
         else:
-            return redirect(url_for('cardinal_auth_bp.index'))
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apId = request.form['ap_id']
             if len(apId) <= 0:
-                status = "Please select a valid access point."
+                status = msgSpecifyValidAp
                 return redirect(url_for('cardinal_ap_bp.manageApDashboard', status=status))
             else:
                 conn = cardinalSql()
@@ -161,3 +169,5 @@ def manageApDashboard():
                 session['apBandwidth'] = apBandwidth
                 session['apModel'] = apModel
                 return render_template("manage-ap-dashboard.html")
+        else:
+            return msgAuthFailed, 401

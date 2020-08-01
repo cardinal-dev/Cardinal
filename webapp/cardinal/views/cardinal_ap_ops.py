@@ -27,9 +27,11 @@ SOFTWARE.
 '''
 
 import MySQLdb
+from cardinal.system.cardinal_fetch import gatherApInfo
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
-from cardinal.system.cardinal_fetch import gatherApInfo
+from cardinal.system.cardinal_sys import getApInfo
+from cardinal.system.cardinal_sys import msgAuthFailed
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -40,209 +42,193 @@ from scout import scout_sys
 
 cardinal_ap_ops = Blueprint('cardinal_ap_ops_bp', __name__)
 
-@cardinal_ap_ops.route("/config-ap-ip", methods=["GET", "POST"])
+@cardinal_ap_ops.route("/change-ap-ip", methods=["GET", "POST"])
 def configApIp():
     if request.method == 'GET':
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("config-ap-ip.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apId = session.get('apId')
+            if apId is None:
+                apId = request.form["ap_id"]
             apNewIp = request.form["ap_new_ip"]
             apSubnetMask = request.form["ap_subnetmask"]
-            conn = cardinalSql()
-            apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-            apInfo = apInfoCursor.fetchall()
-            apInfoCursor.close()
-            for info in apInfo:
-                apName = info[0]
-                apIp = info[1]
-                apSshUsername = info[2]
-                encryptedSshPassword = bytes(info[3], 'utf-8')
+            apInfo = getApInfo(apId=apId)
+            encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_sys.scoutChangeIp(ip=apIp, username=apSshUsername, password=apSshPassword, newIp=apNewIp, subnetMask=apSubnetMask)
-            status = "{}'s IP was successfully updated!".format(apName)
+            scout_sys.scoutChangeIp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, newIp=apNewIp, subnetMask=apSubnetMask)
+            status = "{}'s IP was successfully updated!".format(apInfo[0][0])
             try:
                 changeApIpCursor = conn.cursor()
                 changeApIpCursor.execute("UPDATE access_points SET ap_ip = %s WHERE ap_id = %s", (apNewIp,apId))
                 changeApIpCursor.close()
             except MySQLdb.Error as e:
+                conn.close()
                 return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=e))
             else:
+                conn.close()
                 conn.commit()
-            conn.close()
-            return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=status))
+                return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=status))
+        else:
+            return msgAuthFailed, 401
 
-@cardinal_ap_ops.route("/config-ap-name", methods=["GET", "POST"])
+@cardinal_ap_ops.route("/change-ap-name", methods=["GET", "POST"])
 def configApName():
     if request.method == 'GET':
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("config-ap-name.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apId = session.get('apId')
+            if apId is None:
+                apId = request.form["ap_id"]
             apNewName = request.form["ap_name"]
-            conn = cardinalSql()
-            apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-            apInfo = apInfoCursor.fetchall()
-            apInfoCursor.close()
-            for info in apInfo:
-                apName = info[0]
-                apIp = info[1]
-                apSshUsername = info[2]
-                encryptedSshPassword = bytes(info[3], 'utf-8')
+            apInfo = getApInfo(apId=apId)
+            encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_sys.scoutChangeName(ip=apIp, username=apSshUsername, password=apSshPassword, apName=apNewName)
-            status = "AP Name Changed from {0} to {1}".format(apName,apNewName)
+            scout_sys.scoutChangeName(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, apName=apNewName)
+            status = "AP Name Changed from {0} to {1}".format(apInfo[0][0],apNewName)
             try:
                 changeApNameCursor = conn.cursor()
                 changeApNameCursor.execute("UPDATE access_points SET ap_name = %s WHERE ap_id = %s", (apNewName,apId))
                 changeApNameCursor.close()
             except MySQLdb.Error as e:
+                conn.close()
                 return redirect(url_for('cardinal_ap_ops_bp.configApName', status=e))
             else:
+                conn.close()
                 conn.commit()
-            conn.close()
-            return redirect(url_for('cardinal_ap_ops_bp.configApName', status=status))
+                return redirect(url_for('cardinal_ap_ops_bp.configApName', status=status))
+        else:
+            return msgAuthFailed, 401
 
-@cardinal_ap_ops.route("/config-ap-tftp-backup", methods=["GET", "POST"])
+@cardinal_ap_ops.route("/get-ap-tftp-backup", methods=["GET", "POST"])
 def configApTftpBackup():
     if request.method == 'GET':
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("config-ap-tftp-backup.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apId = session.get('apId')
-            conn = cardinalSql()
+            if apId is None:
+                apId = request.form["ap_id"]
             tftpIp = request.form["tftp_ip"]
-            apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-            apInfo = apInfoCursor.fetchall()
-            apInfoCursor.close()
-            for info in apInfo:
-                apName = info[0]
-                apIp = info[1]
-                apSshUsername = info[2]
-                encryptedSshPassword = bytes(info[3], 'utf-8')
+            apInfo = getApInfo(apId=apId)
+            encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_sys.scoutTftpBackup(ip=apIp, username=apSshUsername, password=apSshPassword, tftpIp=tftpIp)
-            status = "Config Backup for {} Successfully Initiated!".format(apName)
+            scout_sys.scoutTftpBackup(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, tftpIp=tftpIp)
+            status = "Config Backup for {} Successfully Initiated!".format(apInfo[0][0])
             conn.close()
             return redirect(url_for('cardinal_ap_ops_bp.configApTftpBackup', status=status))
+        else:
+            return msgAuthFailed, 401
 
-@cardinal_ap_ops.route("/fetch-ap-info", methods=["GET", "POST"])
+@cardinal_ap_ops.route("/get-ap-info", methods=["GET", "POST"])
 def fetchApInfo():
     if request.method == 'GET':
         if session.get("username") is not None:
             status = request.args.get('status')
             return render_template("fetch-ap-info.html", status=status)
+        else:
+            return msgAuthFailed, 401
     elif request.method == 'POST':
         if session.get("username") is not None:
             apId = session.get('apId')
+            if apId is None:
+                apId = request.form['ap_id']
             status = gatherApInfo(apId)
             return redirect(url_for('cardinal_ap_ops_bp.fetchApInfo', status=status))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_ap_ops.route("/config-ap-http", methods=["GET"])
 def configApHttp():
     if session.get("username") is not None:
         status = request.args.get('status')
         return render_template("config-ap-http.html", status=status)
-    elif session.get("username") is None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ap_ops.route("/enable-ap-http", methods=["POST"])
 def enableApHttp():
     if session.get("username") is not None:
         apId = session.get('apId')
-        conn = cardinalSql()
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            encryptedSshPassword = bytes(info[3], 'utf-8')
+        if apId is None:
+            apId = request.form['ap_id']
+        apInfo = getApInfo(apId=apId)
+        encryptedSshPassword = bytes(apInfo[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutEnableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
-        status = "HTTP Server for {} Successfully Enabled!".format(apName)
+        scout_sys.scoutEnableHttp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
+        status = "HTTP Server for {} Successfully Enabled!".format(apInfo[0][0])
         conn.close()
         return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ap_ops.route("/disable-ap-http", methods=["POST"])
 def disableApHttp():
     if session.get("username") is not None:
         apId = session.get('apId')
-        conn = cardinalSql()
-        apInfoCursor = conn.cursor()
-        apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-        apInfo = apInfoCursor.fetchall()
-        apInfoCursor.close()
-        for info in apInfo:
-            apName = info[0]
-            apIp = info[1]
-            apSshUsername = info[2]
-            encryptedSshPassword = bytes(info[3], 'utf-8')
+        if apId is None:
+            apId = request.form["ap_id"]
+        apInfo = getApInfo(apId=apId)
+        encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutDisableHttp(ip=apIp, username=apSshUsername, password=apSshPassword)
-        status = "HTTP Server for {} Successfully Disabled".format(apName)
+        scout_sys.scoutDisableHttp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
+        status = "HTTP Server for {} Successfully Disabled".format(apInfo[0][0])
         conn.close()
         return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ap_ops.route("/config-ap-snmp", methods=["GET"])
 def configApSnmp():
     if session.get("username") is not None:
         status = request.args.get('status')
         return render_template("config-ap-snmp.html", status=status)
-    elif session.get("username") is None:
-        return redirect(url_for('cardinal_auth_bp.index'))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ap_ops.route("/enable-ap-snmp", methods=["POST"])
 def enableApSnmp():
-    if request.method == 'POST':
-        if session.get("username") is not None:
-            apId = session.get('apId')
-            conn = cardinalSql()
-            apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = %s", [apId])
-            apInfo = apInfoCursor.fetchall()
-            apInfoCursor.close()
-            for info in apInfo:
-                apName = info[0]
-                apIp = info[1]
-                apSshUsername = info[2]
-                encryptedSshPassword = bytes(info[3], 'utf-8')
-                encryptedSnmp = bytes(info[4], 'utf-8')
-            apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            apSnmp = cipherSuite.decrypt(encryptedSnmp).decode('utf-8')
-            scout_sys.scoutEnableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword, snmp=apSnmp)
-            status = "SNMP for {} Successfully Enabled!".format(apName)
-            conn.close()
-            return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
+    if session.get("username") is not None:
+        apId = session.get('apId')
+        if apId is None:
+            apId = request.form["ap_id"]
+        apInfo = getApInfo(apId=apId)
+        encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
+        encryptedSnmp = bytes(apInfo[0][4], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        apSnmp = cipherSuite.decrypt(encryptedSnmp).decode('utf-8')
+        scout_sys.scoutEnableSnmp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, snmp=apSnmp)
+        status = "SNMP for {} Successfully Enabled!".format(apInfo[0][0])
+        conn.close()
+        return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
+    else:
+        return msgAuthFailed, 401
 
 @cardinal_ap_ops.route("/disable-ap-snmp", methods=["POST"])
 def disableApSnmp():
-    if request.method == 'POST':
-        if session.get("username") is not None:
-            apId = session.get('apId')
-            conn = cardinalSql()
-            apInfoCursor = conn.cursor()
-            apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
-            apInfo = apInfoCursor.fetchall()
-            apInfoCursor.close()
-            for info in apInfo:
-                apName = info[0]
-                apIp = info[1]
-                apSshUsername = info[2]
-                encryptedSshPassword = bytes(info[3], 'utf-8')
-            apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_sys.scoutDisableSnmp(ip=apIp, username=apSshUsername, password=apSshPassword)
-            status = "SNMP Server for {} Successfully Disabled!".format(apName)
-            conn.close()
-            return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
+    if session.get("username") is not None:
+        apId = session.get('apId')
+        if apId is None:
+            apId = request.form["ap_id"]
+        apInfo = getApInfo(apId=apId)
+        encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
+        apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
+        scout_sys.scoutDisableSnmp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
+        status = "SNMP Server for {} Successfully Disabled!".format(apInfo[0][0])
+        conn.close()
+        return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
+    else:
+        return msgAuthFailed, 401

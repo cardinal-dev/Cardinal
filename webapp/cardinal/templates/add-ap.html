@@ -14,8 +14,8 @@
 <form id="configure_ap_group">
 <select name="group_id">
 
-{% for item in apGroups %}
 <option value=""></option>
+{% for item in apGroups %}
 <option value="{{ item[0] }}">{{ item[1] }}</option>
 {% endfor %}
 

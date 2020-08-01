@@ -27,6 +27,7 @@ SOFTWARE.
 '''
 
 import subprocess
+from cardinal.system.cardinal_sys import msgAuthFailed
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -41,7 +42,7 @@ def networkTools():
     if session.get("username") is not None:
         return render_template("network-tools.html")
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_network_toolkit.route("/tools-output", methods=["GET"])
 def networkToolsOutput():
@@ -49,7 +50,7 @@ def networkToolsOutput():
         commandOutput = request.args.get("commandOutput")
         return render_template("network-tools-output.html", commandOutput=commandOutput)
     else:
-        return redirect(url_for('cardinal_auth_bp.index'))
+        return msgAuthFailed, 401
 
 @cardinal_network_toolkit.route("/do-ping", methods=["POST"])
 def doPing():
@@ -60,6 +61,8 @@ def doPing():
             pingCmd = subprocess.Popen(pingArgs, stdout=subprocess.PIPE)
             commandOutput = pingCmd.stdout.read()
             return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_network_toolkit.route("/do-tracert", methods=["POST"])
 def doTracert():
@@ -70,6 +73,8 @@ def doTracert():
             tracertCmd = subprocess.Popen(tracertArgs, stdout=subprocess.PIPE)
             commandOutput = tracertCmd.stdout.read()
             return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_network_toolkit.route("/do-dig", methods=["POST"])
 def doDig():
@@ -80,6 +85,8 @@ def doDig():
             digCmd = subprocess.Popen(digArgs, stdout=subprocess.PIPE)
             commandOutput = digCmd.stdout.read()
             return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        else:
+            return msgAuthFailed, 401
 
 @cardinal_network_toolkit.route("/do-curl", methods=["POST"])
 def doCurl():
@@ -90,3 +97,5 @@ def doCurl():
             curlCmd = subprocess.Popen(curlArgs, stdout=subprocess.PIPE)
             commandOutput = curlCmd.stdout.read()
             return redirect(url_for('cardinal_network_toolkit_bp.networkToolsOutput', commandOutput=commandOutput.decode('ascii')))
+        else:
+            return msgAuthFailed, 401

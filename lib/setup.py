@@ -35,5 +35,6 @@ setup(name='scout',
       author_email='jmcclune@mcclunetechnologies.net',
       url='https://github.com/cardinal-dev/Cardinal',
       packages=['scout'],
+      install_requires=['paramiko', 'configparser', 'Jinja2']
       include_package_data=True
      )

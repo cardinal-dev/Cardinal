@@ -27,13 +27,12 @@ SOFTWARE.
 '''
 
 import MySQLdb
-import scout_info
 import time
 from configparser import ConfigParser
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
 from datetime import datetime
-
+from scout import scout_info
 timeStamp = datetime.now()
 
 def gatherApInfo(apId):

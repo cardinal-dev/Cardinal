@@ -46,10 +46,8 @@ def scoutUsage():
     print("   scout-cli --delete-ssid-24: delete a 2.4GHz SSID/RADIUS SSID")
     print("   scout-cli --delete-ssid-5: delete a 5GHz SSID/RADIUS SSID")
     print("   scout-cli --disable-http: disable access point HTTP server")
-    print("   scout-cli --disable-radius: disable access point RADIUS function") 
     print("   scout-cli --disable-snmp: disable access point SNMP function")
     print("   scout-cli --enable-http: enable access point HTTP function")
-    print("   scout-cli --enable-radius: enable access point RADIUS function")
     print("   scout-cli --enable-snmp: enable access point SNMP function")
     print("   scout-cli --get-speed: show access point link speed")
     print("   scout-cli --tftp-backup: backup access point config via TFTP")
@@ -69,7 +67,8 @@ def scoutUsage():
     print("   scout-cli --run-fetcher: run scoutFetcher() from scout-cli")
     print("   scout-cli --ping: ping an AP via SSH")
 
-# SCOUT LOGIC
+
+# Let's start handling the logic for scout-cli
 
 if len(sys.argv) > 1:
     scoutCommand = sys.argv[1]
@@ -80,7 +79,7 @@ if len(sys.argv) > 1:
         password = sys.argv[4]
         return ip, username, password
 
-    # SCOUT INFO COMMANDS
+    # scout_info
     if scoutCommand == "--help":
         scoutUsage()
     elif scoutCommand == "--get-arp":
@@ -136,8 +135,8 @@ if len(sys.argv) > 1:
         apPing = scout_info.scoutPing(ip=ip, username=username, password=password)
         print(apPing)
 
-    # SCOUT SYS COMMANDS
-    if scoutCommand == "--led":
+    # scout_sys
+    elif scoutCommand == "--led":
         ip, username, password = scoutArgs()
         scout_sys.scoutLed(ip=ip, username=username, password=password)
     elif scoutCommand == "--change-ip":
@@ -148,9 +147,6 @@ if len(sys.argv) > 1:
     elif scoutCommand == "--disable-http":
         ip, username, password = scoutArgs()
         scout_sys.scoutDisableHttp(ip=ip, username=username, password=password)
-    elif scoutCommand == "--disable-radius":
-        ip, username, password = scoutArgs()
-        scout_sys.scoutDisableRadius(ip=ip, username=username, password=password)
     elif scoutCommand == "--disable-snmp":
         ip, username, password = scoutArgs()
         snmp = sys.argv[5]
@@ -159,9 +155,6 @@ if len(sys.argv) > 1:
     elif scoutCommand == "--enable-http":
         ip, username, password = scoutArgs()
         scout_sys.scoutEnableHttp(ip=ip, username=username, password=password)
-    elif scoutCommand == "--enable-radius":
-        ip, username, password = scoutArgs()
-        scout_sys.scoutEnableRadius(ip=ip, username=username, password=password)
     elif scoutCommand == "--enable-snmp":
         ip, username, password = scoutArgs()
         snmp = sys.argv[5]
@@ -185,8 +178,8 @@ if len(sys.argv) > 1:
         apName = sys.argv[5]
         scout_sys.scoutChangeName(ip=ip, username=username, password=password, apName=apName)
 
-    # SCOUT SSID COMMANDS
-    if scoutCommand == "--create-ssid-24":
+    # scout_ssid
+    elif scoutCommand == "--create-ssid-24":
         ip, username, password = scoutArgs()
         ssid = sys.argv[5]
         wpa2Pass = sys.argv[6]
@@ -248,6 +241,9 @@ if len(sys.argv) > 1:
         radioSub = sys.argv[7]
         gigaSub = sys.argv[8]
         scout_ssid.scoutDeleteSsid5(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, radioSub=radioSub, gigaSub=gigaSub)
+    else:
+        print("ERROR: Please specify a valid scout-cli command.")
+        sys.exit(1)
 
 else:
     print("ERROR: No valid options detected. Please use --help for a list of valid options.")
