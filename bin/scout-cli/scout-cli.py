@@ -149,17 +149,14 @@ if len(sys.argv) > 1:
         scout_sys.scoutDisableHttp(ip=ip, username=username, password=password)
     elif scoutCommand == "--disable-snmp":
         ip, username, password = scoutArgs()
-        snmp = sys.argv[5]
-        location = sys.argv[6]
-        scout_sys.scoutDisableSnmp(ip=ip, username=username, password=password, snmp=snmp, location=location)
+        scout_sys.scoutDisableSnmp(ip=ip, username=username, password=password)
     elif scoutCommand == "--enable-http":
         ip, username, password = scoutArgs()
         scout_sys.scoutEnableHttp(ip=ip, username=username, password=password)
     elif scoutCommand == "--enable-snmp":
         ip, username, password = scoutArgs()
         snmp = sys.argv[5]
-        location = sys.argv[6]
-        scout_sys.scoutEnableSnmp(ip=ip, username=username, password=password, snmp=snmp, location=location)
+        scout_sys.scoutEnableSnmp(ip=ip, username=username, password=password, snmp=snmp)
     elif scoutCommand == "--tftp-backup":
         ip, username, password = scoutArgs()
         tftpIp = sys.argv[5]
@@ -226,7 +223,7 @@ if len(sys.argv) > 1:
         radiusTimeout = sys.argv[14]
         radiusGroup = sys.argv[15]
         methodList = sys.argv[16]
-        scout_ssid.scoutCreateSsidRadius5(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub, radiusIp=radiusIp, sharedSecret=sharedSecret, authPort=authPort, acctPort=acctPort, radiusTimeout=radiusTimeout, radiusGroup=radiusGroup, methodList=methodList)
+        scout_ssid.scoutCreateSsid5Radius(ip=ip, username=username, password=password, ssid=ssid, vlan=vlan, bridgeGroup=bridgeGroup, radioSub=radioSub, gigaSub=gigaSub, radiusIp=radiusIp, sharedSecret=sharedSecret, authPort=authPort, acctPort=acctPort, radiusTimeout=radiusTimeout, radiusGroup=radiusGroup, methodList=methodList)
     elif scoutCommand == "--delete-ssid-24":
         ip, username, password = scoutArgs()
         ssid = sys.argv[5]
