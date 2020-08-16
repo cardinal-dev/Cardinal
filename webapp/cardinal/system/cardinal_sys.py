@@ -65,6 +65,7 @@ def getApInfo(apId):
     apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = %s", [apId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
+    conn.close()
     return apInfo
 
 # GROUP OPERATIONS
@@ -165,6 +166,7 @@ def ssidCheck(apId, ssidId, ssidType=None, action=None, commit=None):
             conn.close()
             return True
         else:
+            conn.close()
             return None
 
 def ssidGatherApIds(apGroupId):

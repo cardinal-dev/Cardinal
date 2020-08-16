@@ -53,5 +53,7 @@ try:
         print("CONNECTION TEST PASSED: {}".format(version))
     else:
         print("CONNECTION TEST FAILED: {}".format(MySQLdb.Error))
+    conn.close()
 except MySQLdb.Error as e:
+    conn.close()
     print("Cardinal detected a MySQL error: {}".format(e))

@@ -1,8 +1,8 @@
 <h1>scout-cli</h1>
 <h3>CLI for Managing Cisco Autonomous APs</h3>
 
-`scout-cli` exposes `scout` logic in order to manage Cisco APs via the CLI. Instead of passing positional arguments
-directly into the functions, `scout-cli` uses the `sys` module in order to gather the values needed to run.
+`scout-cli` depends on `scout` logic in order to manage Cisco APs via the CLI. Instead of passing positional arguments
+directly into the functions, `scout-cli` uses the `sys` module in order to gather the values needed.
 
 <h3>Usage:</h3>
 
@@ -16,15 +16,11 @@ Usage:
    scout-cli --create-ssid-5: create a 5GHz SSID
    scout-cli --create-ssid-radius-24: create a 2.4GHz RADIUS SSID
    scout-cli --create-ssid-radius-5: create a 5GHz RADIUS SSID
-   scout-cli --delete-ssid-24: delete a 2.4GHz SSID
-   scout-cli --delete-ssid-5: delete a 5GHz SSID
-   scout-cli --delete-ssid-radius-24: delete a 2.4GHz RADIUS SSID
-   scout-cli --delete-ssid-radius-5: delete a 5GHz RADIUS SSID
+   scout-cli --delete-ssid-24: delete a 2.4GHz SSID/RADIUS SSID
+   scout-cli --delete-ssid-5: delete a 5GHz SSID/RADIUS SSID
    scout-cli --disable-http: disable access point HTTP server
-   scout-cli --disable-radius: disable access point RADIUS function
    scout-cli --disable-snmp: disable access point SNMP function
    scout-cli --enable-http: enable access point HTTP function
-   scout-cli --enable-radius: enable access point RADIUS function
    scout-cli --enable-snmp: enable access point SNMP function
    scout-cli --get-speed: show access point link speed
    scout-cli --tftp-backup: backup access point config via TFTP
@@ -41,10 +37,13 @@ Usage:
    scout-cli --get-uptime: fetch access point uptime info
    scout-cli --reboot: reboot access point
    scout-cli --change-name: change access point hostname
+   scout-cli --run-fetcher: run scoutFetcher() from scout-cli
+   scout-cli --ping: ping an AP via SSH
 ~~~
 
-Just like `scout`, values for `ip`, `username`, and `password` are always required. These values are given after the
-command argument.
+Every parameter in `scout-cli` requires three arguments: `ip`, `username`, and `password`.
+After providing the connection information, you can add additional values, depending
+on the option specified.
 
 <h3>Example</h3>
 
