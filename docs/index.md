@@ -3,6 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/cardinal-dev/Cardinal/master/webapp/cardinal/static/img/cardinalmain.png)
 [![Build Status](https://api.travis-ci.org/cardinal-dev/Cardinal.svg?branch=master)](https://travis-ci.org/cardinal-dev/Cardinal)
+[![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
 Cardinal is an open source Cisco access point controller. Cardinal is built on Python and uses `paramiko` to handle the configuration of access points via SSH. In order to use Cardinal, your Cisco AP's must be in autonomous mode (K9W7 IOS) and have SSH enabled. 
 
