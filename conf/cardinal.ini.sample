@@ -8,3 +8,4 @@ flaskkey=d67ff999decd7439c230f519ea9fb999
 encryptkey=rFLoNiCTwoOa6o8QOXBy-9WK2-IdSTT8HKiiIzQFHVVZ=
 commanddebug=off
 workers=2
+sessionTimeout=2

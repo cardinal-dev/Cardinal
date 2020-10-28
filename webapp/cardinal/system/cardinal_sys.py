@@ -43,6 +43,7 @@ flaskKey = cardinalConfig.get('cardinal', 'flaskkey')
 encryptKey = cardinalConfig.get('cardinal', 'encryptkey')
 bytesKey = bytes(encryptKey, 'utf-8')
 cipherSuite = Fernet(bytesKey)
+sessionTimeout = cardinalConfig.get('cardinal', 'sessionTimeout')
 
 # MySQL AUTHENTICATION & HANDLING
 
