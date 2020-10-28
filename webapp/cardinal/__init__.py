@@ -36,10 +36,12 @@ from cardinal.views import cardinal_network_toolkit
 from cardinal.views import cardinal_ssid
 from cardinal.views import cardinal_ssid_ops
 from cardinal.views import cardinal_visuals
+from datetime import timedelta
 from flask import Flask
 
 Cardinal = Flask(__name__)
 Cardinal.secret_key = "{}".format(cardinal_sys.flaskKey)
+Cardinal.permanent_session_lifetime = timedelta(minutes=int(cardinal_sys.sessionTimeout))
 
 Cardinal.register_blueprint(cardinal_ap_group.cardinal_ap_group)
 Cardinal.register_blueprint(cardinal_ap_ops.cardinal_ap_ops)
