@@ -1,10 +1,10 @@
-<h1>Running Cardinal in a Docker Container</h1>
+<h1>Running Cardinal in a Container</h1>
 
-If desired, Cardinal can be deployed in a Docker container. Containers allow you
+If desired, Cardinal can be deployed in a container. Containers allow you
 to deploy applications in an isolated environment, acting as tenants to the Linux
-guest.
+host.
 
-The `Dockerfile` provided installs the latest Cardinal source within an Ubuntu 18.04
+The `Dockerfile` provided will install the latest Cardinal release from source within an Ubuntu 18.04
 environment. Before building the Cardinal image, please make sure you adapt the `Dockerfile`
 to fit your needs (i.e. locale, environment variables, etc.).
 
@@ -12,7 +12,7 @@ The default `Dockerfile` will install Cardinal using the `en_US` locale and sets
 `CARDINALCONFIG` to `/home/cardinal.ini`. Please make sure you know where the `.ini`
 file will be stored before building, so the environment variable is properly configured.
 If you want to try Cardinal in a development environment, just keep the defaults
-and then run `install.sh` from either outside or inside the container. If you're going to
+and run `install.sh` from either outside or inside the container. If you're going to
 use `install.sh`, please make sure you run it from the origin directory (i.e. `bin/`). `build-container.sh`
 is a very simplified method of starting up a Cardinal container, if you want a quick demo environment.
 
@@ -34,8 +34,8 @@ to build the `cardinal` image.
 using the following command:
 
 ~~~
-docker run -d -p <OUTSIDE_PORT>:<INSIDE_PORT> --privileged --name cardinal -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal
-docker run -d -p 1000:80 --privileged --name cardinal -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal
+docker run -d -p <OUTSIDE_PORT>:<INSIDE_PORT> --name cardinal --tmpfs /tmp --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal
+docker run -d -p 1000:80 --name cardinal --tmpfs /tmp --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal
 ~~~
 
 The preceding command will create a Docker container named `cardinal` and will map an external host port to one of the 

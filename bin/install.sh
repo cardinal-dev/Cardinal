@@ -94,6 +94,7 @@ setupCardinal() {
     echo 'flaskkey'=""$flaskKey"" >> $dbCredDir/cardinal.ini
     echo 'encryptkey'=""$encryptKey"" >> $dbCredDir/cardinal.ini
     echo 'commanddebug=off' >> $dbCredDir/cardinal.ini
+    echo 'sessiontimeout=2' >> $dbCredDir/cardinal.ini
 }
 
 if [ "$configOption" = "--guided" ]; then

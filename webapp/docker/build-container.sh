@@ -37,7 +37,7 @@ dockerBuildStatus=$(echo $?)
 
 if [ "$dockerBuildStatus" = 0 ]; then
     echo "INFO: Starting Cardinal container based on cardinal_build image..."
-    docker run -d --privileged --name cardinal_build -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal_build
+    docker run -d --name cardinal_build --tmpfs /tmp --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal_build
     dockerRunStatus=$(echo $?)
 else
     echo "ERROR: docker build failed. Please check the docker build stdout/stderr for more information."
@@ -68,7 +68,7 @@ if [ "$dockerCommitStatus" = 0 ]; then
     docker tag "$dockerImage" cardinal
     docker rm -f cardinal_build
     docker rmi cardinal_build
-    docker run -d -p 1000:80 --privileged --name cardinal -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal
+    docker run -d -p 1000:80 --name cardinal --tmpfs /tmp --tmpfs /run --tmpfs /run/lock -v /sys/fs/cgroup:/sys/fs/cgroup:ro cardinal
     echo "INFO: Starting Cardinal..."
     docker exec -it cardinal systemctl restart cardinal
 else
