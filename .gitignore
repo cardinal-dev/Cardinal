@@ -11,3 +11,4 @@ lib/scout/__pycache__
 docs/_site
 docs/pages/_site
 ci/tests/scout-test.sh
+venv/
