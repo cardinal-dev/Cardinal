@@ -1,12 +1,12 @@
 # Cardinal (Ubuntu 18.04)
 
-FROM jrei/systemd-ubuntu:18.04
+FROM ubuntu:bionic
 MAINTAINER James McClune <jmcclune@mcclunetechnologies.net>
 WORKDIR /opt
 
 # Install dependencies & added extras
 RUN apt-get update
-RUN apt-get install -y git mysql-server mysql-client nginx sudo nano python3-venv locales python3-dev libmysqlclient-dev build-essential
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y git mysql-server mysql-client nginx sudo nano python3-venv locales python3-dev libmysqlclient-dev build-essential systemd
 
 # Grab latest Cardinal source
 RUN git clone https://github.com/cardinal-dev/Cardinal.git
