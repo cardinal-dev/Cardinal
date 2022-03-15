@@ -58,7 +58,6 @@ setupCardinal() {
     sudo python3 -m venv $cardinalBase/cardinal
     sudo $cardinalBase/cardinal/bin/pip install -U pip
     sudo $cardinalBase/cardinal/bin/pip install -r $cardinalBase/../requirements.txt
-    sudo $cardinalBase/cardinal/bin/pip install $cardinalBase/../lib/.
 
     # Create a socket directory for uWSGI
     rm -rf /var/lib/cardinal
@@ -71,7 +70,7 @@ setupCardinal() {
     # Create the MySQL database for Cardinal. We also want to import the SQL structure too!
     mysql -u$dbUsername -p$dbPassword -e "CREATE DATABASE "$dbName""
     mysql -u$dbUsername --password=$dbPassword $dbName < $cardinalBase/../sql/cardinal.sql
-    mysql -u$dbUsername --password=$dbPassword mysql -e "update user set plugin='mysql_native_password' where User='root'"
+    mysql -u$dbUsername --password=$dbPassword mysql -e "update user set plugin='mysql_native_password' where user='root'"
     mysql -u$dbUsername --password=$dbPassword mysql -e "update user set authentication_string=password('$dbPassword') where user='root'"
     systemctl restart mysql
 
@@ -94,7 +93,7 @@ setupCardinal() {
     echo 'flaskkey'=""$flaskKey"" >> $dbCredDir/cardinal.ini
     echo 'encryptkey'=""$encryptKey"" >> $dbCredDir/cardinal.ini
     echo 'commanddebug=off' >> $dbCredDir/cardinal.ini
-    echo 'sessiontimeout=2' >> $dbCredDir/cardinal.ini
+    echo 'sessiontimeout=1000' >> $dbCredDir/cardinal.ini
 }
 
 if [ "$configOption" = "--guided" ]; then

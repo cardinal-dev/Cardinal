@@ -1,20 +1,17 @@
-dist: xenial
+dist: focal
 language: python
 python:
-- '3.6'
-- '3.7'
 - '3.8'
+- '3.9'
+- '3.10'
 services:
 - mysql
 install:
 - python3 -m pip install -r requirements.txt
 before_script:
-- chmod +x ci/tests/*.py
 - mysql -e 'CREATE DATABASE cardinal;'
 - mysql -u root --password="" cardinal < sql/cardinal.sql
 - mysql -e 'SHOW TABLES from cardinal;'
 - ls -lah
-- pip install lib/.
 script:
 - bash ci/tests/travis-test.sh
-- pyinstaller --onefile bin/scout-cli/scout-cli.py

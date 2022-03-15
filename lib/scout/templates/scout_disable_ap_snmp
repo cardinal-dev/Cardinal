@@ -1,4 +1,0 @@
-enable
-{{ password }}
-conf t
-no snmp-server
