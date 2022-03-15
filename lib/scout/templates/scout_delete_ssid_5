@@ -1,9 +1,0 @@
-enable
-{{ password }}
-conf t
-no dot11 ssid {{ ssid }}
-no int Dot11Radio1.{{ radioSub }}
-no int gi0.{{ gigaSub }}
-int Dot11Radio1
-no encryption vlan {{ vlan }} mode ciphers aes-ccm
-do wr

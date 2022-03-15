@@ -1,1 +1,0 @@
-../../lib/scout/scout_info.py

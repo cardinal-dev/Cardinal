@@ -1,0 +1,13 @@
+[Unit]
+Description=Cardinal - Open Source Cisco Access Point Controller
+After=network.target
+
+[Service]
+User=cardinal
+Group=www-data
+WorkingDirectory=<PATH_TO_CARDINAL_WEBAPP>
+Environment="PATH=<PATH_TO_CARDINAL_VENV>:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+ExecStart=<PATH_TO_CARDINAL_VENV>/bin/uwsgi --ini wsgi.ini --logto /var/log/cardinal/cardinal.log
+
+[Install]
+WantedBy=multi-user.target
