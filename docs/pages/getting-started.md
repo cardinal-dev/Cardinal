@@ -27,7 +27,7 @@ Per the introduction above, Cardinal operates on three pillars:
 Development of Cardinal is currently taking place on MySQL 5.7 with Python3 (i.e. 3.5, 3.6, and 3.7) and Nginx 1.16.0.  Please make sure you install these three components and their associated dependencies before proceeding.
 
 ~~~
-sudo apt install mysql-server mysql-client nginx python3-venv python3-dev libmysqlclient-dev build-essential
+sudo apt install mysql-server mysql-client nginx python3-venv python3-dev libmysqlclient-dev build-essential traceroute
 ~~~
 
 Most distributions have moved to Python3, so you shouldn't need to install Python3 manually. If you're system doesn't have Python3, please install it as it's required. Cardinal is tested on Python 3.5+, so installing at least Python 3.5 is highly recommended.
