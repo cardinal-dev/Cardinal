@@ -43,7 +43,7 @@ from flask import request
 from flask import redirect
 from flask import session
 from flask import url_for
-from scout import scout_ssid
+from scout import ssid
 
 cardinal_ssid_ops = Blueprint('cardinal_ssid_ops_bp', __name__)
 
@@ -78,7 +78,7 @@ def deploySsid24Ghz():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
+                ssid.scoutCreateSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="add", commit="True")
                 status = "Deployment of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
@@ -121,7 +121,7 @@ def deploySsid24GhzRadius():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid24Radius(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
+                ssid.scoutCreateSsid24Radius(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="add", commit="True")
                 status = "Deployment of 2.4GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
@@ -157,7 +157,7 @@ def deploySsid24GhzGroup():
             wpa2Pass = cipherSuite.decrypt(encryptedWpa2Pass).decode('utf-8')
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], wpa2Pass=wpa2Pass, vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutCreateSsid24, apInfo=apList)
+            task = processor(operation=ssid.scoutCreateSsid24, apInfo=apList)
             endTime = time.time() - startTime
             status = "Deployment of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -189,7 +189,7 @@ def deploySsid24GhzRadiusGroup():
             sharedSecret = cipherSuite.decrypt(encryptedSharedSecret).decode('utf-8')
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutCreateSsid24Radius, apInfo=apList)
+            task = processor(operation=ssid.scoutCreateSsid24Radius, apInfo=apList)
             endTime = time.time() - startTime
             status = "Deployment of 2.4GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -228,7 +228,7 @@ def deploySsid5Ghz():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
+                ssid.scoutCreateSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], wpa2Pass=wpa2Pass, bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="add", commit="True")
                 status = "Deployment of 5GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
@@ -271,7 +271,7 @@ def deploySsid5GhzRadius():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutCreateSsid5Radius(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
+                ssid.scoutCreateSsid5Radius(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="add", commit="True")
                 status = "Deployment of 5GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apName)
                 conn.close()
@@ -307,7 +307,7 @@ def deploySsid5GhzGroup():
             wpa2Pass = cipherSuite.decrypt(encryptedWpa2Pass).decode('utf-8')
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], wpa2Pass=wpa2Pass, vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][3], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutCreateSsid5, apInfo=apList)
+            task = processor(operation=ssid.scoutCreateSsid5, apInfo=apList)
             endTime = time.time() - startTime
             status = "Deployment of 5GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -339,7 +339,7 @@ def deploySsid5GhzRadiusGroup():
             sharedSecret = cipherSuite.decrypt(encryptedSharedSecret).decode('utf-8')
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], bridgeGroup=ssidInfo[0][2], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4], radiusIp=ssidInfo[0][5], sharedSecret=sharedSecret, authPort=ssidInfo[0][7], acctPort=ssidInfo[0][8], radiusTimeout=ssidInfo[0][9], radiusGroup=ssidInfo[0][10], methodList=ssidInfo[0][11])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutCreateSsid5Radius, apInfo=apList)
+            task = processor(operation=ssid.scoutCreateSsid5Radius, apInfo=apList)
             endTime = time.time() - startTime
             status = "Deployment of 5GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -376,7 +376,7 @@ def removeSsid24Ghz():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                ssid.scoutDeleteSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz", action="remove", commit="True")
                 status = "Removal of 2.4GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
@@ -413,7 +413,7 @@ def removeSsid24GhzRadius():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                ssid.scoutDeleteSsid24(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_24ghz_radius", action="remove", commit="True")
                 status = "Removal of 2.4GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
@@ -443,7 +443,7 @@ def removeSsid24GhzGroup():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz")
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutDeleteSsid24, apInfo=apList)
+            task = processor(operation=ssid.scoutDeleteSsid24, apInfo=apList)
             endTime = time.time() - startTime
             status = "Removal of 2.4GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -473,7 +473,7 @@ def removeSsid24GhzRadiusGroup():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_24ghz_radius")
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutDeleteSsid24, apInfo=apList)
+            task = processor(operation=ssid.scoutDeleteSsid24, apInfo=apList)
             endTime = time.time() - startTime
             status = "Deployment of 2.4GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -510,7 +510,7 @@ def removeSsid5Ghz():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                ssid.scoutDeleteSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz", action="remove", commit="True")
                 status = "Removal of 5GHz SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
@@ -547,7 +547,7 @@ def removeSsid5GhzRadius():
                 apInfoCursor.close()
                 encryptedSshPassword = bytes(apInfo[0][2], 'utf-8')
                 apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-                scout_ssid.scoutDeleteSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
+                ssid.scoutDeleteSsid5(ip=apInfo[0][0], username=apInfo[0][1], password=apSshPassword, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
                 commitRelationship = ssidCheck(apId=apId, ssidId=ssidId, ssidType="ssid_5ghz_radius", action="remove", commit="True")
                 status = "Removal of 5GHz RADIUS SSID {0} for AP {1} Has Been Successfully Initiated!".format(ssidInfo[0][0],apName)
                 conn.close()
@@ -577,7 +577,7 @@ def removeSsid5GhzGroup():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz")
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][4], gigaSub=ssidInfo[0][5])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutDeleteSsid5, apInfo=apList)
+            task = processor(operation=ssid.scoutDeleteSsid5, apInfo=apList)
             endTime = time.time() - startTime
             status = "Removal of 5GHz SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -607,7 +607,7 @@ def removeSsid5GhzRadiusGroup():
             ssidInfo = getSsidInfo(ssidId=ssidId, ssidType="ssid_5ghz_radius")
             apList = apGroupIterator(apGroupId=apGroupId, ssid=ssidInfo[0][0], vlan=ssidInfo[0][1], radioSub=ssidInfo[0][3], gigaSub=ssidInfo[0][4])
             startTime = time.time()
-            task = processor(operation=scout_ssid.scoutDeleteSsid5, apInfo=apList)
+            task = processor(operation=ssid.scoutDeleteSsid5, apInfo=apList)
             endTime = time.time() - startTime
             status = "Deployment of 5GHz RADIUS SSID {0} for AP Group {1} Has Been Successfully Initiated!".format(ssidInfo[0][0], apGroupName)
             completionTime = printCompletionTime(endTime)

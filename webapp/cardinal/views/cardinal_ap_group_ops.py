@@ -38,7 +38,7 @@ from flask import request
 from flask import redirect
 from flask import session
 from flask import url_for
-from scout import scout_sys
+from scout import sys
 
 cardinal_ap_group_ops = Blueprint('cardinal_ap_group_ops_bp', __name__)
 
@@ -60,7 +60,7 @@ def configApTftpBackup():
             tftpIp = request.form["tftp_ip"]
             apList = apGroupIterator(apGroupId=apGroupId, tftpIp=tftpIp)
             startTime = time.time()
-            task = processor(operation=scout_sys.scoutTftpBackup, apInfo=apList)
+            task = processor(operation=sys.scoutTftpBackup, apInfo=apList)
             endTime = time.time() - startTime
             status = "INFO: Config Backup for AP Group {} Successfully Initiated!".format(apGroupName)
             completionTime = printCompletionTime(endTime)
@@ -86,7 +86,7 @@ def enableApHttp():
             apGroupId = request.form["ap_group_id"]
         apList = apGroupIterator(apGroupId=apGroupId)
         startTime = time.time()
-        task = processor(operation=scout_sys.scoutEnableHttp, apInfo=apList)
+        task = processor(operation=sys.scoutEnableHttp, apInfo=apList)
         endTime = time.time() - startTime
         status = "INFO: HTTP Server for AP Group {} Successfully Enabled!".format(apGroupName)
         completionTime = printCompletionTime(endTime)
@@ -103,7 +103,7 @@ def disableApHttp():
             apGroupId = request.form["ap_group_id"]
         apList = apGroupIterator(apGroupId=apGroupId)
         startTime = time.time()
-        task = processor(operation=scout_sys.scoutDisableHttp, apInfo=apList)
+        task = processor(operation=sys.scoutDisableHttp, apInfo=apList)
         endTime = time.time() - startTime
         status = "INFO: HTTP Server for AP Group {} Successfully Disabled!".format(apGroupName)
         completionTime = printCompletionTime(endTime)
@@ -129,7 +129,7 @@ def enableApSnmp():
             apGroupId = request.form["ap_group_id"]
         apList = apGroupIterator(apGroupId=apGroupId, snmp="True")
         startTime = time.time()
-        task = processor(operation=scout_sys.scoutEnableSnmp, apInfo=apList)
+        task = processor(operation=sys.scoutEnableSnmp, apInfo=apList)
         endTime = time.time() - startTime
         status = "INFO: SNMP Server for AP Group {} Successfully Enabled!".format(apGroupName)
         completionTime = printCompletionTime(endTime)
@@ -146,7 +146,7 @@ def disableApSnmp():
             apGroupId = request.form["ap_group_id"]
         apList = apGroupIterator(apGroupId=apGroupId)
         startTime = time.time()
-        task = processor(operation=scout_sys.scoutDisableSnmp, apInfo=apList)
+        task = processor(operation=sys.scoutDisableSnmp, apInfo=apList)
         endTime = time.time() - startTime
         status = "INFO: SNMP Server for AP Group {} Successfully Disabled!".format(apGroupName)
         completionTime = printCompletionTime(endTime)

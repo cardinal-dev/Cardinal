@@ -32,27 +32,29 @@ from configparser import ConfigParser
 from cardinal.system.cardinal_sys import cardinalSql
 from cardinal.system.cardinal_sys import cipherSuite
 from datetime import datetime
-from scout import scout_info
+from scout import info
 
 timeStamp = datetime.now()
 
 def gatherApInfo(apId):
-    """Uses scoutFetcher() to fetch access point information and populate the DB."""
+    '''
+    Uses fetcher() to fetch access point information and populate the DB.
+    '''
     startTime = time.time()
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
     apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password FROM access_points WHERE ap_id = %s", [apId])
     apInfo = apInfoCursor.fetchall()
     apInfoCursor.close()
-    for info in apInfo:
-        apName = info[0]
-        apIp = info[1]
-        apSshUsername = info[2]
-        encryptedSshPassword = bytes(info[3], 'utf-8')
+    for i in apInfo:
+        apName = i[0]
+        apIp = i[1]
+        apSshUsername = i[2]
+        encryptedSshPassword = bytes(i[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
     # Use a try..except to fetch access point information
     try:
-        apInfo = scout_info.scoutFetcher(ip=apIp, username=apSshUsername, password=apSshPassword)
+        apInfo = info.fetcher(ip=apIp, username=apSshUsername, password=apSshPassword)
         apMacAddr = apInfo[0]
         apBandwidth = apInfo[1].strip("Mbps")
         apIosInfo = apInfo[2]
@@ -76,7 +78,9 @@ def gatherApInfo(apId):
     return status
 
 def gatherAllApInfo():
-    """Uses scoutFetcher() to fetch access point information and populate the DB (for all APs)"""
+    '''
+    Uses fetcher() to fetch access point information and populate the DB (for all APs)
+    '''
     conn = cardinalSql()
     apIdCursor = conn.cursor()
     apIdCursor.execute("SELECT ap_id FROM access_points WHERE ap_all_id = 2")
@@ -87,16 +91,16 @@ def gatherAllApInfo():
         apInfoCursor.execute("SELECT ap_ip,ap_ssh_username,ap_ssh_password,ap_name FROM access_points WHERE ap_id = %s", [apId])
         apInfo = apInfoCursor.fetchall()
         apInfoCursor.close()
-        for info in apInfo:
-            apIp = info[0]
-            apSshUsername = info[1]
-            encryptedSshPassword = bytes(info[2], 'utf-8')
-            apName = info[3]
+        for i in apInfo:
+            apIp = i[0]
+            apSshUsername = i[1]
+            encryptedSshPassword = bytes(i[2], 'utf-8')
+            apName = i[3]
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         # Use a try..except to fetch access point information
         try:
             startTime = time.time()
-            apInfo = scout_info.scoutFetcher(ip=apIp, username=apSshUsername, password=apSshPassword)
+            apInfo = info.fetcher(ip=apIp, username=apSshUsername, password=apSshPassword)
             apMacAddr = apInfo[0]
             apBandwidth = apInfo[1].strip("Mbps")
             apIosInfo = apInfo[2]

@@ -38,7 +38,7 @@ from flask import request
 from flask import redirect
 from flask import session
 from flask import url_for
-from scout import scout_sys
+from scout import sys
 
 cardinal_ap_ops = Blueprint('cardinal_ap_ops_bp', __name__)
 
@@ -60,7 +60,7 @@ def configApIp():
             apInfo = getApInfo(apId=apId)
             encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_sys.scoutChangeIp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, newIp=apNewIp, subnetMask=apSubnetMask)
+            sys.scoutChangeIp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, newIp=apNewIp, subnetMask=apSubnetMask)
             status = "{}'s IP was successfully updated!".format(apInfo[0][0])
             try:
                 conn = cardinalSql()
@@ -71,8 +71,8 @@ def configApIp():
                 conn.close()
                 return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=e))
             else:
-                conn.close()
                 conn.commit()
+                conn.close()
                 return redirect(url_for('cardinal_ap_ops_bp.configApIp', status=status))
         else:
             return msgAuthFailed, 401
@@ -94,7 +94,7 @@ def configApName():
             apInfo = getApInfo(apId=apId)
             encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_sys.scoutChangeName(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, apName=apNewName)
+            sys.scoutChangeName(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, apName=apNewName)
             status = "AP Name Changed from {0} to {1}".format(apInfo[0][0],apNewName)
             try:
                 conn = cardinalSql()
@@ -105,8 +105,8 @@ def configApName():
                 conn.close()
                 return redirect(url_for('cardinal_ap_ops_bp.configApName', status=e))
             else:
-                conn.close()
                 conn.commit()
+                conn.close()
                 return redirect(url_for('cardinal_ap_ops_bp.configApName', status=status))
         else:
             return msgAuthFailed, 401
@@ -128,7 +128,7 @@ def configApTftpBackup():
             apInfo = getApInfo(apId=apId)
             encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
             apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-            scout_sys.scoutTftpBackup(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, tftpIp=tftpIp)
+            sys.scoutTftpBackup(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, tftpIp=tftpIp)
             status = "Config Backup for {} Successfully Initiated!".format(apInfo[0][0])
             return redirect(url_for('cardinal_ap_ops_bp.configApTftpBackup', status=status))
         else:
@@ -169,7 +169,7 @@ def enableApHttp():
         apInfo = getApInfo(apId=apId)
         encryptedSshPassword = bytes(apInfo[3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutEnableHttp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
+        sys.scoutEnableHttp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
         status = "HTTP Server for {} Successfully Enabled!".format(apInfo[0][0])
         return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
     else:
@@ -184,7 +184,7 @@ def disableApHttp():
         apInfo = getApInfo(apId=apId)
         encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutDisableHttp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
+        sys.scoutDisableHttp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
         status = "HTTP Server for {} Successfully Disabled".format(apInfo[0][0])
         return redirect(url_for('cardinal_ap_ops_bp.configApHttp', status=status))
     else:
@@ -209,7 +209,7 @@ def enableApSnmp():
         encryptedSnmp = bytes(apInfo[0][4], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         apSnmp = cipherSuite.decrypt(encryptedSnmp).decode('utf-8')
-        scout_sys.scoutEnableSnmp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, snmp=apSnmp)
+        sys.scoutEnableSnmp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword, snmp=apSnmp)
         status = "SNMP for {} Successfully Enabled!".format(apInfo[0][0])
         return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
     else:
@@ -224,7 +224,7 @@ def disableApSnmp():
         apInfo = getApInfo(apId=apId)
         encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
-        scout_sys.scoutDisableSnmp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
+        sys.scoutDisableSnmp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
         status = "SNMP Server for {} Successfully Disabled!".format(apInfo[0][0])
         return redirect(url_for('cardinal_ap_ops_bp.configApSnmp', status=status))
     else:

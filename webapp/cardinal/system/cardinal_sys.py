@@ -53,14 +53,18 @@ mysqlPass = cardinalConfig.get('cardinal', 'dbpassword')
 mysqlDb = cardinalConfig.get('cardinal', 'dbname')
 
 def cardinalSql():
-    """Connection object for MySQLdb transactions."""
+    '''
+    Connection object for MySQLdb transactions.
+    '''
     conn = MySQLdb.connect(host=mysqlHost, user=mysqlUser, passwd=mysqlPass, db=mysqlDb)
     return conn
 
 # CONNECTION INFORMATION
 
 def getApInfo(apId):
-    """Based on apId provided, grab connection information from MySQL as a tuple."""
+    '''
+    Based on apId provided, grab connection information from MySQL as a tuple.
+    '''
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
     apInfoCursor.execute("SELECT ap_name,ap_ip,ap_ssh_username,ap_ssh_password,ap_snmp FROM access_points WHERE ap_id = %s", [apId])
@@ -69,16 +73,74 @@ def getApInfo(apId):
     conn.close()
     return apInfo
 
+# CARDINAL OBJECTS
+
+class accessPoint():
+    '''
+    Object that defines a Cisco access point under
+    Cardinal management
+    '''
+    def add(self, name, ip, username, password, community, apGroupId=None):
+        '''
+        Method for adding a Cisco access point to Cardinal
+        '''
+        # Open connection to MySQL backend
+        conn = cardinalSql()
+        
+        # Encrypt SSH password and SNMP community
+        encryptedSshPassword = cipherSuite.encrypt(bytes(password, 'utf-8')).decode('utf-8')
+        encryptedSnmpCommunity = cipherSuite.encrypt(bytes(community, 'utf-8')).decode('utf-8')
+
+        # Insert access point into the MySQL backend
+        try:
+            if apGroupId is None:
+                addApCursor = conn.cursor()
+                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES (%s, %s, %s, %s, %s, NULL)", (name, ip, username, encryptedSshPassword, encryptedSnmpCommunity))
+                addApCursor.close()
+            else:
+                addApCursor = conn.cursor()
+                addApCursor.execute("INSERT INTO access_points (ap_name, ap_ip, ap_ssh_username, ap_ssh_password, ap_snmp, ap_group_id) VALUES (%s, %s, %s, %s, %s, %s)", (name, ip, username, encryptedSshPassword, encryptedSnmpCommunity, apGroupId))
+                addApCursor.close()
+        except MySQLdb.Error as e:
+            conn.close()
+        else:
+            conn.commit()
+            conn.close()
+
+    def modify(self, id, name=None, **kwargs):
+        '''
+        Method for updating a Cisco access point managed
+        by Cardinal
+        '''
+        # Open connection to MySQL backend
+        conn = cardinalSql()
+
+        if "name" in kwargs.keys():
+            try:
+                updateApName = conn.cursor()
+                updateApName.execute("UPDATE access_points SET ap_name = %s WHERE ap_id = %i", (name, id))
+                updateApName.close()
+            except MySQLdb.Error as e:
+                conn.close()
+            else:
+                conn.commit()
+                conn.close()
+            
+
 # GROUP OPERATIONS
 
 def printCompletionTime(endTime):
-    """Just prints completion time for parallel group processes."""
+    '''
+    Prints completion time for parallel group processes.
+    '''
     completionTime = "INFO: Group Operation Completed In: {}".format(endTime)
     return completionTime
 
 def apGroupIterator(apGroupId, snmp="False", **kwargs):
-    """Used to create a list of lists, which is then passed
-    into functions such as processor()."""
+    '''
+    Used to create a list of lists, which is then passed
+    into functions such as processor().
+    '''
     conn = cardinalSql()
     apInfoCursor = conn.cursor()
     if snmp == "True":
@@ -106,10 +168,12 @@ def apGroupIterator(apGroupId, snmp="False", **kwargs):
 # GROUP PROCESSING
 
 def processor(operation, apInfo):
-    """processor() is used for parallel processing. processor()
+    '''
+    processor() is used for parallel processing. processor()
     accepts two positional arguments: operation and apInfo. operation is
     the function itself (e.g. scout_sys.scoutDoWr) and apInfo is a list of parameters
-    that is passed for each access point (e.g. connection information)."""
+    that is passed for each access point (e.g. connection information).
+    '''
     workers = cardinalConfig.get('cardinal', 'workers')
     with multiprocessing.Pool(processes=int(workers)) as tasker:
         taskResults = tasker.starmap(operation, apInfo)
@@ -118,7 +182,8 @@ def processor(operation, apInfo):
 # SSID DEPLOYMENT
 
 def ssidCheck(apId, ssidId, ssidType=None, action=None, commit=None):
-    """Accepts five positional arguments: apId, ssidId, ssidType, action,
+    '''
+    Accepts five positional arguments: apId, ssidId, ssidType, action,
     and commit. ssidCheck() is used to determine whether or not an access point
     has a specific SSID associated. True means that ssidCheck is successful
     and the AP does not have the SSID deployed. False means ssidCheck
@@ -126,7 +191,8 @@ def ssidCheck(apId, ssidId, ssidType=None, action=None, commit=None):
     supports four arguments: ssid_24ghz, ssid_24ghz_radius, ssid_5ghz,
     ssid_5ghz_radius. action supports two arguments: commit and test. commit will
     actually commit the new deployment to the database, while test just sees if
-    the result would pass, without committing (i.e. dry-run)."""
+    the result would pass, without committing (i.e. dry-run).
+    '''
     conn = cardinalSql()
     try:
         checkSsidRelationship = conn.cursor()
@@ -171,7 +237,9 @@ def ssidCheck(apId, ssidId, ssidType=None, action=None, commit=None):
             return None
 
 def ssidGatherApIds(apGroupId):
-    """Pulls apIds from MySQL depending on group membership."""
+    '''
+    Pulls apIds from MySQL depending on group membership.
+    '''
     conn = cardinalSql()
     try:
         apGroupCheck = conn.cursor()
@@ -186,10 +254,12 @@ def ssidGatherApIds(apGroupId):
         return apIdsSql
 
 def getSsidInfo(ssidId, ssidType=None):
-    """Gathers tuple of SSID information based on ssidId,
+    '''
+    Gathers tuple of SSID information based on ssidId,
     which can then be used for SSID deployment operations.
     ssidType options include: ssid_24ghz, ssid_5ghz, ssid_24ghz_radius,
-    ssid_5ghz_radius."""
+    ssid_5ghz_radius.
+    '''
     conn = cardinalSql()
     try:
         ssidInfoCursor = conn.cursor()

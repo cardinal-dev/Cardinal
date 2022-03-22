@@ -69,9 +69,7 @@ setupCardinal() {
 
     # Create the MySQL database for Cardinal. We also want to import the SQL structure too!
     mysql -u$dbUsername -p$dbPassword -e "CREATE DATABASE "$dbName""
-    mysql -u$dbUsername --password=$dbPassword $dbName < $cardinalBase/../sql/cardinal.sql
-    mysql -u$dbUsername --password=$dbPassword mysql -e "update user set plugin='mysql_native_password' where user='root'"
-    mysql -u$dbUsername --password=$dbPassword mysql -e "update user set authentication_string=password('$dbPassword') where user='root'"
+    mysql -u$dbUsername -p$dbPassword $dbName < $cardinalBase/../sql/cardinal.sql
     systemctl restart mysql
 
     # Create a Cardinal admin
@@ -85,15 +83,14 @@ setupCardinal() {
     rm $dbCredDir/cardinal.ini
     touch $dbCredDir/cardinal.ini
     echo "[cardinal]" >> $dbCredDir/cardinal.ini
-    echo 'dbserver'=""$dbIP"" >> $dbCredDir/cardinal.ini
-    echo 'dbuser'=""$dbUsername"" >> $dbCredDir/cardinal.ini
-    echo 'dbpassword'=""$dbPassword"" >> $dbCredDir/cardinal.ini
-    echo 'dbname'=""$dbName"" >> $dbCredDir/cardinal.ini
-    echo 'commanddir'=""$commandDir"" >> $dbCredDir/cardinal.ini
-    echo 'flaskkey'=""$flaskKey"" >> $dbCredDir/cardinal.ini
-    echo 'encryptkey'=""$encryptKey"" >> $dbCredDir/cardinal.ini
-    echo 'commanddebug=off' >> $dbCredDir/cardinal.ini
-    echo 'sessiontimeout=1000' >> $dbCredDir/cardinal.ini
+    echo 'dbServer'=""$dbIP"" >> $dbCredDir/cardinal.ini
+    echo 'dbUser'=""$dbUsername"" >> $dbCredDir/cardinal.ini
+    echo 'dbPassword'=""$dbPassword"" >> $dbCredDir/cardinal.ini
+    echo 'dbName'=""$dbName"" >> $dbCredDir/cardinal.ini
+    echo 'flaskKey'=""$flaskKey"" >> $dbCredDir/cardinal.ini
+    echo 'encryptKey'=""$encryptKey"" >> $dbCredDir/cardinal.ini
+    echo 'commandDebug=off' >> $dbCredDir/cardinal.ini
+    echo 'sessionTimeout=1000' >> $dbCredDir/cardinal.ini
 }
 
 if [ "$configOption" = "--guided" ]; then
