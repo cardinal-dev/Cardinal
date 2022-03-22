@@ -1,0 +1,26 @@
+version: '3'
+services:
+  ui:
+    ports:
+      - "1000:80"
+    build:
+      context: .
+    environment: 
+      CARDINAL_SQL_HOST: mariadb
+      CARDINAL_SQL_USERNAME: "root"
+      CARDINAL_SQL_PASSWORD: "test1234"
+      CARDINAL_SQL_DATABASE: "cardinal"
+      CARDINAL_USERNAME: admin
+      CARDINAL_PASSWORD: admin
+    hostname: cardinal
+    depends_on: 
+      - mariadb
+  mariadb:
+    image: mariadb
+    environment:
+      MARIADB_USER: "cardinal"
+      MARIADB_ROOT_PASSWORD: "test1234"
+      MARIADB_DATABASE: "cardinal"
+    volumes:
+      - "./sql:/docker-entrypoint-initdb.d"
+    hostname: mariadb
