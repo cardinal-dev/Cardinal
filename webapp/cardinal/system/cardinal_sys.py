@@ -86,7 +86,7 @@ class accessPoint():
         '''
         # Open connection to MySQL backend
         conn = cardinalSql()
-        
+
         # Encrypt SSH password and SNMP community
         encryptedSshPassword = cipherSuite.encrypt(bytes(password, 'utf-8')).decode('utf-8')
         encryptedSnmpCommunity = cipherSuite.encrypt(bytes(community, 'utf-8')).decode('utf-8')
@@ -106,26 +106,6 @@ class accessPoint():
         else:
             conn.commit()
             conn.close()
-
-    def modify(self, id, name=None, **kwargs):
-        '''
-        Method for updating a Cisco access point managed
-        by Cardinal
-        '''
-        # Open connection to MySQL backend
-        conn = cardinalSql()
-
-        if "name" in kwargs.keys():
-            try:
-                updateApName = conn.cursor()
-                updateApName.execute("UPDATE access_points SET ap_name = %s WHERE ap_id = %i", (name, id))
-                updateApName.close()
-            except MySQLdb.Error as e:
-                conn.close()
-            else:
-                conn.commit()
-                conn.close()
-            
 
 # GROUP OPERATIONS
 
