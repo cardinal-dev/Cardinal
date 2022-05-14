@@ -27,11 +27,11 @@ SOFTWARE.
 '''
 
 import time
-from cardinal.system.cardinal_sys import apGroupIterator
-from cardinal.system.cardinal_sys import printCompletionTime
-from cardinal.system.cardinal_sys import cipherSuite
-from cardinal.system.cardinal_sys import processor
-from cardinal.system.cardinal_sys import msgAuthFailed
+#from cardinal.system.common import apGroupIterator
+from cardinal.system.common import printCompletionTime
+#from cardinal.system.common import cipherSuite
+#from cardinal.system.common import processor
+from cardinal.system.common import msgAuthFailed
 from flask import Blueprint
 from flask import render_template
 from flask import request

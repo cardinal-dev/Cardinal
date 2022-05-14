@@ -1,11 +1,1 @@
-[cardinal]
-dbserver=127.0.0.1
-dbuser=dbuser
-dbpassword=password
-dbname=cardinal
-commanddir=/home/Cardinal/bin/scout/templates
-flaskkey=d67ff999decd7439c230f519ea9fb999
-encryptkey=rFLoNiCTwoOa6o8QOXBy-9WK2-IdSTT8HKiiIzQFHVVZ=
-commanddebug=off
-workers=2
-sessionTimeout=2
+../ci/cardinal.ini

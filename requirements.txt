@@ -25,9 +25,11 @@
 flake8==4.0.1
 mysqlclient==2.1.0
 configparser==5.2.0
-werkzeug==2.0.3
-flask==2.0.3
+werkzeug==2.2.3
+flask==2.2.2
 jinja2==3.0.3
 uwsgi==2.0.20
 bandit==1.7.4
-git+https://github.com/cardinal-dev/scout@v1.0
+rq==1.11.1
+redis==4.3.4
+git+https://github.com/cardinal-dev/scout@main

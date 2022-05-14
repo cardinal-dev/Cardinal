@@ -2,8 +2,8 @@
 <font face="Verdana">
 <body>
 <form id="configure_http" action="/"  method="POST">
-<input type="submit" value="Enable HTTP" name="enable-http" formaction="/enable-ap-http">
-<input type="submit" value="Disable HTTP" name="disable-http" formaction="/disable-ap-http">
+<input type="submit" value="Enable HTTP" name="enable-http" formaction="/api/v1/access_points/{{ session['apId'] }}/ops/http/enable">
+<input type="submit" value="Disable HTTP" name="disable-http" formaction="/api/v1/access_points/{{ session['apId'] }}/ops/http/disable">
 <br>
 <br>
 {{ status if status }}

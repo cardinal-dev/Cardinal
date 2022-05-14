@@ -1,5 +1,5 @@
 <html>
-<form id="add_ssid" action="/add-ssid-5ghz" method="POST">
+<form id="add_ssid" action="/api/v1/ssids/5ghz" method="POST">
 <font face="Verdana">
 <label>SSID Name: </label>
 <input type="text" name="ssid_name" required>
@@ -22,7 +22,7 @@
 <br>
 <input type="submit" name="Submit" required>
 </form>
-<button onclick="window.location.href='/add-ssids'">Back to Add SSID Wizard</button>
+<button onclick="window.location.href='/forms/add-ssids'">Back to Add SSID Wizard</button>
 <br>
 <br>
 {{ status if status }}

@@ -3,12 +3,13 @@
 Choose AP:
 <br>
 <body>
-<form id="delete_ap" action="/delete-ap" method="POST">
+<form id="delete_ap" action="/api/v1/access_points">
+<input type="hidden" name="method" value="DELETE">
 <select name="ap_id">
 
 <option value=""></option>
-{% for item in aps %}
-<option value="{{ item[0] }}">{{ item[1] }}</option>
+{% for dict in aps %}
+    <option value="{{ dict['ap_id'] }}">{{ dict['ap_name'] }}</option>
 {% endfor %}
 
 </select>
@@ -16,6 +17,5 @@ Choose AP:
 </form>
 <br>
 <br>
-{{ status if status }}
 </body>
 </html>

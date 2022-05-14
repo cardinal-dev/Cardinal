@@ -3,18 +3,19 @@
 Choose SSID:
 <br>
 <body>
-<form id="delete_ssid" action="/delete-ssid-24ghz" method="POST">
+<form id="delete_ssid" action="/api/v1/ssids/24ghz">
+<input type="hidden" name="method" value="DELETE">
 <select name="ssid_id">
 
 <option value=""></option>
-{% for item in ssids %}
-<option value="{{ item[0] }}">{{ item[1] }}</option>
+{% for dict in ssids %}
+    <option value="{{ dict['ap_ssid_id'] }}">{{ dict['ap_ssid_name'] }}</option>
 {% endfor %}
 
 </select>
 <input type="submit" value="Delete SSID">
 </form>
-<button onclick="window.location.href='/delete-ssids'">Back to Delete SSID Wizard</button>
+<button onclick="window.location.href='/forms/delete-ssids'">Back to Delete SSID Wizard</button>
 <br>
 <br>
 {{ status if status }}

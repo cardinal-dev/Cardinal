@@ -4,12 +4,12 @@
 <body>
 <font face="Verdana">
 Choose AP:
-<form id="manage_aps" action="/manage-ap-dashboard" method="POST">
+<form id="manage_aps" action="/forms/manage-ap-dashboard" method="POST">
 <select name="ap_id">
 
 <option value=""></option>
-{% for item in aps %}
-<option value="{{ item[0] }}">{{ item[1] }}</option>
+{% for dict in aps %}
+    <option value="{{ dict['ap_id'] }}">{{ dict['ap_name'] }}</option>
 {% endfor %}
 
 </select>

@@ -2,14 +2,13 @@
 <font face="Verdana">
 <body>
 <form id="configure_snmp" action="/" method="POST">
-<input type="submit" value="Enable SNMP" name="enable-snmp" formaction="/enable-ap-snmp">
-<input type="submit" value="Disable SNMP" name="disable-snmp" formaction="/disable-ap-snmp">
+<input type="submit" value="Enable SNMP" name="enable-snmp" formaction="/api/v1/access_points/{{ session['apId'] }}/ops/snmp/enable">
+<input type="submit" value="Disable SNMP" name="disable-snmp" formaction="/api/v1/access_points/{{ session['apId'] }}/ops/snmp/disable">
 </form>
 <br>
 <br>
 {{ status if status }}
 <br>
-{{ completionTime if completionTime}}
 </font>
 </body>
 </html>

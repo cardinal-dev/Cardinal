@@ -26,7 +26,7 @@
 
 
 # This script is designed to configure Cardinal information, such as system variables, system dependencies, etc.
-# If anything needs improvement, please open a pull request on the cardinal-dev/Cardinal GitHub repo!
+# If anything needs improvement, please open a pull request on the cardinal-dev/Cardinal GitHub repo.
 
 # Gather information
 
@@ -50,8 +50,9 @@ setupCardinal() {
     # Create log files for Cardinal UI
     rm -rf /var/log/cardinal
     mkdir -p /var/log/cardinal
-    touch /var/log/cardinal/cardinal.log
+    touch /var/log/cardinal/uwsgi.log
     touch /var/log/cardinal/fetcher.log
+    touch /var/log/cardinal/cardinal.log
     chown -R cardinal:cardinal /var/log/cardinal
 
     # Generate Cardinal venv
@@ -128,4 +129,5 @@ elif [ "$configOption" = "--run" ]; then
 else
     installUsage
     echo "ERROR: Please specify a valid option for install.sh"
+    exit 1
 fi
