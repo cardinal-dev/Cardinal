@@ -8,6 +8,7 @@ for i in `seq 1 10`;
     do sleep 1;
         if nc -vz mariadb 3306; then
             mysql -h mariadb -u"$CARDINAL_SQL_USERNAME" -p"$CARDINAL_SQL_PASSWORD" cardinal -e "INSERT INTO users (username,password) VALUES ('$CARDINAL_USERNAME','$hashedPass')"
+            break
         else
             echo "Retrying MariaDB connection..."
             continue
