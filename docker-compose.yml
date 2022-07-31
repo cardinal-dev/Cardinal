@@ -16,7 +16,7 @@ services:
     depends_on: 
       - mariadb
   mariadb:
-    image: mariadb
+    image: mariadb:10.7
     environment:
       MARIADB_USER: "cardinal"
       MARIADB_ROOT_PASSWORD: "test1234"
