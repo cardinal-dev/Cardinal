@@ -27,6 +27,7 @@ header_pages:
   - pages/getting-started.md
   - pages/contact-us.md
   - pages/credits.md
+  - pages/compatibility-guide.md
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
