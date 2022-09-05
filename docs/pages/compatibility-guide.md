@@ -1,5 +1,3 @@
-# Compatibility Guide
-
 ### Introduction
 
 Cardinal uses [scout](https://github.com/cardinal-dev/scout) to communicate with autonomous Cisco access points (APs) over SSH.
@@ -28,7 +26,7 @@ In order to add a new AP model for Cardinal compatibility, please follow these i
 2. Name the issue report in a way that identifies the ask (e.g. [Proposal] Add Cisco 2702i to Cardinal compatibility guide)
 3. Submit supplemental information that describes proof of functionality. You can prove functionality by running tests from [scout/ci/tests](https://github.com/cardinal-dev/scout/tree/main/ci/tests) and paste the redacted output of the tests to the report
 4. Please note the GitHub handle used to submit the proposal will be the handle added to the `Verified By` column
-5. Once approved, a PR will be opened against cardinal-dev/Cardinal to add the entry into the `Official Compatibility Guide`
+5. Once approved, a PR will be opened against cardinal-dev/Cardinal to add the entry into the `Official Compatibility Table`
 
 If anyone has any questions or feedback on the preceding processes, please submit an issue report to cardinal-dev/Cardinal.
 
