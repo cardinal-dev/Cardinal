@@ -8,9 +8,9 @@ The foundation of Cardinal is built on three systems (or pillars):
 
 * MySQL
 * Python3
-* Nginx
+* NGINX
 
-Being that Cardinal is a WSGI application, the web interface requires a WSGI-compliant web server. Nginx is an example of a WSGI-compliant web server and for that reason, Cardinal is developed around this. Even though Nginx is used for the development of Cardinal, that doesn't mean you couldn't use another WSGI-compliant web server.
+Being that Cardinal is a WSGI application, the web interface requires a WSGI-compliant web server. NGINX is an example of a WSGI-compliant web server and for that reason, Cardinal is developed around this. Even though NGINX is used for the development of Cardinal, that doesn't mean you couldn't use another WSGI-compliant web server.
 
 Before we begin with the installation, please make sure you have a stable Linux environment ready to go. Cardinal development is performed on Ubuntu, however, that doesn't mean you couldn't use RHEL/CentOS or another distro. As long as you're able to install Cardinal's three pillars, you should be good to go.
 
@@ -22,9 +22,9 @@ Per the introduction above, Cardinal operates on three pillars:
 
 * MySQL
 * Python3
-* Nginx
+* NGINX
 
-Development of Cardinal is currently taking place on MySQL 5.7 with Python3 (i.e. 3.5, 3.6, and 3.7) and Nginx 1.16.0.  Please make sure you install these three components and their associated dependencies before proceeding.
+Development of Cardinal is currently taking place on MySQL 5.7 with Python3 (i.e. 3.5, 3.6, and 3.7) and NGINX 1.16.0.  Please make sure you install these three components and their associated dependencies before proceeding.
 
 ~~~
 sudo apt install mysql-server mysql-client nginx python3-venv python3-dev libmysqlclient-dev build-essential traceroute
@@ -32,7 +32,7 @@ sudo apt install mysql-server mysql-client nginx python3-venv python3-dev libmys
 
 Most distributions have moved to Python3, so you shouldn't need to install Python3 manually. If you're system doesn't have Python3, please install it as it's required. Cardinal is tested on Python 3.5+, so installing at least Python 3.5 is highly recommended.
 
-Once you have Nginx, MySQL, and Python3 installed, now we can proceed to install Cardinal.
+Once you have NGINX, MySQL, and Python3 installed, now we can proceed to install Cardinal.
 
 # Installation
 
@@ -150,7 +150,7 @@ If `install.sh` didn't error out and you have a `.ini` file in the appropriate l
 
 # Nginx Configuration
 
-Before Cardinal can launch, we need to tell Nginx how to read the uWSGI socket. In Cardinal's `conf/` directory, there's a sample Nginx configuration that we can use.
+Before Cardinal can launch, we need to tell NGINX how to read the uWSGI socket. In Cardinal's `conf/` directory, there's a sample NGINX configuration that we can use.
 
 ~~~
 user  www-data;
@@ -199,7 +199,7 @@ http {
 
 # `systemd` Configuration
 
-In order for Cardinal to start on system startup, we need to add a `systemd` service. Just like the Nginx configuration, there's a `systemd` config in the `conf/` directory as well:
+In order for Cardinal to start on system startup, we need to add a `systemd` service. Just like the NGINX configuration, there's a `systemd` config in the `conf/` directory as well:
 
 ~~~
 [Unit]
@@ -245,7 +245,7 @@ systemctl status mysql
 systemctl status nginx
 ~~~
 
-Once you have verified that MySQL and Nginx are functioning properly, you can then start Cardinal:
+Once you have verified that MySQL and NGINX are functioning properly, you can then start Cardinal:
 
 ~~~
 systemctl start cardinal

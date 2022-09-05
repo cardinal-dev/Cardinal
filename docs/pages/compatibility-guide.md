@@ -1,4 +1,6 @@
-### Introduction
+---
+title: Compatibility Guide
+---
 
 Cardinal uses [scout](https://github.com/cardinal-dev/scout) to communicate with autonomous Cisco access points (APs) over SSH.
 scout can perform actions like gathering AP information and modifying AP configurations. Currently, the CI/CD 
