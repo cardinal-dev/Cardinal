@@ -1,0 +1,26 @@
+# Cardinal (Default Configuration for Kubernetes)
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cardinal-pv
+  labels: 
+    move2kube.konveyor.io/service: mariadb
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: local-storage
+  local:
+    path: /mnt/cardinal_pv # Default PV path, but you can change this if you want
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - <DEDICATED_POD_HOST> # for example, 99.99.99.99.nip.io (if you're running the MariaDB deployment with local storage, you'll need to specify a pod host where the PV exists)

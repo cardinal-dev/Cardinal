@@ -1,0 +1,23 @@
+# Cardinal (Default Configuration for Kubernetes)
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    move2kube.konveyor.io/service: mariadb
+  name: mariadb
+spec:
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: port-3306
+      port: 3306
+      protocol: TCP
+      targetPort: 3306
+  selector:
+    move2kube.konveyor.io/service: mariadb
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
