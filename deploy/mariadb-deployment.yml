@@ -1,0 +1,69 @@
+# Cardinal (Default Configuration for Kubernetes)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    move2kube.konveyor.io/service: mariadb
+  name: mariadb
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      move2kube.konveyor.io/service: mariadb
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        move2kube.konveyor.io/service: mariadb
+      name: mariadb
+    spec:
+      containers:
+        - env:
+            - name: MARIADB_USER
+              value: cardinal
+            - name: MARIADB_ROOT_PASSWORD
+              value: test1234
+            - name: MARIADB_DATABASE
+              value: cardinal
+          image: mariadb:10.7
+          imagePullPolicy: Always
+          name: mariadb
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          # This volumeMount is used for initializing the Cardinal database.
+            - mountPath: /docker-entrypoint-initdb.d
+              name: initdb
+          # This volumeMount is used for persisting MariaDB data across pod restarts.
+            - name: cardinal-pv
+              mountPath: /var/lib/mysql
+      dnsPolicy: ClusterFirst
+      hostname: mariadb
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30 
+      volumes:
+      # This volume is used to initialize the Cardinal database via cardinal.sql.
+        - name: initdb
+          configMap:
+             name: initdb-config
+      # This volume is where MariaDB data will exist permanently.
+      # The MariaDB volume will be Bound using a PersistentVolumeClaim.
+        - name: cardinal-pv
+          persistentVolumeClaim:
+             claimName: cardinal-pv-claim
+status: {}

@@ -1,0 +1,15 @@
+# Cardinal (Default Configuration for Kubernetes)
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cardinal-pv-claim
+  labels:
+    move2kube.konveyor.io/service: mariadb
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage # Default storageClass is local-storage, but you can use other classes
+  resources:
+    requests:
+      storage: 5Gi

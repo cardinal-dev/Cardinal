@@ -1,0 +1,23 @@
+# Cardinal (Default Configuration for Kubernetes)
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    move2kube.konveyor.io/service: ui
+  name: ui
+spec:
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: port-80
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    move2kube.konveyor.io/service: ui
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
