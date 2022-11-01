@@ -265,7 +265,7 @@ You should see the following screen if you're logged in:
 
 Now you can start using Cardinal to manage your Cisco APs!
 
-# Using `scoutFetcher()`
+# Using `fetcher()`
 
 Currently, you can fetch information about your access point via the `Fetch AP Information` tile in Cardinal. If you want to run a fetch
 on all of your access points, please utilize `crontab` and set the interval appropriately:
