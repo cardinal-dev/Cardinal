@@ -167,7 +167,7 @@ def enableApHttp():
         if apId is None:
             apId = request.form['ap_id']
         apInfo = getApInfo(apId=apId)
-        encryptedSshPassword = bytes(apInfo[3], 'utf-8')
+        encryptedSshPassword = bytes(apInfo[0][3], 'utf-8')
         apSshPassword = cipherSuite.decrypt(encryptedSshPassword).decode('utf-8')
         sys.scoutEnableHttp(ip=apInfo[0][1], username=apInfo[0][2], password=apSshPassword)
         status = "HTTP Server for {} Successfully Enabled!".format(apInfo[0][0])
