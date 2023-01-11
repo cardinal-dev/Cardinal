@@ -2,7 +2,7 @@
 
 # MIT License
 
-# Copyright © 2019 Cardinal Contributors
+# Copyright © 2023 Cardinal Contributors
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# IMPORTANT: scout is required and must be packaged from lib/
-# IMPORTANT: multiprocessing is now required as of Cardinal v3.0. Python3 should have this pre-installed.
-
 flake8==4.0.1
 mysqlclient==2.1.0
 configparser==5.2.0
@@ -33,4 +30,4 @@ flask==2.0.3
 jinja2==3.0.3
 uwsgi==2.0.20
 bandit==1.7.4
-git+https://github.com/cardinal-dev/scout@main
+git+https://github.com/cardinal-dev/scout@v1.0
