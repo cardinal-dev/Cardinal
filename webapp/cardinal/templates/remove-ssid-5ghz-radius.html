@@ -3,17 +3,18 @@
 Choose SSID:
 <br>
 <body>
-<form id="remove_ssid" action="/remove-ssid-5ghz-radius" method="POST">
+<form id="remove_ssid" action="/api/v1/access_points/{{ session['apId'] }}/ops/remove_ssid/5ghz_radius" method="POST">
 <select name="ssid_id">
 
-{% for item in ssids %}
-<option value="{{ item[0] }}">{{ item[1] }}</option>
+<option value=""></option>
+{% for dict in ssids %}
+    <option value="{{ dict['ap_ssid_id'] }}">{{ dict['ap_ssid_name'] }}</option>
 {% endfor %}
 
 </select>
 <input type="submit" value="Remove SSID">
 </form>
-<button onclick="window.location.href='/remove-ssids'">Back to Remove SSID Wizard</button>
+<button onclick="window.location.href='/forms/remove-ssids'">Back to Remove SSID Wizard</button>
 <br>
 <br>
 {{ status if status }}

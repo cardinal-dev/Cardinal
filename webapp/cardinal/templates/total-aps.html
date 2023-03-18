@@ -1,9 +1,16 @@
 <html>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/metro.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='src/css/metro.css') }}">
 
 <div class="metroblock accesspoint left ">
-  <h1>{{ totalAps }}</h1>
+  <h1 id="totalAps"></h1>
   <div class="clear"></div>
   <h2>Access Point(s)</h2>
+  <script>
+    const metricsCall = fetch('/api/v1/metrics')
+      .then((response) => response.json())
+      .then((metrics) => {
+        document.getElementById("totalAps").innerHTML = metrics.access_points;
+      });
+  </script>
 </div>
 </html>

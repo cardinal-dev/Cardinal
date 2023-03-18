@@ -1,9 +1,16 @@
 <html>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/metro.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='src/css/metro.css') }}">
 
 <div class="metroblock clients left ">
-  <h1>{{ totalClients }}</h1>
+  <h1 id="totalClients"></h1>
   <div class="clear"></div>
   <h2>Client(s) Associated</h2>
+  <script>
+    const metricsCall = fetch('/api/v1/metrics')
+      .then((response) => response.json())
+      .then((metrics) => {
+        document.getElementById("totalClients").innerHTML = metrics.total_clients;
+      });
+  </script>
 </div>
 </html>

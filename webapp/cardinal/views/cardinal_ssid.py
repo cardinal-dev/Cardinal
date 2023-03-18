@@ -4,7 +4,7 @@
 
 MIT License
 
-Copyright © 2019 Cardinal Contributors
+Copyright © 2023 Cardinal Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,14 @@ SOFTWARE.
 
 '''
 
-import MySQLdb
-from cardinal.system.cardinal_sys import cardinalSql
-from cardinal.system.cardinal_sys import cipherSuite
-from cardinal.system.cardinal_sys import msgAuthFailed
-from cardinal.system.cardinal_sys import msgResourceAdded
-from cardinal.system.cardinal_sys import msgResourceDeleted
+from cardinal.system.common import jsonResponse
+from cardinal.system.common import Ssid24Ghz
+from cardinal.system.common import Ssid5Ghz
+from cardinal.system.common import Ssid24GhzRadius
+from cardinal.system.common import Ssid5GhzRadius
+from cardinal.system.common import msgAuthFailed
+from cardinal.system.common import msgResourceAdded
+from cardinal.system.common import msgResourceDeleted
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -41,328 +43,442 @@ from flask import url_for
 
 cardinal_ssid = Blueprint('cardinal_ssid_bp', __name__)
 
-@cardinal_ssid.route("/add-ssids", methods=["GET"])
-def addSsids():
-    if session.get("username") is not None:
-        return render_template("add-ssids.html")
-    elif session.get("username") is None:
-        return msgAuthFailed, 401
-
-@cardinal_ssid.route("/add-ssid-24ghz", methods=["GET", "POST"])
-def addSsid24Ghz():
+@cardinal_ssid.route("/api/v1/ssids/24ghz", methods=["GET", "POST", "DELETE"])
+def ssid24Ghz():
+    '''
+    /api/v1/ssids/24ghz is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    2.4GHz SSIDs. Creating a 2.4GHz SSID requires
+    a POST request, listing all 2.4GHz SSIDs requires a GET request,
+    and deleting a 2.4GHz SSID requires a DELETE request.
+    '''
     if request.method == 'GET':
         if session.get("username") is not None:
-            status = request.args.get('status')
-            return render_template("add-ssid-24ghz.html", status=status)
-        else:
-            return msgAuthFailed, 401
-    elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidName = request.form["ssid_name"]
-            vlan = request.form["vlan"]
-            wpa2Psk = bytes(request.form["wpa2_psk"], 'utf-8')
-            bridgeGroup = request.form["bridge_group_id"]
-            radioId = request.form["radio_sub_id"]
-            gigaId = request.form["giga_sub_id"]
-            encryptedWpa2 = cipherSuite.encrypt(wpa2Psk).decode('utf-8')
-            conn = cardinalSql()
-            addSsid24GhzCursor = conn.cursor()
-            addSsid24GhzCursor.execute("INSERT INTO ssids_24ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES (%s, %s, %s, %s, %s, %s)", (ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
-            addSsid24GhzCursor.close()
-            conn.commit()
-            conn.close()
-            status = msgResourceAdded(resource=ssidName)
-            return redirect(url_for('cardinal_ssid_bp.addSsid24Ghz', status=status))
-        else:
-            return msgAuthFailed, 401
+            # TODO: Remove this and have JavaScript handle.
+            # Accommodates for lack of PUT/PATCH/DELETE support in HTML forms (specifically for Cardinal UI)
+            # See: https://stackoverflow.com/a/5366062
+            if request.args.get('method')== "DELETE":
+                try:
+                    if "ssid_id" in request.args:
+                        ssidId = request.args.get('ssid_id')
 
-@cardinal_ssid.route("/add-ssid-5ghz", methods=["GET", "POST"])
-def addSsid5Ghz():
-    if request.method == 'GET':
-        if session.get("username") is not None:
-            status = request.args.get('status')
-            return render_template("add-ssid-5ghz.html", status=status)
-        else:
-            return msgAuthFailed, 401
-    elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidName = request.form["ssid_name"]
-            vlan = request.form["vlan"]
-            wpa2Psk = bytes(request.form["wpa2_psk"], 'utf-8')
-            bridgeGroup = request.form["bridge_group_id"]
-            radioId = request.form["radio_sub_id"]
-            gigaId = request.form["giga_sub_id"]
-            encryptedWpa2 = cipherSuite.encrypt(wpa2Psk).decode('utf-8')
-            conn = cardinalSql()
-            addSsid5GhzCursor = conn.cursor()
-            addSsid5GhzCursor.execute("INSERT INTO ssids_5ghz (ap_ssid_name, ap_ssid_vlan, ap_ssid_wpa2, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id) VALUES (%s, %s, %s, %s, %s, %s)", (ssidName,vlan,encryptedWpa2,bridgeGroup,radioId,gigaId))
-            addSsid5GhzCursor.close()
-            conn.commit()
-            conn.close()
-            status = msgResourceAdded(resource=ssidName)
-            return redirect(url_for('cardinal_ssid_bp.addSsid5Ghz', status=status))
-        else:
-            return msgAuthFailed, 401
+                        # Check if access point with specified id exists
+                        ssidCheck = Ssid24Ghz().info(id=ssidId, struct="dict")
+                        if len(ssidCheck) == 0:
+                            return jsonResponse(level="ERROR", message="2.4GHz SSID with specified id does not exist."), 404
+                        else:
+                            ssidName = Ssid24Ghz().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
 
-@cardinal_ssid.route("/add-ssid-24ghz-radius", methods=["GET", "POST"])
-def addSsid24GhzRadius():
-    if request.method == 'GET':
-        if session.get("username") is not None:
-            status = request.args.get('status')
-            return render_template("add-ssid-24ghz-radius.html", status=status)
-        else:
-            return msgAuthFailed, 401
-    elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidName = request.form["ssid_name"]
-            vlan = request.form["vlan"]
-            bridgeGroup = request.form["bridge_group_id"]
-            radioId = request.form["radio_sub_id"]
-            gigaId = request.form["giga_sub_id"]
-            radiusIp = request.form["radius_ip"]
-            sharedSecret = bytes(request.form["shared_secret"], 'utf-8')
-            authPort = request.form["auth_port"]
-            acctPort = request.form["acct_port"]
-            radiusTimeout = request.form["radius_timeout"]
-            radiusGroup = request.form["radius_group"]
-            methodList = request.form["method_list"]
-            encryptedSharedSecret = cipherSuite.encrypt(sharedSecret).decode('utf-8')
-            conn = cardinalSql()
-            addSsid24GhzRadiusCursor = conn.cursor()
-            addSsid24GhzRadiusCursor.execute("INSERT INTO ssids_24ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
-            addSsid24GhzRadiusCursor.close()
-            conn.commit()
-            conn.close()
-            status = msgResourceAdded(resource=ssidName)
-            return redirect(url_for('cardinal_ssid_bp.addSsid24GhzRadius', status=status))
-        else:
-            return msgAuthFailed, 401
+                        Ssid24Ghz().delete(id=ssidId)
 
-@cardinal_ssid.route("/add-ssid-5ghz-radius", methods=["GET", "POST"])
-def addSsid5GhzRadius():
-    if request.method == 'GET':
-        if session.get("username") is not None:
-            status = request.args.get('status')
-            return render_template("add-ssid-5ghz-radius.html", status=status)
-        else:
-            return msgAuthFailed, 401
-    elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidName = request.form["ssid_name"]
-            vlan = request.form["vlan"]
-            bridgeGroup = request.form["bridge_group_id"]
-            radioId = request.form["radio_sub_id"]
-            gigaId = request.form["giga_sub_id"]
-            radiusIp = request.form["radius_ip"]
-            sharedSecret = bytes(request.form["shared_secret"], 'utf-8')
-            authPort = request.form["auth_port"]
-            acctPort = request.form["acct_port"]
-            radiusTimeout = request.form["radius_timeout"]
-            radiusGroup = request.form["radius_group"]
-            methodList = request.form["method_list"]
-            encryptedSharedSecret = cipherSuite.encrypt(sharedSecret).decode('utf-8')
-            conn = cardinalSql()
-            addSsid5GhzRadiusCursor = conn.cursor()
-            addSsid5GhzRadiusCursor.execute("INSERT INTO ssids_5ghz_radius (ap_ssid_name, ap_ssid_vlan, ap_ssid_bridge_id, ap_ssid_radio_id, ap_ssid_ethernet_id, ap_ssid_radius_server, ap_ssid_radius_secret, ap_ssid_authorization_port, ap_ssid_accounting_port, ap_ssid_radius_timeout, ap_ssid_radius_group, ap_ssid_radius_method_list) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (ssidName,vlan,bridgeGroup,radioId,gigaId,radiusIp,encryptedSharedSecret,authPort,acctPort,radiusTimeout,radiusGroup,methodList))
-            addSsid5GhzRadiusCursor.close()
-            conn.commit()
-            conn.close()
-            status = msgResourceAdded(resource=ssidName)
-            return redirect(url_for('cardinal_ssid_bp.addSsid5GhzRadius', status=status))
-        else:
-            return msgAuthFailed, 401
-
-@cardinal_ssid.route("/deploy-ssids", methods=["GET"])
-def deploySsids():
-    if session.get("username") is not None:
-        return render_template("deploy-ssids.html")
-    else:
-        return msgAuthFailed, 401
-
-@cardinal_ssid.route("/deploy-ssids-group", methods=["GET"])
-def deploySsidsGroup():
-    if session.get("username") is not None:
-        return render_template("deploy-ssids-group.html")
-    else:
-        return msgAuthFailed, 401
-
-@cardinal_ssid.route("/remove-ssids", methods=["GET"])
-def removeSsids():
-    if session.get("username") is not None:
-        return render_template("remove-ssids.html")
-    else:
-        return msgAuthFailed, 401
-
-@cardinal_ssid.route("/remove-ssids-group", methods=["GET"])
-def removeSsidsGroup():
-    if session.get("username") is not None:
-        return render_template("remove-ssids-group.html")
-    else:
-        return msgAuthFailed, 401
-
-@cardinal_ssid.route("/delete-ssids", methods=["GET"])
-def deleteSsids():
-    if session.get("username") is not None:
-        return render_template("delete-ssids.html")
-    else:
-        return msgAuthFailed, 401
-
-@cardinal_ssid.route("/delete-ssid-24ghz", methods=["GET", "POST"])
-def deleteSsid24Ghz():
-    if request.method == 'GET':
-        if session.get("username") is not None:
-            conn = cardinalSql()
-            status = request.args.get('status')
-            deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz")
-            ssids = deleteSsidCursor.fetchall()
-            deleteSsidCursor.close()
-            conn.close()
-            return render_template("delete-ssid-24ghz.html", status=status, ssids=ssids)
-        else:
-            return msgAuthFailed, 401
-    elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidId = request.form["ssid_id"]
-            if len(ssidId) <= 0:
-                status = "Please select a valid 2.4GHz SSID."
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=status))
-            conn = cardinalSql()
-            deleteSsidNameCursor = conn.cursor()
-            deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
-            ssidName = deleteSsidNameCursor.fetchone()[0]
-            deleteSsidNameCursor.close()
-            status = msgResourceDeleted(resource=ssidName)
-            try:
-                deleteSsidCursor = conn.cursor()
-                deleteSsidCursor.execute("DELETE FROM ssids_24ghz WHERE ap_ssid_id = %s", [ssidId])
-                deleteSsidCursor.close()
-            except MySQLdb.Error as e:
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=e))
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
             else:
-                conn.commit()
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid24Ghz', status=status))
-        else:
-            return msgAuthFailed, 401
-
-@cardinal_ssid.route("/delete-ssid-5ghz", methods=["GET", "POST"])
-def deleteSsid5Ghz():
-    if request.method == 'GET':
-        if session.get("username") is not None:
-            conn = cardinalSql()
-            status = request.args.get('status')
-            deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz")
-            ssids = deleteSsidCursor.fetchall()
-            deleteSsidCursor.close()
-            conn.close()
-            return render_template("delete-ssid-5ghz.html", status=status, ssids=ssids)
+                return Ssid24Ghz().info()
         else:
             return msgAuthFailed, 401
     elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidId = request.form["ssid_id"]
-            if len(ssidId) <= 0:
-                status = "Please select a valid 5GHz SSID."
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=status))
-            conn = cardinalSql()
-            deleteSsidNameCursor = conn.cursor()
-            deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
-            ssidName = deleteSsidNameCursor.fetchone()[0]
-            deleteSsidNameCursor.close()
-            status = msgResourceDeleted(resource=ssidName)
+        if session.get('username') is not None:
+                ssidName = request.form["ssid_name"]
+                vlan = request.form["vlan"]
+                wpa2Psk = request.form["wpa2_psk"]
+                bridgeGroup = request.form["bridge_group_id"]
+                radioId = request.form["radio_sub_id"]
+                gigaId = request.form["giga_sub_id"]
+                status = msgResourceAdded(resource=ssidName)
+
+                try:
+                    ssidCreationResult = Ssid24Ghz().add(name=ssidName, vlan=vlan, wpa2=wpa2Psk, bridgeGroup=bridgeGroup, \
+                    radioId=radioId, gigaId=gigaId)
+
+                    # Return an HTTP 400 if 2.4GHz SSID with specified name already exists
+                    if ssidCreationResult is not None:
+                        return jsonResponse(level="ERROR", message=ssidCreationResult), 400
+
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return Ssid24Ghz().info(name=ssidName), 201
+        else:
+            return msgAuthFailed, 401
+    elif request.method == 'DELETE':
+        if session.get('username') is not None:
             try:
-                deleteSsidCursor = conn.cursor()
-                deleteSsidCursor.execute("DELETE FROM ssids_5ghz WHERE ap_ssid_id = %s", [ssidId])
-                deleteSsidCursor.close()
-            except MySQLdb.Error as e:
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=e))
+                if "ap_ssid_id" in request.form:
+                    ssidId = request.form["ap_ssid_id"]
+
+                    # Check if 2.4GHz SSID with specified id exists
+                    ssidCheck = Ssid24Ghz().info(id=ssidId, struct="dict")
+                    if len(ssidCheck) == 0:
+                        return "ERROR: 2.4GHz SSID with specified id does not exist.", 404
+                    else:
+                        ssidName = Ssid24Ghz().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
+
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid24Ghz().delete(id=ssidId)
+
+                elif "ap_ssid_name" in request.form:
+                    ssidName = request.form["ap_ssid_name"]
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid24Ghz().delete(name=ssidName)
+                    
+            except Exception as e:
+                return jsonResponse(level="ERROR", message=e), 400
             else:
-                conn.commit()
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid5Ghz', status=status))
+                return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
         else:
             return msgAuthFailed, 401
 
-@cardinal_ssid.route("/delete-ssid-24ghz-radius", methods=["GET", "POST"])
-def deleteSsid24GhzRadius():
+@cardinal_ssid.route("/api/v1/ssids/24ghz/<int:id>", methods=["GET"])
+def ssid24GhzById(id):
+    '''
+    /api/v1/access_points is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    access points. Creating an access point requires
+    a POST request, listing all access points requires a GET request,
+    and deleting an access point requires a DELETE request.
+    '''
     if request.method == 'GET':
         if session.get("username") is not None:
-            conn = cardinalSql()
-            status = request.args.get('status')
-            deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_24ghz_radius")
-            ssids = deleteSsidCursor.fetchall()
-            deleteSsidCursor.close()
-            conn.close()
-            return render_template("delete-ssid-24ghz-radius.html", status=status, ssids=ssids)
-        else:
-            return msgAuthFailed, 401
-    elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidId = request.form["ssid_id"]
-            if len(ssidId) <= 0:
-                status = "Please select a valid 2.4GHz RADIUS SSID."
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
-            conn = cardinalSql()
-            deleteSsidNameCursor = conn.cursor()
-            deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-            ssidName = deleteSsidNameCursor.fetchone()[0]
-            deleteSsidNameCursor.close()
-            status = msgResourceDeleted(resource=ssidName)
-            try:
-                deleteSsidCursor = conn.cursor()
-                deleteSsidCursor.execute("DELETE FROM ssids_24ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-                deleteSsidCursor.close()
-            except MySQLdb.Error as e:
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
+            ssidCheck = Ssid24Ghz().info(id=id, struct="dict")
+            if len(ssidCheck) == 0:
+                return "ERROR: 2.4GHz SSID with specified id does not exist.", 404
             else:
-                conn.commit()
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid24GhzRadius', status=status))
+                return Ssid24Ghz().info(id=id)
         else:
             return msgAuthFailed, 401
 
-@cardinal_ssid.route("/delete-ssid-5ghz-radius", methods=["GET", "POST"])
-def deleteSsid5GhzRadius():
+@cardinal_ssid.route("/api/v1/ssids/24ghz_radius", methods=["GET", "POST", "DELETE"])
+def ssid24GhzRadius():
+    '''
+    /api/v1/ssids/24ghz_radius is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    2.4GHz RADIUS SSIDs. Creating a 2.4GHz RADIUS SSID requires
+    a POST request, listing all 2.4GHz RADIUS SSIDs requires a GET request,
+    and deleting a 2.4GHz RADIUS SSID requires a DELETE request.
+    '''
     if request.method == 'GET':
         if session.get("username") is not None:
-            conn = cardinalSql()
-            status = request.args.get('status')
-            deleteSsidCursor = conn.cursor()
-            deleteSsidCursor.execute("SELECT ap_ssid_id,ap_ssid_name FROM ssids_5ghz_radius")
-            ssids = deleteSsidCursor.fetchall()
-            deleteSsidCursor.close()
-            conn.close()
-            return render_template("delete-ssid-5ghz-radius.html", status=status, ssids=ssids)
+            # TODO: Remove this and have JavaScript handle.
+            # Accommodates for lack of PUT/PATCH/DELETE support in HTML forms (specifically for Cardinal UI)
+            # See: https://stackoverflow.com/a/5366062
+            if request.args.get('method') == "DELETE":
+                try:
+                    if "ssid_id" in request.args:
+                        ssidId = request.args.get('ssid_id')
+
+                        # Check if 2.4GHz RADIUS SSID with specified id exists
+                        ssidCheck = Ssid24GhzRadius().info(id=ssidId, struct="dict")
+                        if len(ssidCheck) == 0:
+                            return jsonResponse(level="ERROR", message="2.4GHz RADIUS SSID with specified id does not exist."), 404
+                        else:
+                            ssidName = Ssid24GhzRadius().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
+
+                        Ssid24GhzRadius().delete(id=ssidId)
+
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
+            else:
+                return Ssid24GhzRadius().info()
         else:
             return msgAuthFailed, 401
     elif request.method == 'POST':
-        if session.get("username") is not None:
-            ssidId = request.form["ssid_id"]
-            if len(ssidId) <= 0:
-                status = "Please select a valid 5GHz RADIUS SSID."
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
-            conn = cardinalSql()
-            deleteSsidNameCursor = conn.cursor()
-            deleteSsidNameCursor.execute("SELECT ap_ssid_name FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-            ssidName = deleteSsidNameCursor.fetchone()[0]
-            deleteSsidNameCursor.close()
-            status = "{} was successfully deleted!".format(ssidName)
+        if session.get('username') is not None:
+                ssidName = request.form["ssid_name"]
+                vlan = request.form["vlan"]
+                bridgeGroup = request.form["bridge_group_id"]
+                radioId = request.form["radio_sub_id"]
+                gigaId = request.form["giga_sub_id"]
+                radiusIp = request.form["radius_ip"]
+                sharedSecret = request.form["shared_secret"]
+                authPort = request.form["auth_port"]
+                acctPort = request.form["acct_port"]
+                radiusTimeout = request.form["radius_timeout"]
+                radiusGroup = request.form["radius_group"]
+                methodList = request.form["method_list"]
+
+                try:
+                    ssidCreationResult = Ssid24GhzRadius().add(name=ssidName, vlan=vlan, bridgeGroup=bridgeGroup, \
+                    radioId=radioId, gigaId=gigaId, radiusIp=radiusIp, sharedSecret=sharedSecret, authPort=authPort, \
+                    acctPort=acctPort, radiusTimeout=radiusTimeout, radiusGroup=radiusGroup, methodList=methodList)
+
+                    # Return an HTTP 400 if 2.4GHz RADIUS SSID with specified name already exists
+                    if ssidCreationResult is not None:
+                        return jsonResponse(level="ERROR", message=ssidCreationResult), 400
+
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return Ssid24GhzRadius().info(name=ssidName), 201
+        else:
+            return msgAuthFailed, 401
+    elif request.method == 'DELETE':
+        if session.get('username') is not None:
             try:
-                deleteSsidCursor = conn.cursor()
-                deleteSsidCursor.execute("DELETE FROM ssids_5ghz_radius WHERE ap_ssid_id = %s", [ssidId])
-                deleteSsidCursor.close()
-            except MySQLdb.Error as e:
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
+                if "ap_ssid_id" in request.form:
+                    ssidId = request.form["ap_ssid_id"]
+
+                    # Check if 2.4GHz RADIUS SSID with specified id exists
+                    ssidCheck = Ssid24GhzRadius().info(id=ssidId, struct="dict")
+                    if len(ssidCheck) == 0:
+                        return "ERROR: 2.4GHz RADIUS SSID with specified id does not exist.", 404
+                    else:
+                        ssidName = Ssid24GhzRadius().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
+
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid24GhzRadius().delete(id=ssidId)
+
+                elif "ap_ssid_name" in request.form:
+                    ssidName = request.form["ap_ssid_name"]
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid24GhzRadius().delete(name=ssidName)
+                    
+            except Exception as e:
+                return jsonResponse(level="ERROR", message=e), 400
             else:
-                conn.commit()
-                conn.close()
-                return redirect(url_for('cardinal_ssid_bp.deleteSsid5GhzRadius', status=status))
+                return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
+        else:
+            return msgAuthFailed, 401
+
+@cardinal_ssid.route("/api/v1/ssids/24ghz_radius/<int:id>", methods=["GET"])
+def ssid24GhzRadiusById(id):
+    '''
+    /api/v1/ssids/24ghz_radius is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    access points. Creating an access point requires
+    a POST request, listing all access points requires a GET request,
+    and deleting an access point requires a DELETE request.
+    '''
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            ssidCheck = Ssid24GhzRadius().info(id=id, struct="dict")
+            if len(ssidCheck) == 0:
+                return "ERROR: 2.4GHz RADIUS SSID with specified id does not exist.", 404
+            else:
+                return Ssid24GhzRadius().info(id=id)
+        else:
+            return msgAuthFailed, 401
+
+@cardinal_ssid.route("/api/v1/ssids/5ghz", methods=["GET", "POST", "DELETE"])
+def ssid5Ghz():
+    '''
+    /api/v1/ssids/5ghz is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    5GHz SSIDs. Creating a 5GHz SSID requires
+    a POST request, listing all 5GHz SSIDs requires a GET request,
+    and deleting a 5GHz SSID requires a DELETE request.
+    '''
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            # TODO: Remove this and have JavaScript handle.
+            # Accommodates for lack of PUT/PATCH/DELETE support in HTML forms (specifically for Cardinal UI)
+            # See: https://stackoverflow.com/a/5366062
+            if request.args.get('method')== "DELETE":
+                try:
+                    if "ssid_id" in request.args:
+                        ssidId = request.args.get('ssid_id')
+
+                        # Check if access point with specified id exists
+                        ssidCheck = Ssid5Ghz().info(id=ssidId, struct="dict")
+                        if len(ssidCheck) == 0:
+                            return jsonResponse(level="ERROR", message="5GHz SSID with specified id does not exist."), 404
+                        else:
+                            ssidName = Ssid5Ghz().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
+
+                        Ssid5Ghz().delete(id=ssidId)
+
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
+            else:
+                return Ssid5Ghz().info()
+        else:
+            return msgAuthFailed, 401
+    elif request.method == 'POST':
+        if session.get('username') is not None:
+                ssidName = request.form["ssid_name"]
+                vlan = request.form["vlan"]
+                wpa2Psk = request.form["wpa2_psk"]
+                bridgeGroup = request.form["bridge_group_id"]
+                radioId = request.form["radio_sub_id"]
+                gigaId = request.form["giga_sub_id"]
+                status = msgResourceAdded(resource=ssidName)
+
+                try:
+                    ssidCreationResult = Ssid5Ghz().add(name=ssidName, vlan=vlan, wpa2=wpa2Psk, bridgeGroup=bridgeGroup, \
+                    radioId=radioId, gigaId=gigaId)
+
+                    # Return an HTTP 400 if 5GHz SSID with specified name already exists
+                    if ssidCreationResult is not None:
+                        return jsonResponse(level="ERROR", message=ssidCreationResult), 400
+
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return Ssid5Ghz().info(name=ssidName), 201
+        else:
+            return msgAuthFailed, 401
+    elif request.method == 'DELETE':
+        if session.get('username') is not None:
+            try:
+                if "ap_ssid_id" in request.form:
+                    ssidId = request.form["ap_ssid_id"]
+
+                    # Check if 5GHz SSID with specified id exists
+                    ssidCheck = Ssid5Ghz().info(id=ssidId, struct="dict")
+                    if len(ssidCheck) == 0:
+                        return "ERROR: 5GHz SSID with specified id does not exist.", 404
+                    else:
+                        ssidName = Ssid5Ghz().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
+
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid5Ghz().delete(id=ssidId)
+
+                elif "ap_ssid_name" in request.form:
+                    ssidName = request.form["ap_ssid_name"]
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid5Ghz().delete(name=ssidName)
+                    
+            except Exception as e:
+                return jsonResponse(level="ERROR", message=e), 400
+            else:
+                return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
+        else:
+            return msgAuthFailed, 401
+
+@cardinal_ssid.route("/api/v1/ssids/5ghz/<int:id>", methods=["GET"])
+def ssid5GhzById(id):
+    '''
+    /api/v1/access_points is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    access points. Creating an access point requires
+    a POST request, listing all access points requires a GET request,
+    and deleting an access point requires a DELETE request.
+    '''
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            ssidCheck = Ssid5Ghz().info(id=id, struct="dict")
+            if len(ssidCheck) == 0:
+                return "ERROR: 5GHz SSID with specified id does not exist.", 404
+            else:
+                return Ssid5Ghz().info(id=id)
+        else:
+            return msgAuthFailed, 401
+
+@cardinal_ssid.route("/api/v1/ssids/5ghz_radius", methods=["GET", "POST", "DELETE"])
+def ssid5GhzRadius():
+    '''
+    /api/v1/ssids/5ghz_radius is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    5GHz RADIUS SSIDs. Creating a 5GHz RADIUS SSID requires
+    a POST request, listing all 5GHz RADIUS SSIDs requires a GET request,
+    and deleting a 5GHz RADIUS SSID requires a DELETE request.
+    '''
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            # TODO: Remove this and have JavaScript handle.
+            # Accommodates for lack of PUT/PATCH/DELETE support in HTML forms (specifically for Cardinal UI)
+            # See: https://stackoverflow.com/a/5366062
+            if request.args.get('method') == "DELETE":
+                try:
+                    if "ssid_id" in request.args:
+                        ssidId = request.args.get('ssid_id')
+
+                        # Check if 5GHz RADIUS SSID with specified id exists
+                        ssidCheck = Ssid5GhzRadius().info(id=ssidId, struct="dict")
+                        if len(ssidCheck) == 0:
+                            return jsonResponse(level="ERROR", message="5GHz RADIUS SSID with specified id does not exist."), 404
+                        else:
+                            ssidName = Ssid5GhzRadius().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
+
+                        Ssid5GhzRadius().delete(id=ssidId)
+
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
+            else:
+                return Ssid5GhzRadius().info()
+        else:
+            return msgAuthFailed, 401
+    elif request.method == 'POST':
+        if session.get('username') is not None:
+                ssidName = request.form["ssid_name"]
+                vlan = request.form["vlan"]
+                bridgeGroup = request.form["bridge_group_id"]
+                radioId = request.form["radio_sub_id"]
+                gigaId = request.form["giga_sub_id"]
+                radiusIp = request.form["radius_ip"]
+                sharedSecret = request.form["shared_secret"]
+                authPort = request.form["auth_port"]
+                acctPort = request.form["acct_port"]
+                radiusTimeout = request.form["radius_timeout"]
+                radiusGroup = request.form["radius_group"]
+                methodList = request.form["method_list"]
+
+                try:
+                    ssidCreationResult = Ssid5GhzRadius().add(name=ssidName, vlan=vlan, bridgeGroup=bridgeGroup, \
+                    radioId=radioId, gigaId=gigaId, radiusIp=radiusIp, sharedSecret=sharedSecret, authPort=authPort, \
+                    acctPort=acctPort, radiusTimeout=radiusTimeout, radiusGroup=radiusGroup, methodList=methodList)
+
+                    # Return an HTTP 400 if 5GHz RADIUS SSID with specified name already exists
+                    if ssidCreationResult is not None:
+                        return jsonResponse(level="ERROR", message=ssidCreationResult), 400
+
+                except Exception as e:
+                    return jsonResponse(level="ERROR", message=e), 400
+                else:
+                    return Ssid5GhzRadius().info(name=ssidName), 201
+        else:
+            return msgAuthFailed, 401
+    elif request.method == 'DELETE':
+        if session.get('username') is not None:
+            try:
+                if "ap_ssid_id" in request.form:
+                    ssidId = request.form["ap_ssid_id"]
+
+                    # Check if 5GHz RADIUS SSID with specified id exists
+                    ssidCheck = Ssid5GhzRadius().info(id=ssidId, struct="dict")
+                    if len(ssidCheck) == 0:
+                        return "ERROR: 5GHz RADIUS SSID with specified id does not exist.", 404
+                    else:
+                        ssidName = Ssid5GhzRadius().info(id=ssidId, struct="dict")[0]["ap_ssid_name"]
+
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid5GhzRadius().delete(id=ssidId)
+
+                elif "ap_ssid_name" in request.form:
+                    ssidName = request.form["ap_ssid_name"]
+                    status = msgResourceDeleted(resource=ssidName)
+                    Ssid5GhzRadius().delete(name=ssidName)
+                    
+            except Exception as e:
+                return jsonResponse(level="ERROR", message=e), 400
+            else:
+                return jsonResponse(level="INFO", message="{} deleted successfully".format(ssidName)), 200
+        else:
+            return msgAuthFailed, 401
+
+@cardinal_ssid.route("/api/v1/ssids/5ghz_radius/<int:id>", methods=["GET"])
+def ssid5GhzRadiusById(id):
+    '''
+    /api/v1/ssids/5ghz_radius is an endpoint that allows
+    a Cardinal user to create, list, and delete registered
+    access points. Creating an access point requires
+    a POST request, listing all access points requires a GET request,
+    and deleting an access point requires a DELETE request.
+    '''
+    if request.method == 'GET':
+        if session.get("username") is not None:
+            ssidCheck = Ssid5GhzRadius().info(id=id, struct="dict")
+            if len(ssidCheck) == 0:
+                return "ERROR: 5GHz RADIUS SSID with specified id does not exist.", 404
+            else:
+                return Ssid5GhzRadius().info(id=id)
         else:
             return msgAuthFailed, 401

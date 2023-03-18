@@ -4,7 +4,7 @@
 
 MIT License
 
-Copyright © 2019 Cardinal Contributors
+Copyright © 2022 Cardinal Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,12 @@ SOFTWARE.
 
 '''
 
-from cardinal.system import cardinal_sys
+from cardinal.system.common import CardinalEnv
 from cardinal.views import cardinal_ap_group
-from cardinal.views import cardinal_ap_ops
 from cardinal.views import cardinal_ap_group_ops
 from cardinal.views import cardinal_ap
 from cardinal.views import cardinal_auth
+from cardinal.views import cardinal_forms
 from cardinal.views import cardinal_network_toolkit
 from cardinal.views import cardinal_ssid
 from cardinal.views import cardinal_ssid_ops
@@ -39,15 +39,20 @@ from cardinal.views import cardinal_visuals
 from datetime import timedelta
 from flask import Flask
 
-Cardinal = Flask(__name__)
-Cardinal.secret_key = "{}".format(cardinal_sys.flaskKey)
-Cardinal.permanent_session_lifetime = timedelta(minutes=int(cardinal_sys.sessionTimeout))
+# Intialize a CardinalEnv() object
+cardinalEnv = CardinalEnv()
 
+# Initialize a Flask() object and configure using Cardinal settings
+Cardinal = Flask(__name__, static_folder='frontend')
+Cardinal.secret_key = cardinalEnv.config()["flaskKey"]
+Cardinal.permanent_session_lifetime = int(cardinalEnv.config()["sessionTimeout"])
+
+# Declare Flask blueprints
 Cardinal.register_blueprint(cardinal_ap_group.cardinal_ap_group)
-Cardinal.register_blueprint(cardinal_ap_ops.cardinal_ap_ops)
 Cardinal.register_blueprint(cardinal_ap_group_ops.cardinal_ap_group_ops)
 Cardinal.register_blueprint(cardinal_ap.cardinal_ap)
 Cardinal.register_blueprint(cardinal_auth.cardinal_auth)
+Cardinal.register_blueprint(cardinal_forms.cardinal_forms)
 Cardinal.register_blueprint(cardinal_network_toolkit.cardinal_network_toolkit)
 Cardinal.register_blueprint(cardinal_ssid.cardinal_ssid)
 Cardinal.register_blueprint(cardinal_ssid_ops.cardinal_ssid_ops)

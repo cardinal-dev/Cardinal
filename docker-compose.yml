@@ -15,6 +15,9 @@ services:
     hostname: cardinal
     depends_on: 
       - mariadb
+  redis:
+    image: redis:latest
+    hostname: redis
   mariadb:
     image: mariadb:10.7
     environment:

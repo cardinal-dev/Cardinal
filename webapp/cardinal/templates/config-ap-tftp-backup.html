@@ -1,8 +1,9 @@
 <html>
-<form id="tftp_ap_backup" action="/get-ap-tftp-backup" method="POST">
+<form id="tftp_ap_backup" action="/api/v1/access_points/{{ session['apId'] }}/ops/tftp" method="POST">
 <font face="Verdana">
 <label>TFTP Server IP: </label>
 <input type="text" name="tftp_ip" required>
+<input type="hidden" name="ap_id" value="{{ session['apId'] }}">
 <br>
 <input type="submit" name="Submit" required>
 </form>

@@ -4,7 +4,7 @@
 
 MIT License
 
-Copyright © 2019 Cardinal Contributors
+Copyright © 2023 Cardinal Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@ SOFTWARE.
 
 '''
 
-from cardinal.system.cardinal_sys import cardinalSql
-from cardinal.system.cardinal_sys import msgAuthFailed
+from cardinal.system.common import CardinalEnv
+from cardinal.system.common import msgAuthFailed
 from flask import Blueprint
 from flask import render_template
 from flask import request
@@ -56,7 +56,7 @@ def dashboard():
 def login():
     username = request.form['username']
     password = request.form['password']
-    conn = cardinalSql()
+    conn = CardinalEnv().sql()
     loginCursor = conn.cursor()
     loginSql = loginCursor.execute("SELECT username,password FROM users WHERE username = %s", [username])
     userInfo = loginCursor.fetchall()
